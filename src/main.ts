@@ -60,7 +60,7 @@ bootstrap().catch((e) => console.error(e));
 // };
 export const handler = async (req, res) => {
   const app = await NestFactory.create(AppModule);  
-  app.enableCors();
+  // app.enableCors();
   await app.init();
   app.getHttpAdapter().getInstance()(req, res);
 };
