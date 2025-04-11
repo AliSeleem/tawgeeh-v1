@@ -39,6 +39,8 @@ async function bootstrap() {
   // Apply Global Exception Filter
   app.useGlobalFilters(new AllExceptionsFilter());
 
+  app.enableCors();
+
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Tawgeeh API')
@@ -60,10 +62,7 @@ bootstrap().catch((e) => console.error(e));
 // };
 export const handler = async (req, res) => {
   const app = await NestFactory.create(AppModule);
-  app.enableCors({
-    origin: ['http://127.0.0.1:5500', '*'],
-    credentials: true,
-  });
+  app.enableCors();
   await app.init();
   app.getHttpAdapter().getInstance()(req, res);
 };
