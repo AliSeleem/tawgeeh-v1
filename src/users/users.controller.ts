@@ -6,9 +6,9 @@ import {
   Param,
   Patch,
   Delete,
-  NotFoundException,
-  BadRequestException,
   Query,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,7 +21,11 @@ import {
   ApiQuery,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { AddExperienceDto } from './dto/add-experiences.dto';
+import { UpdateExperienceDto } from './dto/update-experiences.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -155,5 +159,60 @@ export class UsersController {
   })
   async deleteUser(@Param('id') id: string): Promise<ApiResponse<any>> {
     return this.usersService.deleteUser(+id);
+  }
+
+  @Post('/experience')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Add experience to user',
+    description: 'Add a new experience to the user profile',
+  })
+  @ApiBody({ type: AddExperienceDto })
+  async addExperience(
+    @Req() Req,
+    @Body() AddExperienceDto: AddExperienceDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.addExperience(Req.user.id, AddExperienceDto);
+  }
+
+  @Patch('/experience/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update user experience',
+    description: 'Update existing experience of the user profile',
+  })
+  @ApiBody({ type: UpdateExperienceDto })
+  async updateExperience(
+    @Req() Req,
+    @Param('id') id: number,
+    @Body() UpdateExperienceDto: UpdateExperienceDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.updateExperience(
+      id,
+      Req.user.id,
+      UpdateExperienceDto,
+    );
+  }
+
+  @Delete('/experience/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete user experience',
+    description: 'Remove experience from the user profile',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Experience ID',
+    example: 1,
+  })
+  async deleteExperience(
+    @Req() Req,
+    @Param('id') id: string,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.deleteExperience(+id, Req.user.id);
   }
 }
