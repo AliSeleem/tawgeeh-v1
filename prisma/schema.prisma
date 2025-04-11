@@ -4,37 +4,74 @@ generator client {
 
 datasource db {
   provider = "postgresql" // or "mysql" or "sqlite"
-  url      = env("DATABASE_URL") // Add your database URL to .env file
+  url      = env("DATABASE_URL")
 }
+
+// ======== USER MODELS ========
 
 model User {
   id                      Int             @id @default(autoincrement())
   name                    String          @db.VarChar(50)
   email                   String          @unique
+  password                String?
+  
+  // Authentication related
   emailVerified           Boolean         @default(false)
   verificationCode        String?
   verificationCodeExpires DateTime?
   resetCode               String?
   resetCodeExpires        DateTime?
+  googleId                String?         @unique
+  linkedinId              String?         @unique
+  signup_method           SignupMethod    @default(MANUAL)
+  
+  // Profile information
   phone                   String          @default("+201000000000") @db.VarChar(20)
   gender                  Gender          @default(MALE)
   country                 String          @default("Egypt") @db.VarChar(100)
   specialization          String          @default("Other") @db.VarChar(100)
   experienceLevel         ExperienceLevel @default(BEGINNER)
   bio                     String?         @db.Text
-  signup_method           SignupMethod    @default(MANUAL)
-
-  // Existing relations and fields
-  password   String?
-  googleId   String?            @unique
-  linkedinId String?            @unique
-  chats      ChatParticipants[]
-  messages   Message[]
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
-
-  sessionsRequested Session[] @relation(name: "RequesterRelation")
-  sessionsReceived  Session[] @relation(name: "RequestedRelation")
+  
+  // Mentor status
+  isMentor                Boolean         @default(false)
+  
+  // Media and statistics
+  image_url               String?
+  video_url               String?
+  totalSessions           Int             @default(0)
+  totalMinutes            Int             @default(0)
+  
+  // Social media links
+  linkedin                String?
+  behance                 String?
+  github                  String?
+  instagram               String?
+  
+  // Timestamps
+  createdAt               DateTime        @default(now())
+  updatedAt               DateTime        @updatedAt
+  
+  // Relations to other models
+  chats                   ChatParticipants[]
+  messages                Message[]
+  sessionsRequested       Session[]       @relation(name: "RequesterRelation")
+  sessionsReceived        Session[]       @relation(name: "RequestedRelation")
+  experiences             Experience[]
+  certificates            Certificate[]
+  education               Education[]
+  ratings                 Rating[]        @relation("RatedUser")
+  givenRatings            Rating[]        @relation("RaterUser")
+  achievements            Achievement[]
+  
+  // Mentor-specific relations
+  mentorServices          MentorService[]
+  mentorAvailability      MentorAvailability[]
+  
+  @@index([email])
+  @@index([googleId])
+  @@index([linkedinId])
+  @@index([isMentor]) // Index for querying mentors
 }
 
 enum Gender {
@@ -54,68 +91,251 @@ enum SignupMethod {
   LINKEDIN
 }
 
+// ======== MENTOR MODELS ========
+
+model MentorService {
+  id              Int           @id @default(autoincrement())
+  mentorId        Int
+  name            String        @db.VarChar(100)
+  description     String        @db.Text
+  duration        Int           // Duration in minutes
+  isActive        Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  mentor          User          @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  sessions        Session[]     // Sessions booked for this service
+  
+  @@index([mentorId])
+}
+
+model MentorAvailability {
+  id              Int           @id @default(autoincrement())
+  mentorId        Int
+  dayOfWeek       DayOfWeek
+  startTime       DateTime      // Store as DateTime but use only time part
+  endTime         DateTime      // Store as DateTime but use only time part
+  isRecurring     Boolean       @default(true)
+  specificDate    DateTime?     // For non-recurring availability
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  mentor          User          @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  bookings        TimeSlotBooking[]
+  
+  @@index([mentorId])
+  @@index([dayOfWeek])
+  @@index([specificDate])
+}
+
+model TimeSlotBooking {
+  id                Int               @id @default(autoincrement())
+  availabilityId    Int
+  sessionId         String?           // Optional link to a session
+  startTime         DateTime
+  endTime           DateTime
+  status            BookingStatus     @default(AVAILABLE)
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  availability      MentorAvailability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
+  session           Session?          @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  
+  @@index([availabilityId])
+  @@index([sessionId])
+  @@index([status])
+  @@index([startTime, endTime])
+}
+
+enum DayOfWeek {
+  SATURDAY
+  SUNDAY
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+}
+
+enum BookingStatus {
+  AVAILABLE
+  BOOKED
+  BLOCKED
+}
+
+// ======== USER PROFILE EXTENSIONS ========
+
+model Experience {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  title       String    @db.VarChar(100)
+  company     String    @db.VarChar(100)
+  from        DateTime
+  to          DateTime?
+  stillThere  Boolean   @default(false)
+  summary     String    @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Certificate {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  name        String    @db.VarChar(100)
+  donor       String    @db.VarChar(100)
+  date        DateTime
+  expireAt    DateTime?
+  number      String?   @db.VarChar(100)
+  link        String?   @db.VarChar(255)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Education {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  school      String    @db.VarChar(100)
+  degree      String    @db.VarChar(100)
+  from        DateTime
+  to          DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Rating {
+  id          Int       @id @default(autoincrement())
+  userId      Int       // User being rated
+  raterId     Int       // User giving the rating
+  stars       Float     @db.DoublePrecision
+  comment     String    @db.Text
+  likes       Int       @default(0)
+  date        DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation("RatedUser", fields: [userId], references: [id], onDelete: Cascade)
+  rater       User      @relation("RaterUser", fields: [raterId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, raterId]) // One rating per user pair
+  @@index([userId])
+  @@index([raterId])
+}
+
+model Achievement {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  name        String    @db.VarChar(100)
+  image       String    @db.VarChar(255)
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+// ======== MESSAGING MODELS ========
+
 model Chat {
-  id           String             @id @default(uuid()) // Unique chat ID
-  type         ChatType           @default(DIRECT) // Supports direct & group chats
+  id           String             @id @default(uuid())
+  type         ChatType           @default(DIRECT)
   participants ChatParticipants[]
   messages     Message[]
   createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  
+  @@index([type])
 }
 
 model ChatParticipants {
-  id       String   @id @default(uuid())
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId   Int
-  chat     Chat     @relation(fields: [chatId], references: [id])
-  chatId   String
-  joinedAt DateTime @default(now())
-
-  @@unique([userId, chatId]) // Ensures a user can be in a chat only once
+  id        String    @id @default(uuid())
+  userId    Int
+  chatId    String
+  joinedAt  DateTime  @default(now())
+  lastRead  DateTime? // Track when user last read messages
+  
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chat      Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, chatId])
+  @@index([chatId])
+  @@index([userId])
 }
 
 model Message {
-  id        String      @id @default(uuid()) // Unique message ID
-  chat      Chat        @relation(fields: [chatId], references: [id])
+  id        String      @id @default(uuid())
   chatId    String
-  sender    User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
   senderId  Int
-  content   String // Text message content
-  type      MessageType @default(TEXT) // Supports different message types
-  read      Boolean     @default(false) // Read receipt
+  content   String      @db.Text
+  type      MessageType @default(TEXT)
+  read      Boolean     @default(false)
   createdAt DateTime    @default(now())
-
-  @@index([chatId]) // Optimizes message retrieval for a chat
+  
+  chat      Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  sender    User        @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  
+  @@index([chatId])
+  @@index([senderId])
+  @@index([createdAt])
 }
 
 enum ChatType {
-  DIRECT // One-on-one chat
-  GROUP // Group chat (Future feature)
+  DIRECT
+  GROUP
 }
 
 enum MessageType {
-  TEXT // Plain text
-  IMAGE // Image message
-  VIDEO // Video message
-  AUDIO // Audio message
-  FILE // File attachment
+  TEXT
+  IMAGE
+  VIDEO
+  AUDIO
+  FILE
 }
 
-model Session {
-  id            String        @id @default(uuid())
-  requesterId   Int           @map("requester_id") // User who initiates
-  requestedId   Int           @map("requested_id") // User who is invited
-  status        SessionStatus @default(PENDING)
-  googleMeetUrl String? // Null until accepted
-  scheduledAt   DateTime
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+// ======== SESSION MODELS ========
 
-  requester User @relation(name: "RequesterRelation", fields: [requesterId], references: [id], onDelete: Cascade)
-  requested User @relation(name: "RequestedRelation", fields: [requestedId], references: [id], onDelete: Cascade)
+model Session {
+  id              String          @id @default(uuid())
+  requesterId     Int
+  requestedId     Int
+  serviceId       Int?            // Optional link to the specific mentor service
+  status          SessionStatus   @default(PENDING)
+  googleMeetUrl   String?
+  scheduledAt     DateTime
+  duration        Int             @default(60) // Session duration in minutes
+  notes           String?         @db.Text
+  feedback        String?         @db.Text
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  
+  requester       User            @relation(name: "RequesterRelation", fields: [requesterId], references: [id], onDelete: Cascade)
+  requested       User            @relation(name: "RequestedRelation", fields: [requestedId], references: [id], onDelete: Cascade)
+  service         MentorService?  @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  timeSlot        TimeSlotBooking[]
+  
+  @@index([requesterId])
+  @@index([requestedId])
+  @@index([serviceId])
+  @@index([status])
+  @@index([scheduledAt])
 }
 
 enum SessionStatus {
   PENDING
   ACCEPTED
   REJECTED
+  COMPLETED
+  CANCELLED
 }

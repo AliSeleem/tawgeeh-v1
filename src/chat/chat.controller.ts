@@ -1,10 +1,10 @@
 import { Controller, Post, Body, Get, Param } from '@nestjs/common';
-import { 
-  ApiTags, 
-  ApiOperation, 
-  ApiResponse, 
-  ApiBody, 
-  ApiParam 
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiParam,
 } from '@nestjs/swagger';
 import { ChatService } from './chat.service';
 
@@ -12,24 +12,26 @@ import { ChatService } from './chat.service';
 @Controller('chat')
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
-  
+
   // 🟢 Get all Chats
   @Get()
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get all chats',
-    description: 'Retrieve list of all chat conversations'
+    description: 'Retrieve list of all chat conversations',
   })
   @ApiResponse({
     status: 200,
     description: 'List of chats retrieved successfully',
     schema: {
-      example: [{
-        id: 'chat-123',
-        participants: [1, 2],
-        lastMessage: 'Hello!',
-        timestamp: '2024-03-20T15:00:00Z'
-      }]
-    }
+      example: [
+        {
+          id: 'chat-123',
+          participants: [1, 2],
+          lastMessage: 'Hello!',
+          timestamp: '2024-03-20T15:00:00Z',
+        },
+      ],
+    },
   })
   async getChats() {
     return this.chatService.getChats();
@@ -37,18 +39,18 @@ export class ChatController {
 
   // 🟢 Create or Get a Chat
   @Post('create')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create or get existing chat',
-    description: 'Find or create a chat between two users'
+    description: 'Find or create a chat between two users',
   })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         user1Id: { type: 'number', example: 1 },
-        user2Id: { type: 'number', example: 2 }
-      }
-    }
+        user2Id: { type: 'number', example: 2 },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -57,9 +59,9 @@ export class ChatController {
       example: {
         id: 'chat-123',
         participants: [1, 2],
-        createdAt: '2024-03-20T15:00:00Z'
-      }
-    }
+        createdAt: '2024-03-20T15:00:00Z',
+      },
+    },
   })
   async getOrCreateChat(@Body() body: { user1Id: number; user2Id: number }) {
     return this.chatService.getOrCreateChat(body.user1Id, body.user2Id);
@@ -67,16 +69,19 @@ export class ChatController {
 
   // 🟢 Send a Message
   @Post('send')
-  @ApiOperation({ summary: 'Send message', description: 'Send a message in a chat' })
+  @ApiOperation({
+    summary: 'Send message',
+    description: 'Send a message in a chat',
+  })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         chatId: { type: 'string', example: 'chat-123' },
         senderId: { type: 'number', example: 1 },
-        content: { type: 'string', example: 'Hello there!' }
-      }
-    }
+        content: { type: 'string', example: 'Hello there!' },
+      },
+    },
   })
   @ApiResponse({
     status: 201,
@@ -88,34 +93,40 @@ export class ChatController {
         senderId: 1,
         content: 'Hello there!',
         timestamp: '2024-03-20T15:05:00Z',
-        read: false
-      }
-    }
+        read: false,
+      },
+    },
   })
   async sendMessage(
     @Body() body: { chatId: string; senderId: number; content: string },
   ) {
-    return this.chatService.sendMessage(body.chatId, body.senderId, body.content);
+    return this.chatService.sendMessage(
+      body.chatId,
+      body.senderId,
+      body.content,
+    );
   }
 
   // 🟢 Get User's Chats
   @Get(':userId/chats')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get user chats',
-    description: 'Retrieve all chats for a specific user'
+    description: 'Retrieve all chats for a specific user',
   })
   @ApiParam({ name: 'userId', type: 'number', example: 1 })
   @ApiResponse({
     status: 200,
     description: 'User chats retrieved successfully',
     schema: {
-      example: [{
-        id: 'chat-123',
-        participants: [1, 2],
-        unreadCount: 3,
-        lastMessage: 'See you tomorrow!'
-      }]
-    }
+      example: [
+        {
+          id: 'chat-123',
+          participants: [1, 2],
+          unreadCount: 3,
+          lastMessage: 'See you tomorrow!',
+        },
+      ],
+    },
   })
   async getUserChats(@Param('userId') userId: string) {
     return this.chatService.getUserChats(parseInt(userId, 10));
@@ -123,23 +134,25 @@ export class ChatController {
 
   // 🟢 Get Messages for a Chat
   @Get(':chatId/messages')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Get chat messages',
-    description: 'Retrieve message history for a specific chat'
+    description: 'Retrieve message history for a specific chat',
   })
   @ApiParam({ name: 'chatId', type: 'string', example: 'chat-123' })
   @ApiResponse({
     status: 200,
     description: 'Chat messages retrieved successfully',
     schema: {
-      example: [{
-        id: 'msg-456',
-        senderId: 1,
-        content: 'Hello!',
-        timestamp: '2024-03-20T15:00:00Z',
-        read: true
-      }]
-    }
+      example: [
+        {
+          id: 'msg-456',
+          senderId: 1,
+          content: 'Hello!',
+          timestamp: '2024-03-20T15:00:00Z',
+          read: true,
+        },
+      ],
+    },
   })
   async getChatMessages(@Param('chatId') chatId: string) {
     return this.chatService.getChatMessages(chatId);
@@ -147,18 +160,18 @@ export class ChatController {
 
   // 🟢 Mark Messages as Read
   @Post('mark-read')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Mark messages as read',
-    description: 'Mark all messages in a chat as read for a user'
+    description: 'Mark all messages in a chat as read for a user',
   })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         chatId: { type: 'string', example: 'chat-123' },
-        userId: { type: 'number', example: 2 }
-      }
-    }
+        userId: { type: 'number', example: 2 },
+      },
+    },
   })
   @ApiResponse({
     status: 200,
@@ -166,9 +179,9 @@ export class ChatController {
     schema: {
       example: {
         success: true,
-        message: '3 messages marked as read'
-      }
-    }
+        message: '3 messages marked as read',
+      },
+    },
   })
   async markMessagesAsRead(@Body() body: { chatId: string; userId: number }) {
     return this.chatService.markMessagesAsRead(body.chatId, body.userId);

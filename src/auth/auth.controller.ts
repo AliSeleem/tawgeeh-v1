@@ -43,13 +43,13 @@ export class AuthController {
   @Post('login')
   @ApiOperation({ summary: 'Authenticate user with email/password' })
   @ApiBody({ type: LoginDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Successfully authenticated',
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid credentials' 
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid credentials',
   })
   login(@Body() data: LoginDto) {
     return this.authService.login(data);
@@ -58,13 +58,13 @@ export class AuthController {
   @Post('register')
   @ApiOperation({ summary: 'Create new user account' })
   @ApiBody({ type: RegisterDto })
-  @ApiResponse({ 
-    status: 201, 
+  @ApiResponse({
+    status: 201,
     description: 'User registered successfully',
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Validation error or duplicate email' 
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error or duplicate email',
   })
   register(@Body() data: RegisterDto) {
     return this.authService.register(data);
@@ -73,19 +73,16 @@ export class AuthController {
   @Get('google')
   @UseGuards(AuthGuard('google'))
   @ApiOperation({ summary: 'Initiate Google OAuth flow' })
-  @ApiResponse({ 
-    status: 302, 
-    description: 'Redirects to Google authentication' 
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to Google authentication',
   })
   googleLogin() {}
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
-  async googleAuthCallback(
-    @Req() req,
-    @Res() res: Response,
-  ) {
+  async googleAuthCallback(@Req() req, @Res() res: Response) {
     try {
       // 1️⃣ Format the Google profile data
       const formattedProfile = {
@@ -131,9 +128,9 @@ export class AuthController {
   @Get('linkedin')
   @UseGuards(AuthGuard('linkedin'))
   @ApiOperation({ summary: 'Initiate LinkedIn OAuth flow' })
-  @ApiResponse({ 
-    status: 302, 
-    description: 'Redirects to LinkedIn authentication' 
+  @ApiResponse({
+    status: 302,
+    description: 'Redirects to LinkedIn authentication',
   })
   linkedinLogin() {}
 
@@ -238,15 +235,17 @@ export class AuthController {
   @Patch('complete-registration')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Complete user registration with additional details' })
+  @ApiOperation({
+    summary: 'Complete user registration with additional details',
+  })
   @ApiBody({ type: CompleteRegistrationDto })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'Registration completed',
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid/missing required fields' 
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid/missing required fields',
   })
   async completeRegistration(
     @Req() req,
@@ -262,13 +261,13 @@ export class AuthController {
   // forget password endpoints
   @Post('forget-password')
   @ApiOperation({ summary: 'Initiate password reset process' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Password reset code sent to email' 
+  @ApiResponse({
+    status: 200,
+    description: 'Password reset code sent to email',
   })
-  @ApiResponse({ 
-    status: 404, 
-    description: 'Email not found' 
+  @ApiResponse({
+    status: 404,
+    description: 'Email not found',
   })
   async forgetPassword(@Body() dto: ForgetPasswordDto) {
     return this.authService.forgetPassword(dto.email);
@@ -279,13 +278,13 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Reset user password with verification code' })
   @ApiBody({ type: ResetPasswordDto })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Password updated successfully' 
+  @ApiResponse({
+    status: 200,
+    description: 'Password updated successfully',
   })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid/expired reset code' 
+  @ApiResponse({
+    status: 400,
+    description: 'Invalid/expired reset code',
   })
   async resetPassword(@Req() req, @Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(
@@ -300,9 +299,9 @@ export class AuthController {
   @Patch('verify-email')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Resend email verification code' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Verification code resent successfully' 
+  @ApiResponse({
+    status: 200,
+    description: 'Verification code resent successfully',
   })
   async verifyEmail(@Req() req, @Body() body: { code: string }) {
     try {
@@ -333,9 +332,9 @@ export class AuthController {
   @Get('resend-verification-code')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Resend email verification code' })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Verification code resent successfully' 
+  @ApiResponse({
+    status: 200,
+    description: 'Verification code resent successfully',
   })
   async resendVerificationCode(@Req() req): Promise<IApiResponse<any>> {
     try {
@@ -353,8 +352,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get authenticated user profile' })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'User profile data',
   })
   profile(@Req() req) {

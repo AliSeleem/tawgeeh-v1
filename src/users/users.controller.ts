@@ -75,7 +75,10 @@ export class UsersController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID', description: 'Retrieve detailed user information' })
+  @ApiOperation({
+    summary: 'Get user by ID',
+    description: 'Retrieve detailed user information',
+  })
   @ApiParam({
     name: 'id',
     type: Number,

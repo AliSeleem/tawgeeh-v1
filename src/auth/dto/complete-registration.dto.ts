@@ -8,13 +8,13 @@ export class CompleteRegistrationDto extends OmitType(RegisterDto, [
   @ApiProperty({
     required: false,
     example: 'Experienced full-stack developer',
-    description: 'User biography (optional)'
+    description: 'User biography (optional)',
   })
   bio?: string;
 
   @ApiProperty({
     example: '01012345678',
-    description: 'Egyptian phone number starting with 010, 011, 012, or 015'
+    description: 'Egyptian phone number starting with 010, 011, 012, or 015',
   })
   phone: string;
 }

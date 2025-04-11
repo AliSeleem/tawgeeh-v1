@@ -11,7 +11,7 @@ export class PrismaService
       log: ['query', 'info', 'warn', 'error'],
     });
   }
-  
+
   async onModuleInit() {
     await this.$connect();
   }

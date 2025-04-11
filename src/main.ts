@@ -50,7 +50,7 @@ async function bootstrap() {
   SwaggerModule.setup('/', app, document);
 
   // listen on port
-  await app.listen(process.env.PORT || 3000, "0.0.0.0");
+  await app.listen(process.env.PORT || 3000, '0.0.0.0');
 }
 bootstrap().catch((e) => console.error(e));
 
@@ -59,8 +59,11 @@ bootstrap().catch((e) => console.error(e));
 //   server(req, res);
 // };
 export const handler = async (req, res) => {
-  const app = await NestFactory.create(AppModule);  
-  // app.enableCors();
+  const app = await NestFactory.create(AppModule);
+  app.enableCors({
+    origin: ['http://127.0.0.1:5500', '*'],
+    credentials: true,
+  });
   await app.init();
   app.getHttpAdapter().getInstance()(req, res);
 };

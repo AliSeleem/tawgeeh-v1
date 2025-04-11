@@ -16,7 +16,7 @@ export class CreateUserDto {
     example: 'John Doe',
     description: 'Full name of user (2-50 characters, letters only)',
     minLength: 2,
-    maxLength: 50
+    maxLength: 50,
   })
   @IsString()
   @IsNotEmpty({ message: 'Name is required.' })
@@ -27,7 +27,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: 'user@example.com',
-    description: 'Valid email address'
+    description: 'Valid email address',
   })
   @IsEmail({}, { message: 'Please enter a valid email address.' })
   @IsNotEmpty({ message: 'Email is required.' })
@@ -36,7 +36,7 @@ export class CreateUserDto {
   @ApiProperty({
     example: 'SecurePassword123!',
     description: 'Password (min 6 characters)',
-    minLength: 6
+    minLength: 6,
   })
   @IsString()
   @IsNotEmpty({ message: 'Password is required.' })
@@ -45,7 +45,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: '01012345678',
-    description: 'Egyptian phone number starting with 010, 011, 012, or 015'
+    description: 'Egyptian phone number starting with 010, 011, 012, or 015',
   })
   @IsString()
   @IsNotEmpty({ message: 'Phone number is required.' })
@@ -58,7 +58,7 @@ export class CreateUserDto {
   @ApiProperty({
     enum: Gender,
     example: Gender.MALE,
-    description: 'User gender'
+    description: 'User gender',
   })
   @IsString()
   @IsNotEmpty({ message: 'Gender is required.' })
@@ -69,7 +69,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: 'Egypt',
-    description: 'Country of residence'
+    description: 'Country of residence',
   })
   @IsString()
   @IsNotEmpty({ message: 'Country is required.' })
@@ -77,7 +77,7 @@ export class CreateUserDto {
 
   @ApiProperty({
     example: 'Software Engineering',
-    description: 'Professional specialization'
+    description: 'Professional specialization',
   })
   @IsString()
   @IsNotEmpty({ message: 'Specialization is required.' })
@@ -86,7 +86,7 @@ export class CreateUserDto {
   @ApiProperty({
     enum: ExperienceLevel,
     example: ExperienceLevel.INTERMEDIATE,
-    description: 'Professional experience level'
+    description: 'Professional experience level',
   })
   @IsString()
   @IsNotEmpty({ message: 'Experience level is required.' })
@@ -98,7 +98,7 @@ export class CreateUserDto {
   @ApiProperty({
     required: false,
     example: 'Full-stack developer with 5 years experience',
-    description: 'Optional bio information'
+    description: 'Optional bio information',
   })
   @IsString()
   @IsOptional()

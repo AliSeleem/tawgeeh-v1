@@ -5,7 +5,7 @@ import { ApiPropertyOptional } from '@nestjs/swagger';
 export class UpdateUserDto extends PartialType(CreateUserDto) {
   @ApiPropertyOptional({
     example: 'Updated Bio',
-    description: 'User biography (optional)'
+    description: 'User biography (optional)',
   })
   bio?: string;
 }

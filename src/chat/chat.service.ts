@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -9,7 +13,7 @@ export class ChatService {
   async getOrCreateChat(user1Id: number, user2Id: number) {
     const existingChat = await this.prisma.chat.findFirst({
       where: {
-        type: "DIRECT",
+        type: 'DIRECT',
         AND: [
           { participants: { some: { userId: user1Id } } },
           { participants: { some: { userId: user2Id } } },
@@ -17,12 +21,12 @@ export class ChatService {
       },
       include: { participants: true },
     });
-  
+
     if (existingChat) return existingChat;
-  
+
     return await this.prisma.chat.create({
       data: {
-        type: "DIRECT",
+        type: 'DIRECT',
         participants: {
           create: [
             { user: { connect: { id: user1Id } } },
@@ -33,8 +37,6 @@ export class ChatService {
       include: { participants: true },
     });
   }
-  
-  
 
   // 🟢 Send a Message
   async sendMessage(chatId: string, senderId: number, content: string) {
@@ -51,13 +53,13 @@ export class ChatService {
   async getUserChats(userId: number) {
     const user = await this.prisma.user.findUnique({
       where: {
-        id: userId
-      }
-    })
+        id: userId,
+      },
+    });
 
-    if (!user) throw new NotFoundException("user not found");
+    if (!user) throw new NotFoundException('user not found');
 
-    const chats =  await this.prisma.chat.findMany({
+    const chats = await this.prisma.chat.findMany({
       where: { participants: { some: { userId } } },
       include: {
         participants: {
@@ -67,33 +69,36 @@ export class ChatService {
       },
     });
 
-    if (!chats) throw new InternalServerErrorException("Couldn't retrive use's chats or user has now chats")
+    if (!chats)
+      throw new InternalServerErrorException(
+        "Couldn't retrive use's chats or user has now chats",
+      );
 
     return {
       success: true,
       message: "user's chats retrivied successfully",
       data: chats,
-      error: null
-    }
+      error: null,
+    };
   }
-
 
   // 🟢 Get all Chat
   async getChats() {
-    const chats =  await this.prisma.chat.findMany({
+    const chats = await this.prisma.chat.findMany({
       include: {
-        participants: true
-      }
+        participants: true,
+      },
     });
 
-    if (!chats) throw new InternalServerErrorException("Couldn't retrive chats")
+    if (!chats)
+      throw new InternalServerErrorException("Couldn't retrive chats");
 
     return {
       success: true,
-      message: "Chats retrived successfully",
+      message: 'Chats retrived successfully',
       data: chats,
-      error: null
-    } 
+      error: null,
+    };
   }
 
   // 🟢 Get Chat Messages

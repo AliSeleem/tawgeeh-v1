@@ -6,7 +6,7 @@ export class ResetPasswordDto {
     example: 'ABC123',
     description: 'Password reset code received via email',
     minLength: 6,
-    maxLength: 6
+    maxLength: 6,
   })
   @IsString()
   @IsNotEmpty({ message: 'Reset code is required.' })

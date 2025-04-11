@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { calendar_v3, google } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
@@ -210,37 +214,36 @@ export class SessionsService {
 
   async userSessions(id: number) {
     try {
-        const sessions = await this.prisma.session.findMany({
-            where: {
-                OR: [{ requesterId: id }, { requestedId: id }],
-            },
-            orderBy: {
-                scheduledAt: 'desc',
-            },
-            include: {
-                requester: {
-                    select: { id: true, name: true, email: true },
-                },
-                requested: {
-                    select: { id: true, name: true, email: true },
-                },
-            },
-        });
+      const sessions = await this.prisma.session.findMany({
+        where: {
+          OR: [{ requesterId: id }, { requestedId: id }],
+        },
+        orderBy: {
+          scheduledAt: 'desc',
+        },
+        include: {
+          requester: {
+            select: { id: true, name: true, email: true },
+          },
+          requested: {
+            select: { id: true, name: true, email: true },
+          },
+        },
+      });
 
-        if (!sessions.length) {
-            throw new NotFoundException('No sessions found for this user');
-        }
+      if (!sessions.length) {
+        throw new NotFoundException('No sessions found for this user');
+      }
 
-        console.log(sessions)
-        return {
-          success: true,
-          message: "user's sessions retrived successfully",
-          data: sessions
-        };
+      console.log(sessions);
+      return {
+        success: true,
+        message: "user's sessions retrived successfully",
+        data: sessions,
+      };
     } catch (error) {
-        console.error(`❌ Error fetching sessions for user ${id}:`, error);
-        throw new InternalServerErrorException('Could not retrieve sessions');
+      console.error(`❌ Error fetching sessions for user ${id}:`, error);
+      throw new InternalServerErrorException('Could not retrieve sessions');
     }
-}
-
+  }
 }
