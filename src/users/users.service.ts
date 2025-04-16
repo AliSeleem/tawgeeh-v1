@@ -13,6 +13,8 @@ import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { User } from '@prisma/client';
 import { AddExperienceDto } from './dto/add-experiences.dto';
 import { UpdateExperienceDto } from './dto/update-experiences.dto';
+import { AddCertDto } from './dto/add-cert.dto';
+import { UpdateCertDto } from './dto/update-cert.dto';
 
 @Injectable()
 export class UsersService {
@@ -46,7 +48,7 @@ export class UsersService {
   async getAllUsers(query: { email?: string }): Promise<ApiResponse<any>> {
     let users = await this.prisma.user.findMany({
       select: {
-        experiences: true,
+        certificates: true,
         email: true,
       },
     });
@@ -130,7 +132,7 @@ export class UsersService {
     }
   }
 
-  // experiences
+  // Experiences //
   async addExperience(userId: number, experienceDto: AddExperienceDto) {
     // Check if user exists
     let user = await this.prisma.user.findUnique({
@@ -204,16 +206,91 @@ export class UsersService {
       where: { id: userId },
       data: {
         experiences: {
-          disconnect: { id },
+          delete: { id },
         },
       },
-    });
-    await this.prisma.experience.delete({
-      where: { id },
     });
     return {
       success: true,
       message: 'Experience deleted successfully.',
+      data: null,
+    };
+  }
+
+  // Certificates //
+  async addCert(cert: AddCertDto, userId: number) {
+    // Check if user exists
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+    // Create the certificate
+    const certificate = await this.prisma.certificate.create({
+      data: {
+        ...cert,
+        userId,
+      },
+    });
+
+    // add certificate to user
+    user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        certificates: {
+          connect: { id: certificate.id },
+        },
+      },
+    });
+    return {
+      success: true,
+      message: 'Certificate added successfully.',
+      data: user,
+    };
+  }
+
+  async updateCert(id: number, cert: UpdateCertDto, userId: number) {
+    // Check if certificate exists
+    const certificate = await this.prisma.certificate.findUnique({
+      where: { id, userId },
+    });
+    if (!certificate) {
+      throw new NotFoundException(`Certificate with ID ${id} not found.`);
+    }
+    // update certificate
+    const updatedCertificate = await this.prisma.certificate.update({
+      where: { id },
+      data: {
+        ...cert,
+      },
+    });
+    return {
+      success: true,
+      message: 'Certificate updated successfully.',
+      data: updatedCertificate,
+    };
+  }
+
+  async deleteCert(id: number, userId: number): Promise<ApiResponse<any>> {
+    const certificate = await this.prisma.certificate.findUnique({
+      where: { id: id, userId },
+    });
+    if (!certificate) {
+      throw new NotFoundException(`Certificate with ID ${id} not found.`);
+    }
+    // remove certificate from user
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        certificates: {
+          delete: { id },
+        },
+      },
+    });
+    return {
+      success: true,
+      message: 'Certificate deleted successfully.',
       data: null,
     };
   }

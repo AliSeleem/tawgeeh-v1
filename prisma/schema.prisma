@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // or "mysql" or "sqlite"
+  provider = "mysql" // or "postgresql" or "sqlite" //
   url      = env("DATABASE_URL")
 }
 
@@ -218,7 +218,7 @@ model Rating {
   id          Int       @id @default(autoincrement())
   userId      Int       // User being rated
   raterId     Int       // User giving the rating
-  stars       Float     @db.DoublePrecision
+  stars       Float     // @db.DoublePrecision
   comment     String    @db.Text
   likes       Int       @default(0)
   date        DateTime  @default(now())

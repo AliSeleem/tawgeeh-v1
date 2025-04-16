@@ -26,6 +26,8 @@ import {
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { AddExperienceDto } from './dto/add-experiences.dto';
 import { UpdateExperienceDto } from './dto/update-experiences.dto';
+import { AddCertDto } from './dto/add-cert.dto';
+import { UpdateCertDto } from './dto/update-cert.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -161,6 +163,7 @@ export class UsersController {
     return this.usersService.deleteUser(+id);
   }
 
+  // Experience //
   @Post('/experience')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -214,5 +217,60 @@ export class UsersController {
     @Param('id') id: string,
   ): Promise<ApiResponse<any>> {
     return this.usersService.deleteExperience(+id, Req.user.id);
+  }
+
+  // Certification //
+  @Post('/cert')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Add certification to user',
+    description: 'Add a new certification to the user profile',
+  })
+  @ApiBody({
+    type: AddCertDto,
+  })
+  async addCert(
+    @Req() req,
+    @Body() cert: AddCertDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.addCert(cert, req.user.id);
+  }
+
+  @Patch('/cert/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "update user's certification",
+  })
+  @ApiBody({
+    type: UpdateCertDto,
+  })
+  async updateCert(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() cert: UpdateCertDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.updateCert(id, cert, req.user.id);
+  }
+
+  @Delete('/cert/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Delete user's certification",
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Certification ID',
+    example: 1,
+  })
+  async deleteCert(
+    @Param('id') id: number,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    console.log(id);
+    return this.usersService.deleteCert(id, req.user.id);
   }
 }

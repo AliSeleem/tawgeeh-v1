@@ -60,9 +60,9 @@ bootstrap().catch((e) => console.error(e));
 // export const handler: Handler = (req, res) => {
 //   server(req, res);
 // };
-export const handler = async (req, res) => {
-  const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  await app.init();
-  app.getHttpAdapter().getInstance()(req, res);
-};
+// export const handler = async (req, res) => {
+//   const app = await NestFactory.create(AppModule);
+//   app.enableCors();
+//   await app.init();
+//   app.getHttpAdapter().getInstance()(req, res);
+// };
