@@ -28,6 +28,8 @@ import { AddExperienceDto } from './dto/add-experiences.dto';
 import { UpdateExperienceDto } from './dto/update-experiences.dto';
 import { AddCertDto } from './dto/add-cert.dto';
 import { UpdateCertDto } from './dto/update-cert.dto';
+import { addEducationDto } from './dto/add-education.dto';
+import { UpdateEducationDto } from './dto/update-education.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -272,5 +274,59 @@ export class UsersController {
   ): Promise<ApiResponse<any>> {
     console.log(id);
     return this.usersService.deleteCert(id, req.user.id);
+  }
+
+  // Education //
+  @Post('/education')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Add education to user',
+    description: 'Add a new education to the user profile',
+  })
+  @ApiBody({
+    type: addEducationDto,
+  })
+  async addEdu(
+    @Req() req,
+    @Body() edu: addEducationDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.addEdu(edu, req.user.id);
+  }
+
+  @Patch('/education/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "update user's education",
+  })
+  @ApiBody({
+    type: UpdateEducationDto,
+  })
+  async updateEdu(
+    @Req() req,
+    @Param('id') id: number,
+    @Body() edu: UpdateEducationDto,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.updateEdu(id, edu, req.user.id);
+  }
+
+  @Delete('/education/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "Delete user's education",
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'Education ID',
+    example: 1,
+  })
+  async deleteEdu(
+    @Param('id') id: number,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.deleteEdu(id, req.user.id);
   }
 }
