@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql" // or "postgresql" or "sqlite" //
+  provider = "postgresql" // or "mysql" or "sqlite" //
   url      = env("DATABASE_URL")
 }
 
@@ -221,7 +221,7 @@ model Rating {
   stars       Float     // @db.DoublePrecision
   comment     String    @db.Text
   likes       Int       @default(0)
-  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   
   user        User      @relation("RatedUser", fields: [userId], references: [id], onDelete: Cascade)
