@@ -8,7 +8,7 @@ export class EducationService {
   constructor(private prisma: PrismaService) {}
   async addEdu(edu: CreateEducationDto, userId: number) {
     // Check if user exists
-    let user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
     if (!user) {
@@ -23,20 +23,10 @@ export class EducationService {
       },
     });
 
-    // add education to user
-    user = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        education: {
-          connect: { id: education.id },
-        },
-      },
-    });
-
     return {
       success: true,
       message: 'Education added successfully.',
-      data: user,
+      data: education,
     };
   }
 

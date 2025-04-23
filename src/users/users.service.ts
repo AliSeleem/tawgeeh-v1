@@ -11,12 +11,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { User } from '@prisma/client';
-import { AddExperienceDto } from './dto/add-experiences.dto';
-import { UpdateExperienceDto } from './dto/update-experiences.dto';
-import { AddCertDto } from './dto/add-cert.dto';
-import { UpdateCertDto } from './dto/update-cert.dto';
-import { addEducationDto } from './dto/add-education.dto';
-import { UpdateEducationDto } from './dto/update-education.dto';
 
 @Injectable()
 export class UsersService {
@@ -137,5 +131,28 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async makeMentor(id: number): Promise<ApiResponse<User>> {
+    // check if the user exists
+    let user = await this.prisma.user.findUnique({
+      where: { id },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} is not found`);
+    }
+
+    // Make the user mentor
+    user = await this.prisma.user.update({
+      where: { id },
+      data: { isMentor: true },
+    });
+
+    return {
+      success: true,
+      message: 'User made mentor successfully',
+      data: user,
+    };
   }
 }

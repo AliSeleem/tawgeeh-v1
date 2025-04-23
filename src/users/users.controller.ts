@@ -7,8 +7,6 @@ import {
   Patch,
   Delete,
   Query,
-  UseGuards,
-  Req,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,15 +19,7 @@ import {
   ApiQuery,
   ApiParam,
   ApiBody,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { AddExperienceDto } from './dto/add-experiences.dto';
-import { UpdateExperienceDto } from './dto/update-experiences.dto';
-import { AddCertDto } from './dto/add-cert.dto';
-import { UpdateCertDto } from './dto/update-cert.dto';
-import { addEducationDto } from './dto/add-education.dto';
-import { UpdateEducationDto } from './dto/update-education.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -134,6 +124,21 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ApiResponse<any>> {
     return this.usersService.updateUser(+id, updateUserDto);
+  }
+
+  @Patch('mentor/:id')
+  @ApiOperation({
+    summary: 'Make user mentor',
+    description: 'Update user to be mentor',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'User ID',
+    example: 1,
+  })
+  async makeMentor(@Param('id') id: string): Promise<ApiResponse<any>> {
+    return this.usersService.makeMentor(+id);
   }
 
   @Delete(':id')

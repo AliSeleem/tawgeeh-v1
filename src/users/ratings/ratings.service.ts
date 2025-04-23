@@ -44,20 +44,6 @@ export class RatingsService {
       throw new InternalServerErrorException('failed to rate user');
     }
 
-    // add rating to users
-    await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        ratings: { connect: { id: createdRating.id } },
-      },
-    });
-    await this.prisma.user.update({
-      where: { id: raterId },
-      data: {
-        givenRatings: { connect: { id: createdRating.id } },
-      },
-    });
-
     return {
       success: true,
       message: 'rate created successfully',

@@ -8,7 +8,7 @@ export class AchievementsService {
   constructor(private prisma: PrismaService) {}
   async create(createAchievementDto: CreateAchievementDto, userId: number) {
     // check if user exists
-    let user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
     if (!user) {
@@ -21,19 +21,11 @@ export class AchievementsService {
         userId,
       },
     });
-    // add achievement to user
-    user = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        achievements: {
-          connect: { id: achievement.id },
-        },
-      },
-    });
+
     return {
       success: true,
       message: 'Achievement added successfully.',
-      data: user,
+      data: achievement,
     };
   }
 

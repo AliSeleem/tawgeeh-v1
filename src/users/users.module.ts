@@ -7,6 +7,7 @@ import { EducationModule } from './education/education.module';
 import { ExperiencesModule } from './experiences/experiences.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { MentorServiceModule } from './mentor-service/mentor-service.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AchievementsModule } from './achievements/achievements.module';
     ExperiencesModule,
     CertificationsModule,
     AchievementsModule,
+    MentorServiceModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

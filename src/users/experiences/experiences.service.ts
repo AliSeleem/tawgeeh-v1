@@ -9,7 +9,7 @@ export class ExperiencesService {
   constructor(private prisma: PrismaService) {}
   async addExperience(userId: number, experienceDto: CreateExperiencesDto) {
     // Check if user exists
-    let user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
     if (!user) {
@@ -23,19 +23,10 @@ export class ExperiencesService {
       },
     });
 
-    // add experience to user
-    user = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        experiences: {
-          connect: { id: experience.id },
-        },
-      },
-    });
     return {
       success: true,
       message: 'Experience added successfully.',
-      data: user,
+      data: experience,
     };
   }
 

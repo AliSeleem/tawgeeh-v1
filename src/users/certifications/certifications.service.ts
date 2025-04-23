@@ -9,7 +9,7 @@ export class CertificationsService {
   constructor(private prisma: PrismaService) {}
   async addCert(cert: CreateCertificationsDto, userId: number) {
     // Check if user exists
-    let user = await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
     if (!user) {
@@ -23,19 +23,10 @@ export class CertificationsService {
       },
     });
 
-    // add certificate to user
-    user = await this.prisma.user.update({
-      where: { id: userId },
-      data: {
-        certificates: {
-          connect: { id: certificate.id },
-        },
-      },
-    });
     return {
       success: true,
       message: 'Certificate added successfully.',
-      data: user,
+      data: certificate,
     };
   }
 

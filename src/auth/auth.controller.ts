@@ -99,24 +99,24 @@ export class AuthController {
 
       res.cookie('access_token', access_token);
 
-      if (missingFields.length > 0) {
-        // Pass existing user data and missing fields as query params
-        const queryParams = new URLSearchParams({
-          name: user.name || '',
-          email: user.email || '',
-          phone: user.phone || '',
-          gender: user.gender || '',
-          country: user.country || '',
-          specialization: user.specialization || '',
-          experienceLevel: user.experienceLevel || '',
-          bio: user.bio || '',
-          missingFields: JSON.stringify(missingFields), // Convert array to a string
-        }).toString();
+      // if (missingFields.length > 0) {
+      //   // Pass existing user data and missing fields as query params
+      //   const queryParams = new URLSearchParams({
+      //     name: user.name || '',
+      //     email: user.email || '',
+      //     phone: user.phone || '',
+      //     gender: user.gender || '',
+      //     country: user.country || '',
+      //     specialization: user.specialization || '',
+      //     experienceLevel: user.experienceLevel || '',
+      //     bio: user.bio || '',
+      //     missingFields: JSON.stringify(missingFields), // Convert array to a string
+      //   }).toString();
 
-        return res.redirect(`/signup.html?${queryParams}`);
-      }
+      //   return res.redirect(`/signup.html?${queryParams}`);
+      // }
 
-      return res.redirect('/chats.html'); // Redirect after login
+      // return res.redirect('/chats.html'); // Redirect after login
     } catch (error) {
       throw new HttpException(
         error.message || 'Google authentication failed',
@@ -203,24 +203,24 @@ export class AuthController {
 
       res.cookie('access_token', access_token);
 
-      if (missingFields.length > 0) {
-        // Pass existing user data and missing fields as query params
-        const queryParams = new URLSearchParams({
-          name: user.name || '',
-          email: user.email || '',
-          phone: user.phone || '',
-          gender: user.gender || '',
-          country: user.country || '',
-          specialization: user.specialization || '',
-          experienceLevel: user.experienceLevel || '',
-          bio: user.bio || '',
-          // missingFields: JSON.stringify(missingFields),
-        }).toString();
+      // if (missingFields.length > 0) {
+      //   // Pass existing user data and missing fields as query params
+      //   const queryParams = new URLSearchParams({
+      //     name: user.name || '',
+      //     email: user.email || '',
+      //     phone: user.phone || '',
+      //     gender: user.gender || '',
+      //     country: user.country || '',
+      //     specialization: user.specialization || '',
+      //     experienceLevel: user.experienceLevel || '',
+      //     bio: user.bio || '',
+      //     // missingFields: JSON.stringify(missingFields),
+      //   }).toString();
 
-        return res.redirect(`/signup.html?${queryParams}`);
-      }
+      //   return res.redirect(`/signup.html?${queryParams}`);
+      // }
 
-      return res.redirect('/chats.html'); // Redirect after login
+      // return res.redirect('/chats.html'); // Redirect after login
     } catch (error) {
       throw new HttpException(
         error.response?.data?.message ||
@@ -232,31 +232,31 @@ export class AuthController {
   }
 
   // Endpoint for completing registration with additional details
-  @Patch('complete-registration')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Complete user registration with additional details',
-  })
-  @ApiBody({ type: CompleteRegistrationDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Registration completed',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid/missing required fields',
-  })
-  async completeRegistration(
-    @Req() req,
-    @Body()
-    completeRegistrationDto: CompleteRegistrationDto,
-  ) {
-    return this.authService.completeRegistration(
-      req.user.id,
-      completeRegistrationDto,
-    );
-  }
+  // @Patch('complete-registration')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @ApiOperation({
+  //   summary: 'Complete user registration with additional details',
+  // })
+  // @ApiBody({ type: CompleteRegistrationDto })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: 'Registration completed',
+  // })
+  // @ApiResponse({
+  //   status: 400,
+  //   description: 'Invalid/missing required fields',
+  // })
+  // async completeRegistration(
+  //   @Req() req,
+  //   @Body()
+  //   completeRegistrationDto: CompleteRegistrationDto,
+  // ) {
+  //   return this.authService.completeRegistration(
+  //     req.user.id,
+  //     completeRegistrationDto,
+  //   );
+  // }
 
   // forget password endpoints
   @Post('forget-password')
