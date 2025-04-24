@@ -132,27 +132,4 @@ export class UsersService {
       );
     }
   }
-
-  async makeMentor(id: number): Promise<ApiResponse<User>> {
-    // check if the user exists
-    let user = await this.prisma.user.findUnique({
-      where: { id },
-    });
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} is not found`);
-    }
-
-    // Make the user mentor
-    user = await this.prisma.user.update({
-      where: { id },
-      data: { isMentor: true },
-    });
-
-    return {
-      success: true,
-      message: 'User made mentor successfully',
-      data: user,
-    };
-  }
 }

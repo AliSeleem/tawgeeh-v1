@@ -8,6 +8,7 @@ import { ExperiencesModule } from './experiences/experiences.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { MentorServiceModule } from './mentor-service/mentor-service.module';
+import { MentorRequestModule } from './mentor-request/mentor-request.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MentorServiceModule } from './mentor-service/mentor-service.module';
     CertificationsModule,
     AchievementsModule,
     MentorServiceModule,
+    MentorRequestModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

@@ -67,6 +67,7 @@ model User {
   achievements      Achievement[]
 
   // Mentor-specific relations
+  mentorRequests     MentorRequest[] // Relation to mentor requests
   mentorServices     MentorService[]
   mentorAvailability MentorAvailability[]
 
@@ -176,6 +177,28 @@ model TimeSlotBooking {
   @@index([sessionId])
   @@index([status])
   @@index([startTime, endTime])
+}
+
+model MentorRequest {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  user              User      @relation(fields: [userId], references: [id])
+  specialization    String
+  experienceLevel   String
+  TargetMentees     String
+  linkedin          String
+  bio               String
+  status            ReqStat   @default(PENDING)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  reviewedBy        Int?      // ID of admin who reviewed
+  reviewedAt        DateTime? // When the request was reviewed
+}
+
+enum ReqStat {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 enum DayOfWeek {

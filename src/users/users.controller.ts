@@ -133,21 +133,6 @@ export class UsersController {
     return this.usersService.updateUser(+id, updateUserDto);
   }
 
-  @Patch('mentor/:id')
-  @ApiOperation({
-    summary: 'Make user mentor',
-    description: 'Update user to be mentor',
-  })
-  @ApiParam({
-    name: 'id',
-    type: Number,
-    description: 'User ID',
-    example: 1,
-  })
-  async makeMentor(@Param('id') id: string): Promise<ApiResponse<any>> {
-    return this.usersService.makeMentor(+id);
-  }
-
   @Delete(':id')
   @ApiOperation({
     summary: 'Delete user account',
