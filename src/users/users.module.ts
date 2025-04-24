@@ -9,6 +9,9 @@ import { CertificationsModule } from './certifications/certifications.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { MentorServiceModule } from './mentor-service/mentor-service.module';
 import { MentorRequestModule } from './mentor-request/mentor-request.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @Module({
   imports: [
@@ -20,6 +23,29 @@ import { MentorRequestModule } from './mentor-request/mentor-request.module';
     AchievementsModule,
     MentorServiceModule,
     MentorRequestModule,
+    MulterModule.register({
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          callback(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
+        },
+      }),
+      fileFilter: (req, file, callback) => {
+        // Allow only images (jpg, jpeg, png)
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+          return callback(new Error('Only image files are allowed!'), false);
+        }
+        callback(null, true);
+      },
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB limit
+      },
+    }),
   ],
   controllers: [UsersController],
   providers: [UsersService],

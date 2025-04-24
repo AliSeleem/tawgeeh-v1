@@ -5,6 +5,8 @@ import { AuthModule } from './auth/auth.module';
 import { ChatModule } from './chat/chat.module';
 import { SessionsModule } from './sessions/sessions.module';
 import { NotificationModule } from './notification/notification.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -14,6 +16,10 @@ import { NotificationModule } from './notification/notification.module';
     ChatModule,
     SessionsModule,
     NotificationModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: '/uploads',
+    }),
   ],
   controllers: [],
   providers: [],

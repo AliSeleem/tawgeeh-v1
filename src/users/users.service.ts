@@ -42,17 +42,7 @@ export class UsersService {
   }
 
   async getAllUsers(query: { email?: string }): Promise<ApiResponse<any>> {
-    let users = await this.prisma.user.findMany({
-      select: {
-        education: true,
-        achievements: true,
-        certificates: true,
-        experiences: true,
-        ratings: true,
-        givenRatings: true,
-        email: true,
-      },
-    });
+    let users = await this.prisma.user.findMany();
 
     if (query.email) {
       users = users.filter((user) => user.email === query.email);
@@ -131,5 +121,62 @@ export class UsersService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  // update profile and cover picture
+  async updateProfileImg(
+    userId: number,
+    image_url: string,
+  ): Promise<ApiResponse<string>> {
+    // check if the user exists
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} is not found`);
+    }
+
+    // update the image
+    user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        image_url,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'User image updated successfully',
+      data: image_url,
+    };
+  }
+
+  async updateCoverImg(
+    userId: number,
+    cover_url: string,
+  ): Promise<ApiResponse<string>> {
+    // check if the user exists
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} is not found`);
+    }
+
+    // update the image
+    user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        cover_url,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'User cover image updated successfully',
+      data: cover_url,
+    };
   }
 }

@@ -8,6 +8,9 @@ import {
   Delete,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +28,7 @@ import {
 import { RoleGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
 @Controller('users')
@@ -131,6 +135,56 @@ export class UsersController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ApiResponse<any>> {
     return this.usersService.updateUser(+id, updateUserDto);
+  }
+
+  @Patch('profileImg/:id')
+  @UseInterceptors(FileInterceptor('image_url'))
+  @ApiOperation({
+    summary: 'Update image',
+    description: 'Update user profile image',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'User ID',
+    example: 1,
+  })
+  async updateUserImg(
+    @Param('id') id: string,
+    @UploadedFile() image_url: Express.Multer.File,
+  ): Promise<ApiResponse<any>> {
+    if (!image_url) {
+      throw new BadRequestException('No file uploaded');
+    }
+    return this.usersService.updateProfileImg(
+      +id,
+      `http://localhost:3000/uploads/${image_url.filename}`,
+    );
+  }
+
+  @Patch('coverImg/:id')
+  @UseInterceptors(FileInterceptor('cover_url'))
+  @ApiOperation({
+    summary: 'Update cover image',
+    description: 'Update user cover image',
+  })
+  @ApiParam({
+    name: 'id',
+    type: Number,
+    description: 'User ID',
+    example: 1,
+  })
+  async updateUserCover(
+    @Param('id') id: string,
+    @UploadedFile() cover_url: Express.Multer.File,
+  ): Promise<ApiResponse<any>> {
+    if (!cover_url) {
+      throw new BadRequestException('No file uploaded');
+    }
+    return this.usersService.updateProfileImg(
+      +id,
+      `http://localhost:3000/uploads/${cover_url.filename}`,
+    );
   }
 
   @Delete(':id')
