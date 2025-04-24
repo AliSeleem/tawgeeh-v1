@@ -7,6 +7,7 @@ import {
   Patch,
   Delete,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,7 +20,11 @@ import {
   ApiQuery,
   ApiParam,
   ApiBody,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
+import { RoleGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
 @Controller('users')
@@ -47,6 +52,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all users',
     description: 'Retrieve list of users with optional email filter',

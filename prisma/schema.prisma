@@ -33,8 +33,9 @@ model User {
   experienceLevel ExperienceLevel @default(BEGINNER)
   bio             String?         @db.Text
 
-  // Mentor status
+  // Role and Mentor status
   isMentor Boolean @default(false)
+  role     Role    @default(MENTEE)
 
   // Media and statistics
   image_url     String?
@@ -90,6 +91,12 @@ enum SignupMethod {
   MANUAL
   GOOGLE
   LINKEDIN
+}
+
+enum Role {
+  MENTOR
+  MENTEE
+  ADMIN
 }
 
 // ======== MENTOR MODELS ========
