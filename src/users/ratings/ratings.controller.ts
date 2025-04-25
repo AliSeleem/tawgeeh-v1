@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -34,6 +35,27 @@ export class RatingsController {
     @Body() rating: CreateRatingsDto,
   ) {
     return this.ratingService.create(rating, userId, req.user.id);
+  }
+
+  @Get(':userId')
+  @ApiOperation({
+    summary: 'Get all ratings',
+    description: 'Get all ratings for a user',
+  })
+  async getAll(@Param('userId') userId: number) {
+    return this.ratingService.getAll(userId);
+  }
+
+  @Get(':userId/:ratingId')
+  @ApiOperation({
+    summary: 'Get rating',
+    description: 'Get a rating for a user',
+  })
+  async get(
+    @Param('userId') userId: number,
+    @Param('ratingId') ratingId: number,
+  ) {
+    return this.ratingService.getOne(userId, ratingId);
   }
 
   @Patch(':ratingId')

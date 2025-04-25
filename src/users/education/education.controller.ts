@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -38,6 +39,27 @@ export class EducationController {
     @Body() edu: CreateEducationDto,
   ): Promise<ApiResponse<any>> {
     return this.educationService.addEdu(edu, req.user.id);
+  }
+
+  @Get('userId')
+  @ApiOperation({
+    summary: "Get user's education",
+    description: 'Get all education for the user',
+  })
+  async getEdus(@Param('userId') userId: number): Promise<ApiResponse<any>> {
+    return this.educationService.getEdus(userId);
+  }
+
+  @Get(':userId/:id')
+  @ApiOperation({
+    summary: "Get user's education",
+    description: 'Get education for the user',
+  })
+  async getEdu(
+    @Param('id') id: number,
+    @Param('userId') userId: number,
+  ): Promise<ApiResponse<any>> {
+    return this.educationService.getEduById(id, userId);
   }
 
   @Patch(':id')

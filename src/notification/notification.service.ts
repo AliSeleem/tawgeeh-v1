@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { EmailService } from './email.service';
-import { NotificationType } from './enums/notification-type.enum';
+import { EmailType } from './enums/notification-type.enum';
 
 @Injectable()
 export class NotificationService {
   constructor(private emailService: EmailService) {}
 
   async sendNotification(
-    type: NotificationType,
+    type: EmailType,
     recipientEmail: string,
     data: any,
   ): Promise<void> {

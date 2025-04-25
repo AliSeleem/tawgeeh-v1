@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -19,6 +20,7 @@ import { CreateCertificationsDto } from './dto/create-certifications.dto';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { CertificationsService } from './certifications.service';
 import { UpdateCertificationsDto } from './dto/update-certifications.dto';
+import { use } from 'passport';
 
 @Controller('certifications')
 export class CertificationsController {
@@ -38,6 +40,27 @@ export class CertificationsController {
     @Body() cert: CreateCertificationsDto,
   ): Promise<ApiResponse<any>> {
     return this.certificationsServices.addCert(cert, req.user.id);
+  }
+
+  @Get(':userId')
+  @ApiOperation({
+    summary: "get user's certifications",
+    description: 'Get all certifications of the user',
+  })
+  async getCerts(@Param('userId') userId: number): Promise<ApiResponse<any>> {
+    return this.certificationsServices.getCerts(userId);
+  }
+
+  @Get(':userId/:id')
+  @ApiOperation({
+    summary: "get user's certification",
+    description: 'Get a specific certification of the user',
+  })
+  async getCert(
+    @Param('userId') userId: number,
+    @Param('id') id: number,
+  ): Promise<ApiResponse<any>> {
+    return this.certificationsServices.getCert(id, userId);
   }
 
   @Patch(':id')

@@ -40,26 +40,22 @@ export class MentorServiceController {
     );
   }
 
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Get(':userId')
   @ApiOperation({
     summary: 'Get all mentor services',
     description: 'Get all mentor services',
   })
-  findAll(@Req() req: any) {
-    return this.mentorServiceService.findAll(req.user.id);
+  findAll(@Param('userId') userId: number) {
+    return this.mentorServiceService.findAll(userId);
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @Get(':userId/:id')
   @ApiOperation({
     summary: 'Get one mentor service',
     description: 'Get one mentor service',
   })
-  findOne(@Req() req: any, @Param('id') id: string) {
-    return this.mentorServiceService.findOne(req.user.id, +id);
+  findOne(@Param('id') id: string, @Param('userId') userId: number) {
+    return this.mentorServiceService.findOne(userId, +id);
   }
 
   @Patch(':id')

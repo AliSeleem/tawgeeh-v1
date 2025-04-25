@@ -29,6 +29,48 @@ export class AchievementsService {
     };
   }
 
+  async findAll(userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    const achievements = await this.prisma.achievement.findMany({
+      where: { userId },
+    });
+
+    return {
+      success: true,
+      message: 'Achievements retrieved successfully.',
+      data: achievements,
+    };
+  }
+
+  async findOne(id: number, userId: number) {
+    // check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+    // Check if achievement exists
+    const achievement = await this.prisma.achievement.findUnique({
+      where: { id, userId },
+    });
+    if (!achievement) {
+      throw new NotFoundException(`Achievement with ID ${id} not found.`);
+    }
+    return {
+      success: true,
+      message: 'Achievement retrieved successfully.',
+      data: achievement,
+    };
+  }
+
   async update(
     id: number,
     userId: number,

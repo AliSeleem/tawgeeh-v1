@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Patch,
   Post,
@@ -36,6 +37,27 @@ export class ExperiencesController {
     @Body() AddExperienceDto: CreateExperiencesDto,
   ): Promise<ApiResponse<any>> {
     return this.experiencesService.addExperience(Req.user.id, AddExperienceDto);
+  }
+
+  @Get(':userId')
+  @ApiOperation({
+    summary: 'Get user experiences',
+    description: 'Get all experiences of the user profile',
+  })
+  async getExperiences(@Param('userId') userId: number) {
+    return this.experiencesService.getExperiences(userId);
+  }
+
+  @Get(':userId/:id')
+  @ApiOperation({
+    summary: 'Get user experience',
+    description: 'Get specific experience of the user profile',
+  })
+  async getExperience(
+    @Param('userId') userId: number,
+    @Param('id') id: number,
+  ) {
+    return this.experiencesService.getExperience(id, userId);
   }
 
   @Patch(':id')

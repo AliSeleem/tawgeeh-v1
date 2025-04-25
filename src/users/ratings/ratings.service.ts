@@ -51,6 +51,51 @@ export class RatingsService {
     };
   }
 
+  async getAll(userId: number): Promise<ApiResponse<any>> {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    const ratings = await this.prisma.rating.findMany({
+      where: { userId },
+    });
+
+    return {
+      success: true,
+      message: 'Ratings retrieved successfully.',
+      data: ratings,
+    };
+  }
+
+  async getOne(id: number, userId): Promise<ApiResponse<any>> {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    // check if the rating exists
+    const rating = await this.prisma.rating.findUnique({
+      where: { id, userId },
+    });
+
+    if (!rating) {
+      throw new NotFoundException(`Rating with ID ${id} is not exsits`);
+    }
+
+    return {
+      success: true,
+      message: 'Ratings retrieved successfully.',
+      data: rating,
+    };
+  }
+
   async update(
     id: number,
     rating: UpdateRatingsDto,

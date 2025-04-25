@@ -30,6 +30,49 @@ export class CertificationsService {
     };
   }
 
+  async getCerts(userId: number): Promise<ApiResponse<any>> {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+    // Get all certificates for the user
+    const certificates = await this.prisma.certificate.findMany({
+      where: { userId },
+    });
+
+    return {
+      success: true,
+      message: 'Certificates retrieved successfully.',
+      data: certificates,
+    };
+  }
+
+  async getCert(id: number, userId: number): Promise<ApiResponse<any>> {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+    // Check if certificate exists
+    const certificate = await this.prisma.certificate.findUnique({
+      where: { id, userId },
+    });
+    if (!certificate) {
+      throw new NotFoundException(`Certificate with ID ${id} not found.`);
+    }
+
+    return {
+      success: true,
+      message: 'Certificate retrieved successfully.',
+      data: certificate,
+    };
+  }
+
   async updateCert(id: number, cert: UpdateCertificationsDto, userId: number) {
     // Check if certificate exists
     const certificate = await this.prisma.certificate.findUnique({

@@ -30,6 +30,49 @@ export class EducationService {
     };
   }
 
+  async getEdus(userId: number) {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    // Get all educations for the user
+    const educations = await this.prisma.education.findMany({
+      where: { userId },
+    });
+
+    return {
+      success: true,
+      message: 'Educations retrieved successfully.',
+      data: educations,
+    };
+  }
+
+  async getEduById(id: number, userId: number) {
+    // check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+    // check if education exists
+    const education = await this.prisma.education.findUnique({
+      where: { id, userId },
+    });
+    if (!education) {
+      throw new NotFoundException(`Education with ID ${id} not found.`);
+    }
+    return {
+      success: true,
+      message: 'Education retrieved successfully.',
+      data: education,
+    };
+  }
+
   async updateEdu(id: number, edu: UpdateEducationDto, userId: number) {
     // Check if education exists
     const education = await this.prisma.education.findUnique({

@@ -8,7 +8,7 @@ import { calendar_v3, google } from 'googleapis';
 import { ConfigService } from '@nestjs/config';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { NotificationService } from 'src/notification/notification.service';
-import { NotificationType } from '../notification/enums/notification-type.enum';
+import { EmailType } from '../notification/enums/notification-type.enum';
 
 @Injectable()
 export class SessionsService {
@@ -122,7 +122,7 @@ export class SessionsService {
 
     if (requestedUser) {
       await this.notificationsService.sendNotification(
-        NotificationType.SESSION_REQUEST,
+        EmailType.SESSION_REQUEST,
         requestedUser.email,
         { requesterName: requesterUser?.name, scheduledAt },
       );
@@ -161,7 +161,7 @@ export class SessionsService {
 
     if (session.requester && session.requested) {
       await this.notificationsService.sendNotification(
-        NotificationType.SESSION_ACCEPTED,
+        EmailType.SESSION_ACCEPTED,
         session.requested.email,
         {
           requesterName: session.requester?.name,
@@ -171,7 +171,7 @@ export class SessionsService {
       );
 
       await this.notificationsService.sendNotification(
-        NotificationType.SESSION_ACCEPTED,
+        EmailType.SESSION_ACCEPTED,
         session.requester.email,
         {
           requesterName: session.requested?.name,

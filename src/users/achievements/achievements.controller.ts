@@ -38,6 +38,26 @@ export class AchievementsController {
     return this.achievementsService.create(createAchievementDto, req.user.id);
   }
 
+  @Get(':userId')
+  @ApiOperation({
+    summary: "get user's achievements",
+    description: 'Get all achievements of the user',
+  })
+  findAll(@Param('userId') userId: number) {
+    return this.achievementsService.findAll(userId);
+  }
+
+  @Get(':userId/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: "get user's achievement",
+    description: 'Get a specific achievement of the user',
+  })
+  findOne(@Param('id') id: number, @Param('userId') userId: number) {
+    return this.achievementsService.findOne(id, userId);
+  }
+
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

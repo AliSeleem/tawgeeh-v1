@@ -30,6 +30,48 @@ export class ExperiencesService {
     };
   }
 
+  async getExperiences(userId: number): Promise<ApiResponse<any>> {
+    // Check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    const experiences = await this.prisma.experience.findMany({
+      where: { userId },
+    });
+    return {
+      success: true,
+      message: 'Experiences retrieved successfully.',
+      data: experiences,
+    };
+  }
+
+  async getExperience(id: number, userId: number): Promise<ApiResponse<any>> {
+    // check if user exists
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    // Check if experience exists
+    const experience = await this.prisma.experience.findUnique({
+      where: { id, userId },
+    });
+    if (!experience) {
+      throw new NotFoundException(`Experience with ID ${id} not found.`);
+    }
+    return {
+      success: true,
+      message: 'Experience retrieved successfully.',
+      data: experience,
+    };
+  }
   async updateExperience(
     id: number,
     userId: number,
