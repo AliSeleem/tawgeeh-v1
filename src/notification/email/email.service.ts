@@ -3,7 +3,7 @@ import * as nodemailer from 'nodemailer';
 import * as fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import { ConfigService } from '@nestjs/config';
-import { EmailType } from './enums/notification-type.enum';
+import { EmailType } from '../enums/notification-type.enum';
 
 @Injectable()
 export class EmailService {
@@ -37,11 +37,7 @@ export class EmailService {
     };
   }
 
-  async sendEmail(
-    to: string,
-    type: EmailType,
-    data: any,
-  ): Promise<void> {
+  async sendEmail(to: string, type: EmailType, data: any): Promise<void> {
     const emailContent = await this.renderTemplate(type, data);
 
     await this.transporter.sendMail({

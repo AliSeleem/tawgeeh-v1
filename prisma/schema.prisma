@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // or "mysql" or "sqlite" //
+  provider = "mysql" // or "postgresql" or "sqlite" //
   url      = env("DATABASE_URL")
 }
 
@@ -70,6 +70,7 @@ model User {
   mentorRequests     MentorRequest[] // Relation to mentor requests
   mentorServices     MentorService[]
   mentorAvailability MentorAvailability[]
+  Notification       Notification[]
 
   @@index([email])
   @@index([googleId])
@@ -180,19 +181,19 @@ model TimeSlotBooking {
 }
 
 model MentorRequest {
-  id                Int       @id @default(autoincrement())
-  userId            Int
-  user              User      @relation(fields: [userId], references: [id])
-  specialization    String
-  experienceLevel   String
-  TargetMentees     String
-  linkedin          String
-  bio               String
-  status            ReqStat   @default(PENDING)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  reviewedBy        Int?      // ID of admin who reviewed
-  reviewedAt        DateTime? // When the request was reviewed
+  id              Int       @id @default(autoincrement())
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id])
+  specialization  String
+  experienceLevel String
+  TargetMentees   String
+  linkedin        String
+  bio             String
+  status          ReqStat   @default(PENDING)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  reviewedBy      Int? // ID of admin who reviewed
+  reviewedAt      DateTime? // When the request was reviewed
 }
 
 enum ReqStat {
@@ -392,4 +393,20 @@ enum SessionStatus {
   REJECTED
   COMPLETED
   CANCELLED
+}
+
+// ======== Notifications =========
+
+model Notification {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  from      Int? // ID of the user made the action that triggered the Notification
+  title     String // Title of the Notification
+  body      String // Notification body
+  sent      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
