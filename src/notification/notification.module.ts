@@ -5,9 +5,10 @@ import { ConfigModule } from '@nestjs/config';
 import { PushService } from './push/push.service';
 import { NotificationController } from './push/notification.controller';
 import { NotificationStorageService } from './push/notification-storage.service';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule, PrismaModule],
   controllers: [NotificationController],
   providers: [
     EmailService,

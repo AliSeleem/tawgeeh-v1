@@ -1,5 +1,5 @@
 import { Controller, Sse, Query } from '@nestjs/common';
-import { Observable } from 'rxjs';
+import { finalize, map, Observable } from 'rxjs';
 import { PushService } from './push.service';
 
 @Controller('notifications')
@@ -14,6 +14,7 @@ export class NotificationController {
 
     // Get the user's notification channel
     const userSubject = this.pushService.getSubject(userId);
+    console.log('userSubject', userSubject);
 
     // Send any missed notifications
     this.pushService.sendMissedNotifications(userId).catch((err) => {
@@ -21,19 +22,27 @@ export class NotificationController {
     });
 
     // Stream notifications to the client
-    return new Observable((observer) => {
-      userSubject.subscribe({
-        next: (data) => {
-          observer.next({ event: 'notification', data });
-        },
-        error: (err) => observer.error(err),
-        complete: () => observer.complete(),
-      });
+    // return new Observable((observer) => {
+    //   userSubject.subscribe({
+    //     next: (data) => {
+    //       observer.next({ event: 'notification', data });
+    //     },
+    //     error: (err) => observer.error(err),
+    //     complete: () => observer.complete(),
+    //   });
 
+    //   // Clean up when the client disconnects
+    //   return () => {
+    //     this.pushService.cleanup(userId);
+    //   };
+    // });
+    return userSubject.asObservable().pipe(
+      // Map the data to the desired format
+      map((data) => ({ event: 'notification', data, type: 'notification' })),
       // Clean up when the client disconnects
-      return () => {
+      finalize(() => {
         this.pushService.cleanup(userId);
-      };
-    });
+      }),
+    );
   }
 }

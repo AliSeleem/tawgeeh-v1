@@ -57,8 +57,8 @@ model User {
   // Relations to other models
   chats             ChatParticipants[]
   messages          Message[]
-  sessionsRequested Session[]          @relation(name: "RequesterRelation")
-  sessionsReceived  Session[]          @relation(name: "RequestedRelation")
+  mentorSessions    Session[]         @relation("mentorSessions")
+  menteeSessions    Session[]         @relation("menteeSessions")
   experiences       Experience[]
   certificates      Certificate[]
   education         Education[]
@@ -151,7 +151,6 @@ model MentorAvailability {
   updatedAt         DateTime  @updatedAt
 
   mentor          User              @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-  bookings        TimeSlotBooking[]
   MentorService   MentorService?    @relation(fields: [mentorServiceId], references: [id])
   mentorServiceId Int?
 
@@ -159,25 +158,6 @@ model MentorAvailability {
   @@index([dayOfWeek])
   @@index([specificDate])
   @@index([isRecurring])
-}
-
-model TimeSlotBooking {
-  id             Int           @id @default(autoincrement())
-  availabilityId Int
-  sessionId      String? // Optional link to a session
-  startTime      DateTime
-  endTime        DateTime
-  status         BookingStatus @default(AVAILABLE)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-
-  availability MentorAvailability @relation(fields: [availabilityId], references: [id], onDelete: Cascade)
-  session      Session?           @relation(fields: [sessionId], references: [id], onDelete: SetNull)
-
-  @@index([availabilityId])
-  @@index([sessionId])
-  @@index([status])
-  @@index([startTime, endTime])
 }
 
 model MentorRequest {
@@ -363,28 +343,40 @@ enum MessageType {
 
 model Session {
   id            String        @id @default(uuid())
-  requesterId   Int
-  requestedId   Int
-  serviceId     Int? // Optional link to the specific mentor service
+  menteeId      Int
+  mentorId      Int
+  serviceId     Int?          // Optional link to the specific mentor service
   status        SessionStatus @default(PENDING)
   googleMeetUrl String?
   scheduledAt   DateTime
   duration      Int           @default(60) // Session duration in minutes
   notes         String?       @db.Text
   feedback      String?       @db.Text
+  answers       Answer[]
+  menteeQ       String?
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  requester User              @relation(name: "RequesterRelation", fields: [requesterId], references: [id], onDelete: Cascade)
-  requested User              @relation(name: "RequestedRelation", fields: [requestedId], references: [id], onDelete: Cascade)
-  service   MentorService?    @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-  timeSlot  TimeSlotBooking[]
+  mentee        User              @relation(name: "menteeSessions", fields: [menteeId], references: [id], onDelete: Cascade)
+  mentor        User              @relation(name: "mentorSessions", fields: [mentorId], references: [id], onDelete: Cascade)
+  service       MentorService?    @relation(fields: [serviceId], references: [id], onDelete: SetNull)
 
-  @@index([requesterId])
-  @@index([requestedId])
+  @@index([menteeId])
+  @@index([mentorId])
   @@index([serviceId])
   @@index([status])
   @@index([scheduledAt])
+}
+
+model Answer {
+  id            Int       @id @default(autoincrement())
+  questionId    Int
+  text          String
+
+  sessionId     String
+  session       Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
 }
 
 enum SessionStatus {

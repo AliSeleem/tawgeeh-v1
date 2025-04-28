@@ -11,139 +11,118 @@ import {
 import {
   ApiTags,
   ApiOperation,
-  ApiResponse,
   ApiBearerAuth,
   ApiParam,
   ApiBody,
 } from '@nestjs/swagger';
 import { SessionsService } from './sessions.service';
+import { CreateSessionDto } from './dto/create-session.dto';
+import { UpdateSessionNotesDto } from './dto/update-session-notes.dto';
+import { UpdateSessionFeedbackDto } from './dto/update-session-feedback.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { ApiResponse as IApiResponse } from 'src/common/interfaces/response.interface';
+import { ApiResponse } from 'src/common/interfaces/response.interface';
 
 @ApiTags('Sessions')
 @ApiBearerAuth()
 @Controller('sessions')
 export class SessionsController {
-  constructor(private readonly sessionsService: SessionsService) {}
+  constructor(private readonly sessionService: SessionsService) {}
 
   @Post('request')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Request a new mentoring session' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        requesterId: { type: 'number', example: 1 },
-        requestedId: { type: 'number', example: 2 },
-        scheduledAt: {
-          type: 'string',
-          format: 'date-time',
-          example: '2024-03-20T15:00:00Z',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 201,
-    description: 'Session requested successfully',
-    schema: {
-      example: {
-        id: 1,
-        requesterId: 1,
-        requestedId: 2,
-        scheduledAt: '2024-03-20T15:00:00Z',
-        status: 'PENDING',
-      },
-    },
-  })
+  @ApiBody({ type: CreateSessionDto })
   async requestSession(
-    @Body('requesterId') requesterId: number,
-    @Body('requestedId') requestedId: number,
-    @Body('scheduledAt') scheduledAt: Date,
-  ) {
-    return this.sessionsService.requestSession(
-      requesterId,
-      requestedId,
-      scheduledAt,
-    );
+    @Body() createSessionDto: CreateSessionDto,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.requestSession(createSessionDto, req.user.id);
   }
 
-  @Patch(':id/accept')
+  @Patch(':sessionId/accept')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Accept a session request' })
-  @ApiParam({ name: 'id', description: 'Session ID', type: Number, example: 1 })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        userId: { type: 'number', example: 2 },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Session accepted',
-    schema: {
-      example: {
-        id: 1,
-        status: 'ACCEPTED',
-        updatedAt: '2024-03-20T15:05:00Z',
-      },
-    },
-  })
+  @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async acceptSession(
-    @Param('id') sessionId: string,
-    @Body('userId') requestedUserId: number,
-  ) {
-    return this.sessionsService.acceptSession(sessionId, requestedUserId);
+    @Param('sessionId') sessionId: string,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.acceptSession(sessionId, req.user.id);
   }
 
-  @Patch(':id/reject')
+  @Patch(':sessionId/reject')
+  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Reject a session request' })
-  @ApiParam({ name: 'id', description: 'Session ID', type: Number, example: 1 })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        userId: { type: 'number', example: 2 },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 200,
-    description: 'Session rejected',
-    schema: {
-      example: {
-        id: 1,
-        status: 'REJECTED',
-        updatedAt: '2024-03-20T15:05:00Z',
-      },
-    },
-  })
+  @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async rejectSession(
-    @Param('id') sessionId: string,
-    @Body('userId') requestedUserId: number,
-  ) {
-    return this.sessionsService.rejectSession(sessionId, requestedUserId);
+    @Param('sessionId') sessionId: string,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.rejectSession(sessionId, req.user.id);
+  }
+
+  @Patch(':sessionId/cancel')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Cancel a session' })
+  @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
+  async cancelSession(
+    @Param('sessionId') sessionId: string,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.cancelSession(sessionId, req.user.id);
+  }
+
+  @Patch(':sessionId/complete')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Mark a session as complete' })
+  @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
+  async completeSession(
+    @Param('sessionId') sessionId: string,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.completeSession(sessionId, req.user.id);
+  }
+
+  @Post('notes')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Add notes to a completed session' })
+  @ApiBody({ type: UpdateSessionNotesDto })
+  async addNotes(
+    @Body() updateSessionNotesDto: UpdateSessionNotesDto,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.addNotes(updateSessionNotesDto, req.user.id);
+  }
+
+  @Post('feedback')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Add feedback to a completed session' })
+  @ApiBody({ type: UpdateSessionFeedbackDto })
+  async addFeedback(
+    @Body() updateSessionFeedbackDto: UpdateSessionFeedbackDto,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.addFeedback(
+      updateSessionFeedbackDto,
+      req.user.id,
+    );
   }
 
   @Get('user')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get user sessions' })
-  @ApiResponse({
-    status: 200,
-    description: 'List of user sessions',
-    schema: {
-      example: [
-        {
-          id: 1,
-          requesterId: 1,
-          requestedId: 2,
-          scheduledAt: '2024-03-20T15:00:00Z',
-          status: 'PENDING',
-        },
-      ],
-    },
-  })
-  async getUserSessions(@Req() req): Promise<IApiResponse<any>> {
-    return this.sessionsService.userSessions(req.user.id);
+  async getUserSessions(@Req() req): Promise<ApiResponse<any>> {
+    return this.sessionService.getUserSessions(req.user.id);
+  }
+
+  @Get(':sessionId')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get a specific session' })
+  @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
+  async getSession(
+    @Param('sessionId') sessionId: string,
+    @Req() req,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.getSession(sessionId, req.user.id);
   }
 }

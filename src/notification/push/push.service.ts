@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 // import { NotificationChannel } from './notification.interface';
 import { NotificationStorageService } from './notification-storage.service';
 import { Subject } from 'rxjs';
+import { Notification } from '@prisma/client';
 
 @Injectable()
 export class PushService {
@@ -34,12 +35,14 @@ export class PushService {
   // Send missed notifications when a user connects
   async sendMissedNotifications(userId: number): Promise<void> {
     const userSubject = this.getSubject(userId);
-    const missedNotifications =
+
+    const missedNotifications: Notification[] =
       await this.storageService.getUndeliveredNotifications(userId);
+    console.log('missedNotifications', missedNotifications);
     for (const notification of missedNotifications) {
       userSubject.next({
-        subject: notification.subject,
-        content: notification.content,
+        subject: notification.title,
+        content: notification.body,
       });
       await this.storageService.markAsDelivered(notification.id);
     }

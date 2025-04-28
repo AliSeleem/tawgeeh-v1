@@ -10,6 +10,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { QuestionService } from './question/question.service';
 import { MentorAvailabilityService } from './mentor-availability/mentor-availability.service';
 import { MentorService } from '@prisma/client';
+import { Role } from 'src/common/enums/role.enum';
 
 @Injectable()
 export class MentorServiceService {
@@ -25,7 +26,7 @@ export class MentorServiceService {
   ): Promise<ApiResponse<MentorService>> {
     // check if mentorId is valid
     const mentor = await this.prisma.user.findUnique({
-      where: { id: mentorId, isMentor: true },
+      where: { id: mentorId, role: Role.MENTOR },
     });
     if (!mentor) {
       throw new NotFoundException('Mentor not found');
