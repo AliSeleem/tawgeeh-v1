@@ -24,6 +24,8 @@ import { CreateMentorAvailabilityDto } from './dto/create-mentor-availability.dt
 import { UpdateMentorAvailabilityDto } from './dto/update-mentor-availability.dto';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { MentorAvailability } from '@prisma/client';
+import { RoleGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 
 // @ApiTags('Mentor Availability')
 @Controller('mentor-availability')
@@ -34,7 +36,7 @@ export class MentorAvailabilityController {
   ) {}
 
   @Post('/')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create mentor availability',
@@ -52,8 +54,6 @@ export class MentorAvailabilityController {
   }
 
   @Get('/')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get mentor availabilities',
     description: 'Retrieve all availabilities for the mentor profile',
@@ -63,8 +63,6 @@ export class MentorAvailabilityController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get mentor availability by ID',
     description: 'Retrieve a specific availability from the mentor profile',
@@ -83,7 +81,7 @@ export class MentorAvailabilityController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update mentor availability',
@@ -109,7 +107,7 @@ export class MentorAvailabilityController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete mentor availability',

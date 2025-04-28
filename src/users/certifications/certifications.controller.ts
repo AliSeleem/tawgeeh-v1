@@ -80,7 +80,7 @@ export class CertificationsController {
     return this.certificationsServices.updateCert(id, cert, req.user.id);
   }
 
-  @Delete('/cert/:id')
+  @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({

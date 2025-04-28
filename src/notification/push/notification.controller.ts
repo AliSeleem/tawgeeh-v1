@@ -1,12 +1,16 @@
-import { Controller, Sse, Query } from '@nestjs/common';
+import { Controller, Sse, Query, UseGuards } from '@nestjs/common';
 import { finalize, map, Observable } from 'rxjs';
 import { PushService } from './push.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('notifications')
 export class NotificationController {
   constructor(private readonly pushService: PushService) {}
 
   @Sse('stream')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   streamNotifications(@Query('userId') userId: number): Observable<any> {
     if (!userId) {
       throw new Error('userId is required');
@@ -14,7 +18,6 @@ export class NotificationController {
 
     // Get the user's notification channel
     const userSubject = this.pushService.getSubject(userId);
-    console.log('userSubject', userSubject);
 
     // Send any missed notifications
     this.pushService.sendMissedNotifications(userId).catch((err) => {

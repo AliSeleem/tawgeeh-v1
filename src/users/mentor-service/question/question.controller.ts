@@ -13,13 +13,15 @@ import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { RoleGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 
 @Controller('question/:serviceId')
 export class QuestionController {
   constructor(private readonly questionService: QuestionService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create a new question',
@@ -34,8 +36,6 @@ export class QuestionController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Retrieve all questions',
     description: 'Retrieve all questions for a specific service',
@@ -45,8 +45,6 @@ export class QuestionController {
   }
 
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Retrieve a specific question',
     description:
@@ -57,7 +55,7 @@ export class QuestionController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update a specific question',
@@ -73,7 +71,7 @@ export class QuestionController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete a specific question',

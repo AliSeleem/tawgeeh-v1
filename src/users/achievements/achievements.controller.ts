@@ -48,8 +48,6 @@ export class AchievementsController {
   }
 
   @Get(':userId/:id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @ApiOperation({
     summary: "get user's achievement",
     description: 'Get a specific achievement of the user',

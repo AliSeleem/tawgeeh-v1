@@ -36,6 +36,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create a new user',
     description: 'Register a new user account with required information',
@@ -56,8 +58,6 @@ export class UsersController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all users',
     description: 'Retrieve list of users with optional email filter',
@@ -107,6 +107,8 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update user details',
     description: 'Update partial or complete user information',
@@ -138,6 +140,8 @@ export class UsersController {
   }
 
   @Patch('profileImg/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('image_url'))
   @ApiOperation({
     summary: 'Update image',
@@ -163,6 +167,8 @@ export class UsersController {
   }
 
   @Patch('coverImg/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('cover_url'))
   @ApiOperation({
     summary: 'Update cover image',
@@ -188,6 +194,8 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Delete user account',
     description: 'Permanently remove a user account',

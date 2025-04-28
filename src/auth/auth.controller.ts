@@ -295,8 +295,8 @@ export class AuthController {
   }
 
   // email verification endpoints
-  @UseGuards(JwtAuthGuard)
   @Patch('verify-email')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Resend email verification code' })
   @ApiResponse({
@@ -328,8 +328,8 @@ export class AuthController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('resend-verification-code')
+  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Resend email verification code' })
   @ApiResponse({

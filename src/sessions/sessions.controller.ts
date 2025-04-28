@@ -21,6 +21,8 @@ import { UpdateSessionNotesDto } from './dto/update-session-notes.dto';
 import { UpdateSessionFeedbackDto } from './dto/update-session-feedback.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
+import { RoleGuard } from 'src/common/guards/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Sessions')
 @ApiBearerAuth()
@@ -29,7 +31,7 @@ export class SessionsController {
   constructor(private readonly sessionService: SessionsService) {}
 
   @Post('request')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Request a new mentoring session' })
   @ApiBody({ type: CreateSessionDto })
   async requestSession(
@@ -40,7 +42,7 @@ export class SessionsController {
   }
 
   @Patch(':sessionId/accept')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiOperation({ summary: 'Accept a session request' })
   @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async acceptSession(
@@ -51,7 +53,7 @@ export class SessionsController {
   }
 
   @Patch(':sessionId/reject')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiOperation({ summary: 'Reject a session request' })
   @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async rejectSession(
@@ -62,7 +64,7 @@ export class SessionsController {
   }
 
   @Patch(':sessionId/cancel')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Cancel a session' })
   @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async cancelSession(
@@ -73,7 +75,7 @@ export class SessionsController {
   }
 
   @Patch(':sessionId/complete')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Mark a session as complete' })
   @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async completeSession(
@@ -84,7 +86,7 @@ export class SessionsController {
   }
 
   @Post('notes')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiOperation({ summary: 'Add notes to a completed session' })
   @ApiBody({ type: UpdateSessionNotesDto })
   async addNotes(
@@ -95,7 +97,7 @@ export class SessionsController {
   }
 
   @Post('feedback')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTEE))
   @ApiOperation({ summary: 'Add feedback to a completed session' })
   @ApiBody({ type: UpdateSessionFeedbackDto })
   async addFeedback(
@@ -109,14 +111,14 @@ export class SessionsController {
   }
 
   @Get('user')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Get user sessions' })
   async getUserSessions(@Req() req): Promise<ApiResponse<any>> {
     return this.sessionService.getUserSessions(req.user.id);
   }
 
   @Get(':sessionId')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Get a specific session' })
   @ApiParam({ name: 'sessionId', description: 'Session ID', type: String })
   async getSession(

@@ -22,6 +22,8 @@ export class RatingsController {
   @Post('/:userId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Rate a user',
     description: 'Add a rating to a user',
@@ -61,6 +63,8 @@ export class RatingsController {
   @Patch(':ratingId')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update rating',
     description: 'Update Rating on a user',
@@ -79,6 +83,8 @@ export class RatingsController {
   @Patch(':ratingId/like')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Like rating',
     description: 'Like a rating',
@@ -88,6 +94,8 @@ export class RatingsController {
   }
 
   @Delete(':ratingId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({

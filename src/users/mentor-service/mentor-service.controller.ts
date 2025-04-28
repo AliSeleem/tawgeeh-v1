@@ -14,13 +14,15 @@ import { CreateMentorServiceDto } from './dto/create-mentor-service.dto';
 import { UpdateMentorServiceDto } from './dto/update-mentor-service.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
+import { Role } from 'src/common/enums/role.enum';
+import { RoleGuard } from 'src/common/guards/roles.guard';
 
 @Controller('mentor-service')
 export class MentorServiceController {
   constructor(private readonly mentorServiceService: MentorServiceService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create a new mentor service',
@@ -59,7 +61,7 @@ export class MentorServiceController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Update a mentor service',
@@ -82,7 +84,7 @@ export class MentorServiceController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Remove a mentor service',
