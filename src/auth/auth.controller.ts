@@ -18,6 +18,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiExcludeEndpoint,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -25,66 +26,46 @@ import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
 import { Response } from 'express';
-import { ApiResponse as IApiResponse } from 'src/common/interfaces/response.interface';
 import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { CompleteRegistrationDto } from './dto/complete-registration.dto';
+import axios from 'axios';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
+    private readonly authService: AuthService,
+    private readonly configService: ConfigService,
   ) {}
 
   @Post('login')
-  @ApiOperation({ summary: 'Authenticate user with email/password' })
+  @ApiOperation({ summary: 'Authenticate user with email and password' })
   @ApiBody({ type: LoginDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully authenticated',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid credentials',
-  })
-  login(@Body() data: LoginDto) {
+  async login(@Body() data: LoginDto) {
     return this.authService.login(data);
   }
 
   @Post('register')
-  @ApiOperation({ summary: 'Create new user account' })
+  @ApiOperation({ summary: 'Create a new user account' })
   @ApiBody({ type: RegisterDto })
-  @ApiResponse({
-    status: 201,
-    description: 'User registered successfully',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Validation error or duplicate email',
-  })
-  register(@Body() data: RegisterDto) {
+  async register(@Body() data: RegisterDto) {
     return this.authService.register(data);
   }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
-  @ApiOperation({ summary: 'Initiate Google OAuth flow' })
-  @ApiResponse({
-    status: 302,
-    description: 'Redirects to Google authentication',
-  })
-  googleLogin() {}
+  @ApiOperation({ summary: 'Initiate Google OAuth authentication flow' })
+  googleLogin() {
+    // Initiates Google OAuth flow
+  }
 
   @Get('google/callback')
   @UseGuards(AuthGuard('google'))
   @ApiExcludeEndpoint()
-  async googleAuthCallback(@Req() req, @Res() res: Response) {
+  async googleAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      // 1️⃣ Format the Google profile data
       const formattedProfile = {
         id: req.user.id,
         displayName: req.user.displayName,
@@ -93,30 +74,17 @@ export class AuthController {
         _json: req.user._json,
       };
 
-      // 2️⃣ Validate and create/update user with the formatted profile
-      const { access_token, user, missingFields } =
-        await this.authService.validateOAuthUser(formattedProfile, 'google');
+      const { access_token } = await this.authService.validateOAuthUser(
+        formattedProfile,
+        'google',
+      );
 
-      res.cookie('access_token', access_token);
+      res.cookie('access_token', access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
 
-      // if (missingFields.length > 0) {
-      //   // Pass existing user data and missing fields as query params
-      //   const queryParams = new URLSearchParams({
-      //     name: user.name || '',
-      //     email: user.email || '',
-      //     phone: user.phone || '',
-      //     gender: user.gender || '',
-      //     country: user.country || '',
-      //     specialization: user.specialization || '',
-      //     experienceLevel: user.experienceLevel || '',
-      //     bio: user.bio || '',
-      //     missingFields: JSON.stringify(missingFields), // Convert array to a string
-      //   }).toString();
-
-      //   return res.redirect(`/signup.html?${queryParams}`);
-      // }
-
-      // return res.redirect('/chats.html'); // Redirect after login
+      return res.redirect('/chats.html');
     } catch (error) {
       throw new HttpException(
         error.message || 'Google authentication failed',
@@ -127,15 +95,15 @@ export class AuthController {
 
   @Get('linkedin')
   @UseGuards(AuthGuard('linkedin'))
-  @ApiOperation({ summary: 'Initiate LinkedIn OAuth flow' })
-  @ApiResponse({
-    status: 302,
-    description: 'Redirects to LinkedIn authentication',
-  })
-  linkedinLogin() {}
+  @ApiOperation({ summary: 'Initiate LinkedIn OAuth authentication flow' })
+  linkedinLogin() {
+    // Initiates LinkedIn OAuth flow
+  }
 
   @Get('linkedin/callback')
+  @UseGuards(AuthGuard('linkedin'))
   @ApiExcludeEndpoint()
+  @ApiQuery({ name: 'code', required: true, type: String })
   async linkedinAuthCallback(
     @Query('code') code: string,
     @Res() res: Response,
@@ -149,7 +117,6 @@ export class AuthController {
         'LINKEDIN_CALLBACK_URL',
       );
 
-      // Check if necessary values are defined
       if (!clientId || !clientSecret || !redirectUri) {
         throw new HttpException(
           'Missing LinkedIn configuration',
@@ -157,7 +124,6 @@ export class AuthController {
         );
       }
 
-      // 1️⃣ Get Access Token - Fixed URLSearchParams construction
       const params = new URLSearchParams();
       params.append('grant_type', 'authorization_code');
       params.append('code', code);
@@ -165,7 +131,6 @@ export class AuthController {
       params.append('client_secret', clientSecret);
       params.append('redirect_uri', redirectUri);
 
-      // 1️⃣ Get Access Token using axios directly
       const tokenResponse = await axios.post(
         'https://www.linkedin.com/oauth/v2/accessToken',
         params,
@@ -176,7 +141,6 @@ export class AuthController {
 
       const accessToken = tokenResponse.data.access_token;
 
-      // 2️⃣ Fetch User Profile
       const profileResponse = await axios.get(
         'https://api.linkedin.com/v2/userinfo',
         {
@@ -186,7 +150,6 @@ export class AuthController {
 
       const profileData = profileResponse.data;
 
-      // 3️⃣ Format the LinkedIn profile data to match the expected structure
       const formattedProfile = {
         id: profileData.sub,
         displayName:
@@ -197,30 +160,17 @@ export class AuthController {
         _json: profileData,
       };
 
-      // 4️⃣ Validate and create/update user with the formatted profile
-      const { access_token, user, missingFields } =
-        await this.authService.validateOAuthUser(formattedProfile, 'linkedin');
+      const { access_token } = await this.authService.validateOAuthUser(
+        formattedProfile,
+        'linkedin',
+      );
 
-      res.cookie('access_token', access_token);
+      res.cookie('access_token', access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
 
-      // if (missingFields.length > 0) {
-      //   // Pass existing user data and missing fields as query params
-      //   const queryParams = new URLSearchParams({
-      //     name: user.name || '',
-      //     email: user.email || '',
-      //     phone: user.phone || '',
-      //     gender: user.gender || '',
-      //     country: user.country || '',
-      //     specialization: user.specialization || '',
-      //     experienceLevel: user.experienceLevel || '',
-      //     bio: user.bio || '',
-      //     // missingFields: JSON.stringify(missingFields),
-      //   }).toString();
-
-      //   return res.redirect(`/signup.html?${queryParams}`);
-      // }
-
-      // return res.redirect('/chats.html'); // Redirect after login
+      return res.redirect('/chats.html');
     } catch (error) {
       throw new HttpException(
         error.response?.data?.message ||
@@ -231,44 +181,26 @@ export class AuthController {
     }
   }
 
-  // Endpoint for completing registration with additional details
-  // @Patch('complete-registration')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // @ApiOperation({
-  //   summary: 'Complete user registration with additional details',
-  // })
-  // @ApiBody({ type: CompleteRegistrationDto })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: 'Registration completed',
-  // })
-  // @ApiResponse({
-  //   status: 400,
-  //   description: 'Invalid/missing required fields',
-  // })
-  // async completeRegistration(
-  //   @Req() req,
-  //   @Body()
-  //   completeRegistrationDto: CompleteRegistrationDto,
-  // ) {
-  //   return this.authService.completeRegistration(
-  //     req.user.id,
-  //     completeRegistrationDto,
-  //   );
-  // }
+  @Patch('complete-registration')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Complete user registration with additional details',
+  })
+  @ApiBody({ type: CompleteRegistrationDto })
+  async completeRegistration(
+    @Req() req: any,
+    @Body() completeRegistrationDto: CompleteRegistrationDto,
+  ) {
+    return this.authService.completeRegistration(
+      req.user.id,
+      completeRegistrationDto,
+    );
+  }
 
-  // forget password endpoints
   @Post('forget-password')
   @ApiOperation({ summary: 'Initiate password reset process' })
-  @ApiResponse({
-    status: 200,
-    description: 'Password reset code sent to email',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Email not found',
-  })
+  @ApiBody({ type: ForgetPasswordDto })
   async forgetPassword(@Body() dto: ForgetPasswordDto) {
     return this.authService.forgetPassword(dto.email);
   }
@@ -278,15 +210,7 @@ export class AuthController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Reset user password with verification code' })
   @ApiBody({ type: ResetPasswordDto })
-  @ApiResponse({
-    status: 200,
-    description: 'Password updated successfully',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid/expired reset code',
-  })
-  async resetPassword(@Req() req, @Body() dto: ResetPasswordDto) {
+  async resetPassword(@Req() req: any, @Body() dto: ResetPasswordDto) {
     return this.authService.resetPassword(
       req.user.userId,
       dto.resetCode,
@@ -294,58 +218,48 @@ export class AuthController {
     );
   }
 
-  // email verification endpoints
   @Patch('verify-email')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @ApiOperation({ summary: 'Resend email verification code' })
+  @ApiOperation({ summary: 'Verify user email with verification code' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        code: { type: 'string' },
+      },
+    },
+  })
   @ApiResponse({
     status: 200,
-    description: 'Verification code resent successfully',
+    description: 'Email verified successfully',
   })
-  async verifyEmail(@Req() req, @Body() body: { code: string }) {
-    try {
-      const { code } = body;
-      const userId = req.user.id;
+  async verifyEmail(@Req() req: any, @Body() body: { code: string }) {
+    const { code } = body;
+    const userId = req.user.id;
 
-      const isVerified = await this.authService.verifyEmail(userId, code);
+    const isVerified = await this.authService.verifyEmail(userId, code);
 
-      if (isVerified) {
-        return {
-          message: 'Email verified successfully',
-        };
-      }
-
-      throw new HttpException(
-        'Invalid or expired verification code',
-        HttpStatus.BAD_REQUEST,
-      );
-    } catch (error) {
-      throw new HttpException(
-        error.message || 'Verification failed',
-        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    if (isVerified) {
+      return { message: 'Email verified successfully' };
     }
+
+    throw new HttpException(
+      'Invalid or expired verification code',
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   @Get('resend-verification-code')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Resend email verification code' })
-  @ApiResponse({
-    status: 200,
-    description: 'Verification code resent successfully',
-  })
-  async resendVerificationCode(@Req() req): Promise<IApiResponse<any>> {
-    try {
-      await this.authService.generateAndSendVerificationCode(req.user);
-      return {
-        success: true,
-        message: 'code resend to your email, check it.',
-      };
-    } catch (error) {
-      throw new HttpException('Error happened', HttpStatus.BAD_REQUEST);
-    }
+  async resendVerificationCode(@Req() req: any) {
+    await this.authService.generateAndSendVerificationCode(req.user);
+    return {
+      success: true,
+      message: 'Verification code resent to your email',
+    };
   }
 
   @Get('profile')
@@ -355,8 +269,20 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: 'User profile data',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        email: { type: 'string' },
+        name: { type: 'string' },
+      },
+    },
   })
-  profile(@Req() req) {
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+  })
+  profile(@Req() req: any) {
     return req.user;
   }
 }

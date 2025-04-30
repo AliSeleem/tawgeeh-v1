@@ -43,14 +43,6 @@ export class UsersController {
     description: 'Register a new user account with required information',
   })
   @ApiBody({ type: CreateUserDto })
-  @SwaggerApiResponse({
-    status: 201,
-    description: 'User created successfully',
-  })
-  @SwaggerApiResponse({
-    status: 400,
-    description: 'Invalid input data format',
-  })
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<ApiResponse<any>> {
@@ -69,14 +61,6 @@ export class UsersController {
     example: 'user@example.com',
     description: 'Filter users by email address',
   })
-  @SwaggerApiResponse({
-    status: 200,
-    description: 'List of users retrieved successfully',
-  })
-  @SwaggerApiResponse({
-    status: 404,
-    description: 'No users found matching criteria',
-  })
   async getAllUsers(
     @Query() query: { email?: string },
   ): Promise<ApiResponse<any>> {
@@ -93,14 +77,6 @@ export class UsersController {
     type: Number,
     description: 'User ID',
     example: 1,
-  })
-  @SwaggerApiResponse({
-    status: 200,
-    description: 'User details retrieved successfully',
-  })
-  @SwaggerApiResponse({
-    status: 404,
-    description: 'User not found',
   })
   async getUserById(@Param('id') id: string): Promise<ApiResponse<any>> {
     return this.usersService.getUserById(+id);
@@ -120,18 +96,6 @@ export class UsersController {
     example: 1,
   })
   @ApiBody({ type: UpdateUserDto })
-  @SwaggerApiResponse({
-    status: 200,
-    description: 'User updated successfully',
-  })
-  @SwaggerApiResponse({
-    status: 400,
-    description: 'Invalid input data',
-  })
-  @SwaggerApiResponse({
-    status: 404,
-    description: 'User not found',
-  })
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -205,20 +169,6 @@ export class UsersController {
     type: Number,
     description: 'User ID',
     example: 1,
-  })
-  @SwaggerApiResponse({
-    status: 200,
-    description: 'User deleted successfully',
-    schema: {
-      example: {
-        success: true,
-        message: 'User deleted successfully',
-      },
-    },
-  })
-  @SwaggerApiResponse({
-    status: 404,
-    description: 'User not found',
   })
   async deleteUser(@Param('id') id: string): Promise<ApiResponse<any>> {
     return this.usersService.deleteUser(+id);
