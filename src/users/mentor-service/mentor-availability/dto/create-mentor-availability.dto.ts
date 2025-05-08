@@ -1,30 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { DayOfWeek } from '@prisma/client';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
+  IsArray,
+  IsBoolean,
   IsDate,
   IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
-  IsBoolean,
+  ValidateNested,
 } from 'class-validator';
-import { IsAfterDate } from 'src/common/validators/IsAfterDate';
-import { IsSpecificDateRequired } from 'src/common/validators/IsSpecificDateRequired';
 
-export class CreateMentorAvailabilityDto {
+class IntervalDto {
   @ApiProperty({
-    example: 'Work time',
-    description: 'Title for this availability',
+    example: '11:45',
+    description: 'Start time of the interval (HH:mm format)',
   })
   @IsString()
-  @IsNotEmpty({ message: 'Title is required.' })
-  title: string;
+  @IsNotEmpty({ message: 'startTime is required' })
+  startTime: string;
 
   @ApiProperty({
-    example: 'MONDAY',
-    description: 'Day this availability is available on',
+    example: '14:00',
+    description: 'End time of the interval (HH:mm format)',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'endTime is required' })
+  endTime: string;
+}
+
+class DayDto {
+  @ApiProperty({
+    example: 'SATURDAY',
+    description: 'Day of the week for recurring availability',
     enum: [
       'MONDAY',
       'TUESDAY',
@@ -34,10 +44,42 @@ export class CreateMentorAvailabilityDto {
       'SATURDAY',
       'SUNDAY',
     ],
+    required: false,
   })
   @IsEnum(DayOfWeek)
-  @IsNotEmpty({ message: 'Day is required' })
-  dayOfWeek: DayOfWeek;
+  @IsOptional()
+  dayOfWeek?: DayOfWeek;
+
+  @ApiProperty({
+    example: '2025-04-27',
+    description: 'Specific date for non-recurring availability',
+    required: false,
+  })
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
+  @IsDate({ message: 'specificDate must be a date' })
+  @IsOptional()
+  specificDate?: Date;
+
+  @ApiProperty({
+    example: [{ startTime: '11:45', endTime: '14:00' }],
+    description: 'List of time intervals for the day',
+    type: [IntervalDto],
+  })
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => IntervalDto)
+  @IsNotEmpty({ message: 'Intervals are required' })
+  intervals: IntervalDto[];
+}
+
+export class CreateMentorAvailabilityDto {
+  @ApiProperty({
+    example: 'Work time',
+    description: 'Title for this availability',
+  })
+  @IsString()
+  @IsNotEmpty({ message: 'Title is required' })
+  title: string;
 
   @ApiProperty({
     example: '2025-04-27',
@@ -51,8 +93,9 @@ export class CreateMentorAvailabilityDto {
   @ApiProperty({
     example: '2025-10-27',
     description: 'Date this availability expires on',
+    required: false,
   })
-  @Transform(({ value }) => new Date(value))
+  @Transform(({ value }) => (value ? new Date(value) : undefined))
   @IsDate({ message: 'expireAt must be a date' })
   @IsOptional()
   expireAt?: Date;
@@ -91,25 +134,6 @@ export class CreateMentorAvailabilityDto {
   breakMinutes?: number;
 
   @ApiProperty({
-    example: '2025-04-27T09:00:00Z',
-    description: 'Start time of availability (time part only)',
-  })
-  @Transform(({ value }) => new Date(value))
-  @IsDate({ message: 'startTime must be a date' })
-  @IsNotEmpty({ message: 'startTime is required' })
-  startTime: Date;
-
-  @ApiProperty({
-    example: '2025-04-27T17:00:00Z',
-    description: 'End time of availability (time part only)',
-  })
-  @Transform(({ value }) => new Date(value))
-  @IsDate({ message: 'endTime must be a date' })
-  @IsNotEmpty({ message: 'endTime is required' })
-  @IsAfterDate('startTime', { message: 'endTime must be after startTime' })
-  endTime: Date;
-
-  @ApiProperty({
     example: true,
     description: 'Whether this availability is recurring',
   })
@@ -118,13 +142,18 @@ export class CreateMentorAvailabilityDto {
   isRecurring: boolean;
 
   @ApiProperty({
-    example: '2025-04-27',
-    description: 'Specific date for non-recurring availability',
-    required: false,
+    example: [
+      {
+        dayOfWeek: 'SATURDAY',
+        intervals: [{ startTime: '11:45', endTime: '14:00' }],
+      },
+    ],
+    description: 'List of days with their time intervals',
+    type: [DayDto],
   })
-  @Transform(({ value }) => new Date(value))
-  @IsDate({ message: 'specificDate must be a date' })
-  @IsOptional()
-  @IsSpecificDateRequired('isRecurring')
-  specificDate?: Date;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => DayDto)
+  @IsNotEmpty({ message: 'Days are required' })
+  days: DayDto[];
 }

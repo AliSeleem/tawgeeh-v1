@@ -54,6 +54,8 @@ export class MentorAvailabilityController {
   }
 
   @Get('/')
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get mentor availabilities',
     description: 'Retrieve all availabilities for the mentor profile',
@@ -63,6 +65,8 @@ export class MentorAvailabilityController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get mentor availability by ID',
     description: 'Retrieve a specific availability from the mentor profile',

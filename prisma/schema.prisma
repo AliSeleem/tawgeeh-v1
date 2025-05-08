@@ -133,31 +133,52 @@ model Question {
 }
 
 model MentorAvailability {
-  id                Int       @id @default(autoincrement())
+  id                Int                      @id @default(autoincrement())
   title             String
   mentorId          Int
-  dayOfWeek         DayOfWeek
-  availableFrom     DateTime  @default(now())
-  expireAt          DateTime? // The expiration time
-  maxDaysBefore     Int // Maximum number days user can book befor
-  minHoursBefore    Int // Minimum number of hours user can book befor
-  maxBookingsPerDay Int // Maximum number of booking on one day
-  breakMinutes      Int? // Number of Break minutes between sessions
-  startTime         DateTime // Store as DateTime but use only time part
-  endTime           DateTime // Store as DateTime but use only time part
-  isRecurring       Boolean   @default(true)
-  specificDate      DateTime? // For non-recurring availability
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  mentor          User              @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-  MentorService   MentorService?    @relation(fields: [mentorServiceId], references: [id])
-  mentorServiceId Int?
+  availableFrom     DateTime                @default(now())
+  expireAt          DateTime?               // The expiration time
+  maxDaysBefore     Int                     // Maximum number of days user can book before
+  minHoursBefore    Int                     // Minimum number of hours user can book before
+  maxBookingsPerDay Int                     // Maximum number of bookings per day
+  breakMinutes      Int?                    // Number of break minutes between sessions
+  isRecurring       Boolean                 @default(true)
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  mentor            User                    @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  MentorService     MentorService?          @relation(fields: [mentorServiceId], references: [id])
+  mentorServiceId   Int?
+  days              MentorAvailabilityDay[] // Relation to days
 
   @@index([mentorId])
+  @@index([isRecurring])
+}
+
+model MentorAvailabilityDay {
+  id                Int                      @id @default(autoincrement())
+  mentorAvailabilityId Int
+  dayOfWeek         DayOfWeek?              // For recurring availability (e.g., Saturday)
+  specificDate      DateTime?               // For non-recurring availability
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  mentorAvailability MentorAvailability     @relation(fields: [mentorAvailabilityId], references: [id], onDelete: Cascade)
+  intervals         MentorAvailabilityInterval[] // Relation to intervals
+
+  @@index([mentorAvailabilityId])
   @@index([dayOfWeek])
   @@index([specificDate])
-  @@index([isRecurring])
+}
+
+model MentorAvailabilityInterval {
+  id                Int                      @id @default(autoincrement())
+  mentorAvailabilityDayId Int
+  startTime         String                  // Time string, e.g., '11:45'
+  endTime           String                  // Time string, e.g., '14:00'
+  createdAt         DateTime                @default(now())
+  updatedAt         DateTime                @updatedAt
+  mentorAvailabilityDay MentorAvailabilityDay @relation(fields: [mentorAvailabilityDayId], references: [id], onDelete: Cascade)
+
+  @@index([mentorAvailabilityDayId])
 }
 
 model MentorRequest {

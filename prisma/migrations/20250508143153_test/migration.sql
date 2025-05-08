@@ -94,22 +94,42 @@ CREATE TABLE "MentorAvailability" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "mentorId" INTEGER NOT NULL,
-    "dayOfWeek" "DayOfWeek" NOT NULL,
     "availableFrom" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "expireAt" TIMESTAMP(3),
     "maxDaysBefore" INTEGER NOT NULL,
     "minHoursBefore" INTEGER NOT NULL,
     "maxBookingsPerDay" INTEGER NOT NULL,
     "breakMinutes" INTEGER,
-    "startTime" TIMESTAMP(3) NOT NULL,
-    "endTime" TIMESTAMP(3) NOT NULL,
     "isRecurring" BOOLEAN NOT NULL DEFAULT true,
-    "specificDate" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "mentorServiceId" INTEGER,
 
     CONSTRAINT "MentorAvailability_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MentorAvailabilityDay" (
+    "id" SERIAL NOT NULL,
+    "mentorAvailabilityId" INTEGER NOT NULL,
+    "dayOfWeek" "DayOfWeek",
+    "specificDate" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "MentorAvailabilityDay_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "MentorAvailabilityInterval" (
+    "id" SERIAL NOT NULL,
+    "mentorAvailabilityDayId" INTEGER NOT NULL,
+    "startTime" TEXT NOT NULL,
+    "endTime" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "MentorAvailabilityInterval_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -313,13 +333,19 @@ CREATE INDEX "Question_serviceId_idx" ON "Question"("serviceId");
 CREATE INDEX "MentorAvailability_mentorId_idx" ON "MentorAvailability"("mentorId");
 
 -- CreateIndex
-CREATE INDEX "MentorAvailability_dayOfWeek_idx" ON "MentorAvailability"("dayOfWeek");
-
--- CreateIndex
-CREATE INDEX "MentorAvailability_specificDate_idx" ON "MentorAvailability"("specificDate");
-
--- CreateIndex
 CREATE INDEX "MentorAvailability_isRecurring_idx" ON "MentorAvailability"("isRecurring");
+
+-- CreateIndex
+CREATE INDEX "MentorAvailabilityDay_mentorAvailabilityId_idx" ON "MentorAvailabilityDay"("mentorAvailabilityId");
+
+-- CreateIndex
+CREATE INDEX "MentorAvailabilityDay_dayOfWeek_idx" ON "MentorAvailabilityDay"("dayOfWeek");
+
+-- CreateIndex
+CREATE INDEX "MentorAvailabilityDay_specificDate_idx" ON "MentorAvailabilityDay"("specificDate");
+
+-- CreateIndex
+CREATE INDEX "MentorAvailabilityInterval_mentorAvailabilityDayId_idx" ON "MentorAvailabilityInterval"("mentorAvailabilityDayId");
 
 -- CreateIndex
 CREATE INDEX "Experience_userId_idx" ON "Experience"("userId");
@@ -395,6 +421,12 @@ ALTER TABLE "MentorAvailability" ADD CONSTRAINT "MentorAvailability_mentorId_fke
 
 -- AddForeignKey
 ALTER TABLE "MentorAvailability" ADD CONSTRAINT "MentorAvailability_mentorServiceId_fkey" FOREIGN KEY ("mentorServiceId") REFERENCES "MentorService"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MentorAvailabilityDay" ADD CONSTRAINT "MentorAvailabilityDay_mentorAvailabilityId_fkey" FOREIGN KEY ("mentorAvailabilityId") REFERENCES "MentorAvailability"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "MentorAvailabilityInterval" ADD CONSTRAINT "MentorAvailabilityInterval_mentorAvailabilityDayId_fkey" FOREIGN KEY ("mentorAvailabilityDayId") REFERENCES "MentorAvailabilityDay"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "MentorRequest" ADD CONSTRAINT "MentorRequest_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
