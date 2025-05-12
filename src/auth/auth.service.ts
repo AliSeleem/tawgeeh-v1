@@ -11,7 +11,10 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { ExperienceLevel, Gender, SignupMethod, User } from '@prisma/client';
 import { NotificationService } from 'src/notification/notification.service';
-import { EmailType } from 'src/notification/enums/notification-type.enum';
+import {
+  EmailType,
+  NotificationType,
+} from 'src/notification/enums/notification-type.enum';
 import { CompleteRegistrationDto } from './dto/complete-registration.dto';
 
 @Injectable()
@@ -140,9 +143,10 @@ export class AuthService {
 
     // Send verification email
     await this.notificationService.sendNotification(
-      EmailType.EMAIL_VERIFICATION,
+      NotificationType.EMAIL,
       user.email,
       { name: user.name, verificationCode },
+      EmailType.EMAIL_VERIFICATION,
     );
 
     return verificationCode;
@@ -201,9 +205,10 @@ export class AuthService {
 
       // Send reset code via notification service
       await this.notificationService.sendNotification(
-        EmailType.PASSWORD_RESET,
+        NotificationType.EMAIL,
         user.email,
         { name: user.name, resetCode },
+        EmailType.PASSWORD_RESET,
       );
 
       // Generate and return a token (optional)
