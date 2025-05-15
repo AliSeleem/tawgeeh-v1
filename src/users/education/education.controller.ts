@@ -41,7 +41,7 @@ export class EducationController {
     return this.educationService.addEdu(edu, req.user.id);
   }
 
-  @Get('userId')
+  @Get(':userId')
   @ApiOperation({
     summary: "Get user's education",
     description: 'Get all education for the user',

@@ -56,8 +56,8 @@ export class MentorServiceController {
     summary: 'Get one mentor service',
     description: 'Get one mentor service',
   })
-  findOne(@Param('id') id: string, @Param('userId') userId: number) {
-    return this.mentorServiceService.findOne(userId, +id);
+  findOne(@Param('id') id: number, @Param('userId') userId: number) {
+    return this.mentorServiceService.findOne(userId, id);
   }
 
   @Patch(':id')
@@ -73,12 +73,12 @@ export class MentorServiceController {
   })
   update(
     @Req() req: any,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateMentorServiceDto: UpdateMentorServiceDto,
   ) {
     return this.mentorServiceService.update(
       req.user.id,
-      +id,
+      id,
       updateMentorServiceDto,
     );
   }
