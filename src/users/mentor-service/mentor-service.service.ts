@@ -88,7 +88,7 @@ export class MentorServiceService {
   async findAll(mentorId: number): Promise<ApiResponse<MentorService[]>> {
     // Check if mentor exists
     const mentor = await this.prisma.user.findUnique({
-      where: { id: mentorId, isMentor: true },
+      where: { id: mentorId, role: Role.MENTOR },
     });
     if (!mentor) {
       throw new NotFoundException('Mentor not found');
