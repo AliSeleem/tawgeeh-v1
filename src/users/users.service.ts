@@ -41,12 +41,70 @@ export class UsersService {
     };
   }
 
-  async getAllUsers(query: { email?: string }): Promise<ApiResponse<any>> {
-    let users = await this.prisma.user.findMany();
+  async getAllUsers(query: {
+    email?: string;
+    q?: string;
+    specialization?: string;
+  }): Promise<ApiResponse<any>> {
+    // Build the Prisma where clause based on the query
+    const where: any = {};
 
     if (query.email) {
-      users = users.filter((user) => user.email === query.email);
+      where.email = {
+        equals: query.email,
+        mode: 'insensitive', // Case-insensitive email search
+      };
+    } else if (query.q) {
+      const searchTerm = query.q.trim();
+      if (searchTerm) {
+        where.OR = [
+          {
+            name: {
+              contains: searchTerm,
+              mode: 'insensitive', // Case-insensitive name search
+            },
+          },
+          {
+            experiences: {
+              some: {
+                OR: [
+                  {
+                    company: {
+                      contains: searchTerm,
+                      mode: 'insensitive',
+                    },
+                  },
+                  {
+                    title: {
+                      contains: searchTerm,
+                      mode: 'insensitive',
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ];
+      }
+    } else if (query.specialization?.trim()) {
+      where.specialization = {
+        contains: query.specialization.trim(),
+        mode: 'insensitive',
+      };
     }
+
+    // Fetch users with the filtered conditions
+    const users = await this.prisma.user.findMany({
+      where,
+      include: {
+        experiences: {
+          select: {
+            company: true,
+            title: true,
+          },
+        },
+      },
+    });
 
     return {
       success: true,

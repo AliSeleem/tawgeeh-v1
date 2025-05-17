@@ -61,8 +61,22 @@ export class UsersController {
     example: 'user@example.com',
     description: 'Filter users by email address',
   })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    example: 'John Doe',
+    description: 'Search users by name or company or role in this company',
+  })
+  @ApiQuery({
+    name: 'specialization',
+    required: false,
+    type: String,
+    example: 'Developer',
+    description: 'Filter users by specialization',
+  })
   async getAllUsers(
-    @Query() query: { email?: string },
+    @Query() query: { email?: string; q?: string; specialization?: string },
   ): Promise<ApiResponse<any>> {
     return this.usersService.getAllUsers(query);
   }
