@@ -507,38 +507,30 @@ export class SessionsService {
     if (!user) {
       throw new NotFoundException(`User with ID ${userId} not found.`);
     }
-    try {
-      // Get all sessions for the user
-      const sessions = await this.prisma.session.findMany({
-        where: {
-          OR: [{ menteeId: userId }, { mentorId: userId }],
-        },
-        include: {
-          mentee: { select: { id: true, name: true, email: true } },
-          mentor: { select: { id: true, name: true, email: true } },
-          answers: true,
-          service: {
-            include: {
-              questions: true,
-            },
+
+    // Get all sessions for the user
+    const sessions = await this.prisma.session.findMany({
+      where: {
+        OR: [{ menteeId: userId }, { mentorId: userId }],
+      },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        answers: true,
+        service: {
+          include: {
+            questions: true,
           },
         },
-        orderBy: { scheduledAt: 'desc' },
-      });
+      },
+      orderBy: { scheduledAt: 'desc' },
+    });
 
-      if (!sessions.length) {
-        throw new NotFoundException('No sessions found for this user');
-      }
-
-      return {
-        success: true,
-        message: "User's sessions retrieved successfully.",
-        data: sessions,
-      };
-    } catch (error) {
-      console.error(`❌ Error fetching sessions for user ${userId}:`, error);
-      throw new InternalServerErrorException('Could not retrieve sessions');
-    }
+    return {
+      success: true,
+      message: "User's sessions retrieved successfully.",
+      data: sessions,
+    };
   }
 
   // Get a specific session
