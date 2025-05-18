@@ -3,6 +3,7 @@ import {
   NotFoundException,
   ForbiddenException,
   InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
@@ -123,6 +124,7 @@ export class SessionsService {
     if (!mentee) {
       throw new NotFoundException(`User with ID ${menteeId} not found.`);
     }
+
     // Check if mentor exists
     const mentor = await this.prisma.user.findUnique({
       where: { id: dto.mentorId },
@@ -130,15 +132,157 @@ export class SessionsService {
     if (!mentor) {
       throw new NotFoundException(`Mentor with ID ${dto.mentorId} not found.`);
     }
+
     // Check if service exists
     const service = await this.prisma.mentorService.findUnique({
       where: { id: dto.serviceId },
+      include: {
+        dates: {
+          include: {
+            days: {
+              include: {
+                intervals: {
+                  select: {
+                    startTime: true,
+                    endTime: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
     if (!service) {
       throw new NotFoundException(
         `Service with ID ${dto.serviceId} not found.`,
       );
     }
+
+    // Check if the service is available for the selected date
+    const scheduledDate = new Date(dto.scheduledAt);
+    const dayOfWeek = scheduledDate
+      .toLocaleString('en-us', { weekday: 'long' })
+      .toUpperCase();
+
+    const availability = service.dates.find((date) => {
+      const hasMatchingDay = date.days.some(
+        (day) =>
+          (date.isRecurring && day.dayOfWeek === dayOfWeek) ||
+          (!date.isRecurring &&
+            day.specificDate?.toDateString() === scheduledDate.toDateString()),
+      );
+
+      // Check if date is within availability period
+      const now = new Date();
+      const minBookingTime = new Date(
+        now.getTime() + date.minHoursBefore * 60 * 60 * 1000,
+      );
+      const maxBookingTime = date.maxDaysBefore
+        ? new Date(now.getTime() + date.maxDaysBefore * 24 * 60 * 60 * 1000)
+        : null;
+
+      return (
+        hasMatchingDay &&
+        scheduledDate >= minBookingTime &&
+        (!maxBookingTime || scheduledDate <= maxBookingTime) &&
+        (!date.expireAt || scheduledDate <= date.expireAt)
+      );
+    });
+
+    if (!availability) {
+      throw new BadRequestException(
+        'Service is not available for the selected date.',
+      );
+    }
+
+    // Check if no sessions is booked with mentor on this date
+    const existingSessions = await this.prisma.session.count({
+      where: {
+        mentorId: dto.mentorId,
+        scheduledAt: {
+          gte: new Date(scheduledDate.setHours(0, 0, 0, 0)),
+          lte: new Date(scheduledDate.setHours(23, 59, 59, 999)),
+        },
+        status: {
+          not: SessionStatus.CANCELLED,
+        },
+      },
+    });
+
+    if (existingSessions >= availability.maxBookingsPerDay) {
+      throw new BadRequestException('Maximum bookings reached for this day.');
+    }
+
+    // Check if the session requested is accepted in the time constraints
+    const matchingDay = availability.days.find(
+      (day) =>
+        (availability.isRecurring && day.dayOfWeek === dayOfWeek) ||
+        (!availability.isRecurring &&
+          day.specificDate?.toDateString() === scheduledDate.toDateString()),
+    );
+
+    if (!matchingDay) {
+      throw new BadRequestException(
+        'No availability defined for the selected day.',
+      );
+    }
+
+    const sessionStart = new Date(dto.scheduledAt);
+    const sessionEnd = new Date(
+      sessionStart.getTime() + dto.duration * 60 * 1000,
+    );
+
+    const isWithinInterval = matchingDay.intervals.some((interval) => {
+      const [startHours, startMinutes] = interval.startTime
+        .split(':')
+        .map(Number);
+      const [endHours, endMinutes] = interval.endTime.split(':').map(Number);
+
+      const intervalStart = new Date(scheduledDate);
+      intervalStart.setHours(startHours, startMinutes, 0, 0);
+
+      const intervalEnd = new Date(scheduledDate);
+      intervalEnd.setHours(endHours, endMinutes, 0, 0);
+
+      return (
+        sessionStart >= intervalStart &&
+        sessionEnd <= intervalEnd &&
+        dto.duration <= service.duration
+      );
+    });
+
+    if (!isWithinInterval) {
+      throw new BadRequestException(
+        'Requested session time is outside available intervals or duration constraints.',
+      );
+    }
+
+    // Check for overlapping sessions
+    const overlappingSessions = await this.prisma.session.findMany({
+      where: {
+        mentorId: dto.mentorId,
+        status: {
+          not: SessionStatus.CANCELLED,
+        },
+        scheduledAt: {
+          gte: new Date(
+            sessionStart.getTime() -
+              (availability.breakMinutes || 0) * 60 * 1000,
+          ),
+          lte: new Date(
+            sessionEnd.getTime() + (availability.breakMinutes || 0) * 60 * 1000,
+          ),
+        },
+      },
+    });
+
+    if (overlappingSessions.length > 0) {
+      throw new BadRequestException(
+        'Requested session time conflicts with existing sessions.',
+      );
+    }
+
     // Create the session
     const session = await this.prisma.session.create({
       data: {
@@ -153,7 +297,7 @@ export class SessionsService {
       include: { mentee: true, mentor: true, service: true },
     });
 
-    // add answers
+    // Add answers
     if (dto.answers && dto.answers.length > 0) {
       await this.prisma.answer.createMany({
         data: dto.answers.map((answer) => ({
