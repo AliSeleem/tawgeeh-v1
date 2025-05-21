@@ -140,7 +140,7 @@ export class UsersController {
     }
     return this.usersService.updateProfileImg(
       +id,
-      `http://localhost:3000/uploads/${image_url.filename}`,
+      `https://tawgeeh-v1-production.up.railway.app/uploads/${image_url.filename}`,
     );
   }
 

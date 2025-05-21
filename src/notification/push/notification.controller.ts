@@ -9,16 +9,17 @@ export class NotificationController {
   constructor(private readonly pushService: PushService) {}
 
   @Sse('stream')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   streamNotifications(@Query('userId') userId: number): Observable<any> {
+    console.log('streamNotifications called');
     if (!userId) {
       throw new Error('userId is required');
     }
+    console.log('userId', userId);
 
     // Get the user's notification channel
     const userSubject = this.pushService.getSubject(userId);
-
     // Send any missed notifications
     this.pushService.sendMissedNotifications(userId).catch((err) => {
       console.error('Error sending missed notifications:', err);
