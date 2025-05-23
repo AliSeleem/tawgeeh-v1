@@ -1,0 +1,364 @@
+.Booking-container {
+  position: relative;
+  width: 100%;
+  max-width: 1740px;
+  margin: 0 auto;
+  overflow: hidden;
+  padding-bottom: 40px;
+}
+/* Coach Profile */
+.coach-profile {
+  display: flex;
+  padding: 30px 25px;
+  align-items: center;
+}
+
+.coach-info {
+  text-align: left;
+}
+
+.coach-info h2 {
+  font-size: 1.8rem;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.coach-info p {
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+.coach-image {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.coach-image img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  padding: 2px;
+  background-color: white;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.coach-image div {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.session-details {
+  position: relative;
+  right: 48px;
+  width: 24%;
+}
+
+.session-details h2 {
+  font-size: 1.7rem;
+  color: var(--text-color);
+  margin-bottom: 12px;
+}
+
+/* Session Info */
+.session-info {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-light);
+  background-color: var(--background-light);
+  margin-top: 12px;
+}
+
+.session-info div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.session-info div i {
+  color: var(--primary-color);
+}
+
+/* Date Selection */
+.date-selection {
+  padding: 25px 12px 25px 25px;
+  display: flex;
+  /* flex-direction: row-reverse; */
+  justify-content: space-between;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.date-title {
+  margin-bottom: 15px;
+  text-align: right;
+  font-size: 1.2rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.timezone {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  text-align: right;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.timezone i {
+  color: var(--primary-color);
+}
+
+/* Calendar */
+.calendar-container {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 30px;
+  background-color: white;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.weekday-column {
+  flex: 1;
+  padding: 5px;
+  text-align: center;
+  /* border-right: 1px solid var(--border-color); */
+  display: flex;
+  flex-direction: column;
+}
+
+.weekday-column:last-child {
+  border-right: none;
+}
+
+.day-header {
+  padding: 12px 5px;
+  text-align: center;
+  font-weight: bold;
+  background-color: var(--background-light);
+  /* border-bottom: 1px solid var(--border-color); */
+  color: var(--text-color);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  justify-content: center;
+}
+
+.day-header span:first-child {
+  font-size: 0.7rem;
+  color: var(--text-light);
+}
+
+.day-header span:last-child {
+  font-size: 1.1rem;
+}
+
+.time-slots {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 5px;
+  flex-grow: 1;
+}
+
+.time-slot {
+  padding: 4px 8px;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.time-slot.available {
+  background-color: white;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.time-slot.available:hover {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 3px 8px rgba(74, 38, 253, 0.2);
+}
+
+.time-slot.unavailable {
+  /* color: #ccc; */
+  border-color: #eee;
+  cursor: not-allowed;
+  /* background-color: #fafafa; */
+}
+
+.day-calendar {
+  display: flex;
+  margin-bottom: 30px;
+  position: relative;
+  width: 73%;
+}
+
+.calendar-arrows {
+  position: absolute;
+  top: 1%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.calendar-arrows .arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  /* background-color: white; */
+  /* border-radius: 50%; */
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15); */
+  cursor: pointer;
+  pointer-events: auto;
+  transition: var(--transition);
+}
+
+.calendar-arrows .arrow:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.calendar-columns {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.calendar-columns::-webkit-scrollbar {
+  display: none;
+}
+
+.month-calendar {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  background-color: white;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+  width: 350px;
+  height: 50vh;
+}
+
+.month-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: var(--background-light);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.month-header .arrow {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.month-header .arrow:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.month-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 10px;
+}
+
+.day-cell {
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3px auto;
+  transition: var(--transition);
+}
+
+.day-cell.header {
+  cursor: default;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.day-cell:not(.header):hover {
+  background-color: rgba(74, 38, 253, 0.1);
+}
+
+.day-cell.selected {
+  background-color: var(--accent-color);
+  border: 1px solid var(--text-color);
+  font-weight: bold;
+}
+
+.day-cell.today {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: bold;
+}
+
+.day-cell.other-month {
+  color: #ccc;
+}
+
+@media (max-width: 768px) {
+  .nav-tabs {
+    gap: 15px;
+  }
+
+  .nav-tabs a {
+    font-size: 0.9rem;
+  }
+
+  .coach-profile {
+    flex-direction: column-reverse;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .coach-info {
+    text-align: center;
+  }
+
+  .session-info {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .calendar-arrows .arrow {
+    width: 32px;
+    height: 32px;
+  }
+}

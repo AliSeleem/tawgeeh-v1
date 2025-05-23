@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جلسة توجيه مع نهال سراج</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background-color: #f9fafb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 1rem;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 42rem;
+            width: 100%;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border-right: 4px solid #facc15;
+        }
+        
+        .content {
+            padding: 1.5rem;
+        }
+        
+        .details-toggle {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+        
+        .details-toggle span {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #374151;
+            margin-left: 0.5rem;
+        }
+        
+        .details-toggle .arrow {
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: transform 0.2s;
+        }
+        
+        .details-toggle.open .arrow {
+            transform: rotate(180deg);
+        }
+        
+        .session-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .date-time {
+            display: flex;
+            justify-content: flex-start;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .date-time-item {
+            display: flex;
+            align-items: center;
+        }
+        
+        .date-time-item span {
+            margin-right: 0.25rem;
+        }
+        
+        .date-time-item .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .coach-info {
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: right;
+        }
+        
+        .coach-profile {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .coach-details {
+            text-align: right;
+        }
+        
+        .coach-name {
+            font-weight: bold;
+            font-size: 1.125rem;
+        }
+        
+        .coach-title {
+            color: #6b7280;
+        }
+        
+        .coach-avatar {
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e5e7eb;
+            order: -1;
+        }
+        
+        .session-name {
+            margin-bottom: 2rem;
+        }
+        
+        .session-type {
+            color: #6b7280;
+        }
+        
+        .trainee-notes {
+            margin-bottom: 2rem;
+        }
+        
+        .note-text {
+            color: #6b7280;
+            line-height: 1.625;
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: flex-start;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            background-color: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn:hover {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <div class="details-toggle">
+                <span>التفاصيل</span>
+                <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+            </div>
+            
+            <h1 class="session-title">جلسة توجيه مع نهال سراج</h1>
+            
+            <div class="date-time">
+                <div class="date-time-item">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span>السبت 10، يناير</span>
+                </div>
+                <div class="date-time-item">
+                    <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>3 مساءً - 3:30 مساءً</span>
+                </div>
+            </div>
+            
+            <div class="coach-info">
+                <h2 class="section-title">الموجه :</h2>
+                <div class="coach-profile">
+                    <div class="coach-details">
+                        <h3 class="coach-name">نهال سراج</h3>
+                        <p class="coach-title">Product Designer</p>
+                    </div>
+                    <img src="/lovable-uploads/bc58e5b2-fd93-4b8c-9767-1498c444b497.png" alt="نهال سراج" class="coach-avatar">
+                </div>
+            </div>
+            
+            <div class="session-name">
+                <h2 class="section-title">اسم الجلسة</h2>
+                <p class="session-type">Career Coaching</p>
+            </div>
+            
+            <div class="trainee-notes">
+                <h2 class="section-title">ملاحظات المتدرب :</h2>
+                <p class="note-text">
+                    ذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها
+                    التطبيق.ذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد
+                </p>
+            </div>
+            
+            <div class="actions">
+                <button class="btn">إرسال رسالة</button>
+                <button class="btn">تغيير الموعد</button>
+                <button class="btn">إلغاء الجلسة</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.querySelector('.details-toggle').addEventListener('click', function() {
+            this.classList.toggle('open');
+            // You could also implement toggling the visibility of details content here
+        });
+    </script>
+</body>
+</html>

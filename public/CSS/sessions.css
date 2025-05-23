@@ -1,0 +1,638 @@
+:root {
+  --background-color: #f2f2f2; /* General background color */
+  --border-color: #d2d2d2; /* Border color for inputs and elements */
+  --card-shadow: 0 16px 32px 0 rgba(88, 92, 95, 0.1); /* Shadow for cards */
+  --default-font-family: "Baloo Bhaijaan 2", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Ubuntu, "Helvetica Neue", Helvetica, Arial,
+    "PingFang SC", "Hiragino Sans GB", "Microsoft Yahei UI", "Microsoft Yahei",
+    "Source Han Sans CN", sans-serif; /* Primary font stack */
+  --light-text: #8e8e8e; /* Light text color for secondary content */
+  --lighter-text: #bbbbbb; /* Even lighter text for subtle elements */
+  --main-color: #101828; /* Primary text color for headings and content */
+  --primary-color: #f82548; /* Brand primary color (red) */
+  --second-color: #a4a4a4; /* Secondary text color for placeholders */
+  --secondary-color: #0000b8; /* Brand secondary color (blue) */
+  --shadow-color: rgba(0, 0, 0, 0.12); /* General shadow color */
+  --text-color: #333333; /* Default text color */
+  --white: #ffffff; /* White color for backgrounds and text */
+  --Colors-Neutral-200: #e8e8e8; /* Neutral light gray */
+  --Colors-Neutral-300: #d2d2d2; /* Neutral medium gray */
+  --Colors-Neutral-400: #bbb; /* Neutral darker gray */
+  --Colors-Neutral-500: #a4a4a4; /* Neutral darkest gray */
+}
+
+/* Reset default browser styles for consistent rendering */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base body styles */
+body {
+  font-family: var(--default-font-family);
+  height: 1000px; /* Fixed height for scrolling */
+  margin: 32px 62px; /* Margin for top/bottom and left/right */
+}
+
+/* ==========================================================================
+   Header and Navigation
+   ========================================================================== */
+
+/* Navigation bar styling */
+nav {
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--Colors-Neutral-200);
+  border-radius: 16px;
+  box-shadow: 0px 2px 15px 0px rgba(0, 0, 0, 0.12);
+  display: flex;
+  direction: rtl; /* Right-to-left layout for Arabic support */
+  justify-content: space-between;
+  margin-bottom: 19px;
+  padding: 8px 24px;
+}
+
+/* Logo styling */
+.logo img {
+  height: 36px;
+  object-fit: contain;
+  width: 146px;
+}
+
+/* Navigation tabs (middle section) */
+.middleTabs {
+  align-items: center;
+  display: flex;
+  gap: 24px;
+}
+
+.middleTabs a {
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 34px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.middleTabs a:hover:not(.active) {
+  color: var(--primary-color); /* Highlight on hover */
+}
+
+.middleTabs a.active {
+  border-bottom: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Left section (user profile and auth buttons) */
+.left_Sec {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse; /* RTL alignment */
+  gap: 12px;
+}
+
+/* User profile link */
+.titel {
+  align-items: center;
+  display: flex;
+  gap: 13px;
+  text-decoration: none;
+}
+
+.titel img {
+  border-radius: 50%;
+  height: 24px;
+  object-fit: cover;
+  width: 24px;
+}
+
+.titel p {
+  align-items: center;
+  color: var(--text-color);
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.titel p img {
+  height: 24px;
+  margin-left: 2px;
+  width: 24px;
+}
+
+/* Navigation buttons (notifications, messages) */
+.buttonsNav {
+  display: flex;
+  gap: 8px;
+}
+
+.buttonsNav .notBtn,
+.buttonsNav .messageBtn {
+  align-items: center;
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  padding: 8px;
+  transition: all 0.3s ease;
+}
+
+.buttonsNav .notBtn:hover,
+.buttonsNav .messageBtn:hover {
+  background: rgba(248, 37, 72, 0.05);
+  border-color: var(--primary-color);
+}
+
+.buttonsNav img {
+  height: 24px;
+  width: 24px;
+}
+
+/* Notification count badge */
+.notification-count {
+  align-items: center;
+  background-color: var(--primary-color);
+  border: 2px solid var(--white);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: var(--white);
+  display: flex;
+  font-size: 12px;
+  font-weight: 600;
+  height: 22px;
+  justify-content: center;
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  transition: transform 0.2s ease;
+  width: 22px;
+  z-index: 10;
+}
+
+.notBtn:hover .notification-count {
+  transform: scale(1.1); /* Slight zoom on hover */
+}
+
+/* Authentication buttons (signup/login) */
+.auth-group {
+  align-items: center;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 12px;
+}
+
+.signup-btn {
+  background: var(--primary-color);
+  border-radius: 6px;
+  color: var(--white);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  padding: 8px 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.signup-btn:hover {
+  background: #e01e3c; /* Darker red on hover */
+  box-shadow: 0 4px 8px rgba(248, 37, 72, 0.2);
+}
+
+.login-btn {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  padding: 8px 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: rgba(248, 37, 72, 0.05);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.logout-btn {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  padding: 8px 12px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(248, 37, 72, 0.05);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* ==========================================================================
+   Profile Dropdown
+   ========================================================================== */
+
+/* Profile section container */
+.auth-section {
+  direction: rtl;
+  position: relative;
+}
+
+/* Profile dropdown menu */
+.profile-dropdown {
+  background-color: var(--white);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: none; /* Hidden by default */
+  left: 0;
+  position: absolute;
+  right: 142px;
+  top: 134%;
+  width: 162px;
+  z-index: 1000;
+}
+
+.profile-dropdown.show {
+  display: block; /* Show when active */
+}
+
+.dropdown-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.dropdown-menu li {
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.dropdown-menu li:last-child {
+  border-bottom: none;
+}
+
+.dropdown-menu a {
+  align-items: center;
+  color: var(--text-color);
+  display: flex;
+  font-size: 14px;
+  gap: 10px;
+  padding: 15px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.dropdown-menu span {
+  color: var(--text-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dropdown-menu a:hover {
+  background-color: #f5f5f5;
+}
+
+.icon {
+  align-items: center;
+  display: inline-flex;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+}
+
+/* ==========================================================================
+   Sessions Page Styles
+   ========================================================================== */
+
+.main-container {
+  max-width: 1300px;
+  margin-top: 20px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-align: right;
+  color: #222;
+}
+
+.page-description {
+  color: #666;
+  margin-bottom: 25px;
+  text-align: right;
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.tab-menu {
+  display: flex;
+  justify-content: flex-start;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  cursor: pointer;
+  position: relative;
+  color: #777;
+  font-weight: 500;
+  font-size: 15px;
+  margin-left: 10px;
+}
+
+.tab.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  right: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary-color);
+}
+
+.tab-badge {
+  background-color: var(--primary-color);
+  color: var(--white);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+/* Session Cards */
+.session-card {
+  background-color: var(--white);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.session-card.expanded {
+  padding: 20px;
+}
+
+.session-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.session-card.expanded .session-details {
+  max-height: 500px;
+}
+
+.session-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.session-title {
+  font-weight: 600;
+  font-size: 16px;
+  text-align: right;
+  color: rgba(74, 74, 74, 0.8);
+}
+
+.session-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end; /* Align buttons to the right for RTL */
+}
+
+.btn {
+  background-color: var(--white);
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  color: #555;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+}
+
+.btn:hover {
+  background-color: #f9f9f9;
+}
+
+.btn_filled {
+  background: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: var(--white);
+}
+
+.btn_filled:hover {
+  background: #e01e3c;
+}
+
+.btn_outline {
+  background: var(--white);
+  border: 1.5px solid var(--Colors-Neutral-400);
+  color: var(--main-color);
+}
+
+.details-btn {
+  display: flex;
+  /* color: #777; */
+  cursor: pointer;
+  font-size: 14px;
+  align-items: center;
+}
+
+.arrow-icon {
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.MentorName {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.session-time {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 16px;
+  color: #555;
+  font-size: 14px;
+}
+
+.time-icon,
+.date-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mentor-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.mentor-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mentor-name {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.mentor-title {
+  color: #666;
+  font-size: 14px;
+}
+
+.session-type {
+  margin-bottom: 15px;
+}
+
+.type-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.type-value {
+  color: #666;
+}
+
+.session-notes {
+  margin-bottom: 15px;
+}
+
+.notes-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.notes-text {
+  color: #666;
+  line-height: 1.5;
+}
+
+.btn-primary {
+  color: var(--swal2-background);
+  background-color: var(--praimary-color);
+}
+
+.btnCancel {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  background-color: var(--white);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: #a4a4a4;
+  display: flex;
+  align-items: center;
+  border: none;
+}
+
+.material-icons {
+  font-size: 18px;
+  vertical-align: middle;
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #facc15;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 5px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+       Responsive Adjustments
+       ========================================================================== */
+
+@media (max-width: 1440px) {
+  .main-container {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    padding: 0 10px 40px;
+  }
+
+  .session-card {
+    padding: 12px 16px;
+  }
+
+  .session-actions {
+    gap: 8px;
+  }
+
+  .btn,
+  .btnCancel {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-description {
+    font-size: 14px;
+  }
+
+  .tab {
+    font-size: 14px;
+    padding: 8px 15px;
+  }
+}

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="../CSS/Settings.css" />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <div class="left_Sec">
+          <div class="titel">
+            <img id="image2" src="./images/freepik__adjust__7471.svg" alt="" />
+            <p class="mentor_name"></p>
+          </div>
+          <div class="buttonsNav">
+            <button class="notBtn">
+              <img src="./images/notification.svg" alt="" />
+            </button>
+            <button class="messageBtn">
+              <img src="./images/messages-2.svg" alt="" />
+            </button>
+          </div>
+        </div>
+        <div class="logo">
+          <img src="./images/logo_campus.svg" alt="" />
+        </div>
+      </nav>
+    </header>
+    <div class="main">
+      <main>
+        <h1 class="headinng">الإعدادات</h1>
+        <div class="GeneralSettings">
+          <h2>إعدادات الحساب العامة</h2>
+          <div class="GeneralSettings_content">
+            <div class="changePassWord GeneralSettings_contentFlex">
+              <h4>تغيير كلمة المرور</h4>
+              <button id="changePassWordBtn" class="changePassWordBtn">
+                تغيير<img src="./images/edit-2_white.svg" alt="" />
+              </button>
+            </div>
+            <div class="factor_authentication GeneralSettings_contentFlex">
+              <h4>تفعيل/إيقاف المصادقة الثنائية</h4>
+              <!-- From Uiverse.io by AbanoubMagdy1 -->
+              <label class="switch">
+                <input type="checkbox" class="checkbox" />
+                <div class="slider"></div>
+                <div class="slider-card">
+                  <div class="slider-card-face slider-card-front"></div>
+                  <div class="slider-card-face slider-card-back"></div>
+                </div>
+              </label>
+            </div>
+            <div class="delete_profile GeneralSettings_contentFlex">
+              <h4>حذف الحساب</h4>
+              <button class="deleteBtn">حذف</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="GeneralSettings">
+          <h2>إعدادات الحساب العامة</h2>
+          <div class="GeneralSettings_content">
+            <div class="factor_authentication GeneralSettings_contentFlex">
+              <h4>تفعيل/إيقاف الإشعارات داخل التطبيق</h4>
+              <!-- From Uiverse.io by AbanoubMagdy1 -->
+              <label class="switch">
+                <input type="checkbox" class="checkbox" />
+                <div class="slider"></div>
+                <div class="slider-card">
+                  <div class="slider-card-face slider-card-front"></div>
+                  <div class="slider-card-face slider-card-back"></div>
+                </div>
+              </label>
+            </div>
+            <div class="changePassWord GeneralSettings_contentFlex">
+              <h4>اختيار أنواع الإشعارات</h4>
+              <button id="typeNoteficationBtn" class="changePassWordBtn">
+                تحديد
+              </button>
+            </div>
+
+            <div class="factor_authentication GeneralSettings_contentFlex">
+              <h4>التحكم في إشعارات البريد الإلكتروني</h4>
+              <!-- From Uiverse.io by AbanoubMagdy1 -->
+              <label class="switch">
+                <input type="checkbox" class="checkbox" />
+                <div class="slider"></div>
+                <div class="slider-card">
+                  <div class="slider-card-face slider-card-front"></div>
+                  <div class="slider-card-face slider-card-back"></div>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+    <div class="overlay" id="changePassWord_screen">
+      <div class="changePassWord_screen">
+        <div class="text">
+          <h1>تعيين كلمة مرور جديدة</h1>
+          <p>يجب ان يكون الطول 8 احرف على الأقل</p>
+          <div class="or">
+            <span></span>
+            <p>أو</p>
+            <span></span>
+          </div>
+        </div>
+
+        <form
+          action="/change-password"
+          method="POST"
+          class="form_contaner form_contanerP"
+        >
+          <div class="form_group">
+            <label class="label" for="newPassword">كلمة المرور الحالية </label>
+            <div class="wrapper">
+              <input
+                class="input"
+                type="password"
+                name="newPassword"
+                id="newPassword"
+                placeholder="*********************"
+                oninput="checkInputDirection(this)"
+              />
+              <span id="newPasswordError" class="error"></span>
+            </div>
+          </div>
+          <div class="form_group">
+            <label class="label" for="newPassword">كلمة المرور الجديدة </label>
+            <div class="wrapper">
+              <input
+                class="input"
+                type="password"
+                name="newPassword"
+                id="newPassword"
+                placeholder="*********************"
+                oninput="checkInputDirection(this)"
+              />
+              <span id="newPasswordError" class="error"></span>
+            </div>
+          </div>
+          <div class="form_group">
+            <label class="label" for="confirmNewPassword"
+              >تأكيد كلمة المرور الجديدة
+            </label>
+            <div class="wrapper">
+              <input
+                class="input"
+                type="password"
+                name="confirmNewPassword"
+                id="confirmNewPassword"
+                placeholder="*********************"
+                oninput="checkInputDirection(this)"
+              />
+              <span id="confirmNewPasswordError" class="error"></span>
+            </div>
+          </div>
+          <div class="loginbtn_con">
+            <input
+              type="button"
+              class="loginbtn"
+              id="changePasswordBtn"
+              value="تغيير كلمة المرور"
+            />
+            <h4 id="forgtPasswordBtn">نسيت كلمة المرور ؟</h4>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="overlay" id="typeNotefication">
+      <div class="typeNotefication">
+        <h1>اختيار أنواع الإشعارات</h1>
+        <div
+          class="setions GeneralSettings_contentFlex GeneralSettings_contentFlex_N"
+        >
+          <h3>تنبيهات الجلسات</h3>
+          <input type="checkbox" class="checkbox" name="setions" id="setions" />
+        </div>
+        <div
+          class="messages GeneralSettings_contentFlex GeneralSettings_contentFlex_N"
+        >
+          <h3>الرسائل</h3>
+          <input type="checkbox" class="checkbox" name="setions" id="setions" />
+        </div>
+        <div
+          class="feedbacks GeneralSettings_contentFlex GeneralSettings_contentFlex_N"
+        >
+          <h3>المراجعات</h3>
+          <input type="checkbox" class="checkbox" name="setions" id="setions" />
+        </div>
+        <div class="mail GeneralSettings_contentFlex">
+          <h3>إشعارات البريد الإلكتروني</h3>
+          <input type="checkbox" class="checkbox" name="setions" id="setions" />
+        </div>
+      </div>
+    </div>
+    <script src="../JS/Settings.js"></script>
+  </body>
+</html>

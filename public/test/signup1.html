@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>انشاء حساب جديد</title>
+    <link rel="stylesheet" href="../CSS/login.css" />
+  </head>
+  <body>
+    <div class="main_contaner main_contanerS" id="signup1">
+      <div class="con">
+        <div class="con1 conformat conChecked"></div>
+        <div class="con2 conformat"></div>
+        <div class="con3 conformat"></div>
+      </div>
+
+      <h1>انشاء حساب جديد</h1>
+      <form id="signupForm1" class="form_contaner">
+        <div class="form_group">
+          <label class="label" for="">الإسم كاملا</label>
+          <input
+            class="input"
+            type="text"
+            name="fullName"
+            id="fullName"
+            placeholder="ادخل اسمك كاملا"
+            oninput="checkInputDirection(this)"
+          />
+          <span id="fullNameError" class="error"></span>
+        </div>
+        <div class="form_group">
+          <label class="label" for="signupEmail">البريد الإلكتروني</label>
+          <input
+            class="input"
+            type="email"
+            name="signupEmail"
+            id="signupEmail"
+            placeholder="Moatasmshabaan@gmail.com"
+            oninput="checkInputDirection(this)"
+          />
+          <span id="signupEmailError" class="error"></span>
+        </div>
+        <div class="form_group">
+          <label class="label" for="phone">رقم الهاتف </label>
+          <input
+            class="input"
+            type="text"
+            name="phone"
+            id="phone"
+            placeholder="010281317744"
+            oninput="checkInputDirection(this)"
+          />
+          <span id="phoneError" class="error"></span>
+        </div>
+        <div class="form_group">
+          <label class="label" for="signupPassword">كلمة المرور </label>
+          <input
+            class="input"
+            type="password"
+            name="signupPassword"
+            id="signupPassword"
+            placeholder="************************"
+            oninput="checkInputDirection(this)"
+          />
+          <span id="signupPasswordError" class="error"></span>
+        </div>
+        <div class="form_group">
+          <label class="label" for="confirmPassword">تأكيد كلمة المرور</label>
+          <input
+            class="input"
+            type="password"
+            name="confirmPassword"
+            id="confirmPassword"
+            placeholder="************************"
+            oninput="checkInputDirection(this)"
+          />
+          <span id="confirmPasswordError" class="error"></span>
+        </div>
+
+        <div class="group2 form_group">
+          <div class="check">
+            <label for="privacyCheckbox1">لقد قرأت وفهمت سياسة الخصوصية</label>
+            <input class="checkbox" type="checkbox" id="privacyCheckbox1" />
+            <span id="privacyError" class="error"></span>
+          </div>
+
+          <div class="or form_group">
+            <span></span>
+            <p>أو</p>
+            <span></span>
+          </div>
+          <div class="buttons_con form_group">
+            <button type="button" class="GoogleBtn">
+              <img src="./images/Google.svg" alt="" />
+            </button>
+            <button type="button" class="linkedinBtn" value="">
+              <img src="./images/linkedin.svg" alt="" />
+            </button>
+          </div>
+          <div class="loginbtn_con">
+            <input
+              type="button"
+              value="التالي"
+              id="signupBtn"
+              class="loginbtn"
+            />
+          </div>
+          <div class="signup_con form_group">
+            <h4 id="registerBtn">تسجيل الدخول</h4>
+            <p>هل لديك حساب بالفعل؟</p>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="./JS/APIs.js"></script>
+    <script src="./JS/validation.js"></script>
+    <script src="./JS/login.js"></script>
+  </body>
+</html>

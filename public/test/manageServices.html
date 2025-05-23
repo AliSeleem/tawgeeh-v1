@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Campus Profile</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      }
+
+      body {
+        background-color: #fcfcfc;
+        direction: rtl;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 15px;
+      }
+
+      /* Header styles */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #fff;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+      }
+
+      .user-info {
+        display: flex;
+        align-items: center;
+      }
+
+      .user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-left: 10px;
+      }
+
+      .user-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .dropdown-icon {
+        margin-right: 5px;
+        color: #777;
+      }
+
+      .user-name {
+        font-weight: 600;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 20px;
+      }
+
+      .action-icon {
+        font-size: 18px;
+        color: #777;
+        cursor: pointer;
+      }
+
+      .navigation {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+      }
+
+      .nav-item {
+        padding: 0 5px;
+        font-weight: 500;
+        color: #555;
+        position: relative;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .active {
+        color: #333;
+        font-weight: 600;
+      }
+
+      .nav-item.active::after {
+        content: "";
+        position: absolute;
+        bottom: -5px;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #ff385c;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo img {
+        height: 28px;
+      }
+
+      /* Banner styles */
+      .banner {
+        position: relative;
+        height: 240px;
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 50px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .banner-images {
+        display: flex;
+        height: 100%;
+      }
+
+      .banner-image {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .banner-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .banner-image:nth-child(1) img {
+        background-color: #1d2d50;
+      }
+
+      .banner-image:nth-child(2) img {
+        background-color: #133b5c;
+      }
+
+      .banner-image:nth-child(3) img {
+        background-color: #1e5f74;
+      }
+
+      .pencil-btn {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        width: 38px;
+        height: 38px;
+        background-color: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .pencil-icon {
+        color: #555;
+        font-size: 16px;
+      }
+
+      /* Profile styles */
+      .profile {
+        position: relative;
+      }
+
+      .profile-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 25px;
+      }
+
+      .profile-info {
+        text-align: right;
+      }
+
+      .profile-name {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .profile-title {
+        color: #777;
+        margin-bottom: 15px;
+        font-size: 15px;
+      }
+
+      .social-links {
+        display: flex;
+        gap: 10px;
+      }
+
+      .social-link {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 16px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+      }
+
+      .social-link:hover {
+        transform: translateY(-2px);
+      }
+
+      .instagram {
+        background: linear-gradient(
+          45deg,
+          #f09433,
+          #e6683c,
+          #dc2743,
+          #cc2366,
+          #bc1888
+        );
+      }
+
+      .dribbble {
+        background-color: #ea4c89;
+      }
+
+      .behance {
+        background-color: #1769ff;
+      }
+
+      .linkedin {
+        background-color: #0077b5;
+      }
+
+      .github {
+        background-color: #333;
+      }
+
+      .profile-avatar {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid #fff;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+        margin-top: -75px;
+        position: relative;
+        background-color: #f9f9f9;
+      }
+
+      .profile-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .edit-button {
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        padding: 8px 15px;
+        border-radius: 8px;
+        color: #555;
+        cursor: pointer;
+        margin-bottom: 25px;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .edit-button:hover {
+        background-color: #f9f9f9;
+      }
+
+      /* Tabs styles */
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #e0e0e0;
+        margin-bottom: 30px;
+      }
+
+      .tab {
+        padding: 12px 20px;
+        color: #777;
+        cursor: pointer;
+        position: relative;
+        font-weight: 500;
+        font-size: 15px;
+      }
+
+      .tab.active {
+        color: #ff385c;
+        font-weight: 600;
+      }
+
+      .tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #ff385c;
+      }
+
+      /* Services styles */
+      .services-heading {
+        font-size: 22px;
+        margin-bottom: 20px;
+        text-align: right;
+        color: #333;
+      }
+
+      .services-grid {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 20px;
+      }
+
+      .service-card {
+        background-color: #fff;
+        border-radius: 12px;
+        width: 25%;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        position: relative;
+        transition: transform 0.2s, box-shadow 0.2s;
+        height: 200px;
+      }
+
+      .service-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+      }
+
+      .service-card.add-new {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed #ddd;
+        background-color: #fcfcfc;
+        cursor: pointer;
+        box-shadow: none;
+        width: 25%;
+      }
+
+      .service-card.add-new:hover {
+        background-color: #f5f5f5;
+      }
+
+      .add-icon {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        background-color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .add-icon i {
+        font-size: 20px;
+        color: #777;
+      }
+
+      .service-content {
+        padding: 18px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .service-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .service-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .service-icon {
+        width: 32px;
+        height: 32px;
+        background-color: #f5f5f5;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+      }
+
+      .service-details {
+        display: flex;
+        justify-content: flex-start;
+        gap: 5px;
+        margin-bottom: 15px;
+      }
+
+      .service-type {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .service-duration {
+        color: #777;
+        font-size: 14px;
+      }
+
+      .service-platform {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        color: #777;
+        font-size: 14px;
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+
+      .platform-icon {
+        margin-right: 8px;
+        width: 20px;
+        height: 20px;
+        background-color: #34a853;
+        border-radius: 4px;
+      }
+
+      .service-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: auto;
+        border-top: 1px solid #eee;
+        gap: 100px;
+        padding-top: 12px;
+      }
+
+      .action-button {
+        display: flex;
+        border: solid 2px #eee;
+        padding: 2px;
+        border-radius: 5px;
+        align-items: center;
+        color: #666;
+        font-size: 14px;
+        cursor: pointer;
+        transition: color 0.2s;
+        gap: 8px;
+      }
+
+      .action-button:hover {
+        color: #ff385c;
+      }
+
+      .action-icon {
+        margin-left: 5px;
+      }
+
+      .edit-dropdown {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 5;
+      }
+
+      .gear-icon {
+        width: 28px;
+        height: 28px;
+        background-color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+      }
+
+      .edit-actions {
+        position: absolute;
+        top: 35px;
+        left: 0;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15);
+        width: 120px;
+        overflow: hidden;
+      }
+
+      .edit-action {
+        padding: 10px 15px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s;
+      }
+
+      .edit-action:hover {
+        background-color: #f5f5f5;
+      }
+
+      .edit-icon {
+        margin-left: 10px;
+        color: #666;
+        width: 16px;
+      }
+
+      .delete-action {
+        color: #ff385c;
+      }
+
+      .delete-icon {
+        color: #ff385c;
+      }
+
+      /* Copy link button */
+      .copy-link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .copy-icon {
+        margin-left: 5px;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="user-info">
+          <div class="user-avatar">
+            <img src="/api/placeholder/36/36" alt="User Avatar" />
+          </div>
+          <div class="user-name">
+            معتصم شعبان <i class="fas fa-chevron-down dropdown-icon"></i>
+          </div>
+        </div>
+
+        <div class="header-actions">
+          <i class="fas fa-bell action-icon"></i>
+          <i class="fas fa-comment-alt action-icon"></i>
+        </div>
+
+        <div class="navigation">
+          <div class="nav-item">إنضم كموجه</div>
+          <div class="nav-item">الجلسات</div>
+          <div class="nav-item active">الموجهين</div>
+        </div>
+
+        <div class="logo">
+          <svg width="120" height="30" viewBox="0 0 120 30">
+            <circle cx="15" cy="15" r="8" fill="#FF385C" />
+            <circle cx="30" cy="15" r="8" fill="#4E67F3" />
+            <circle cx="22.5" cy="15" r="8" fill="#8F34FA" opacity="0.8" />
+            <text
+              x="45"
+              y="20"
+              font-family="Arial"
+              font-size="16"
+              font-weight="bold"
+              fill="#333"
+            >
+              campus
+            </text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Banner -->
+      <div class="banner">
+        <div class="banner-images">
+          <div class="banner-image">
+            <img src="/api/placeholder/400/240" alt="UI/UX Design" />
+          </div>
+          <div class="banner-image">
+            <img src="/api/placeholder/400/240" alt="Mobile Development" />
+          </div>
+          <div class="banner-image">
+            <img src="/api/placeholder/400/240" alt="Coding" />
+          </div>
+        </div>
+        <div class="pencil-btn">
+          <i class="fas fa-pencil-alt pencil-icon"></i>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="profile">
+        <div class="profile-header">
+          <div class="profile-info">
+            <h1 class="profile-name">معتصم شعبان EG</h1>
+            <p class="profile-title">Product Designer at Campus</p>
+            <div class="social-links">
+              <a href="#" class="social-link instagram">
+                <i class="fab fa-instagram"></i>
+              </a>
+              <a href="#" class="social-link dribbble">
+                <i class="fab fa-dribbble"></i>
+              </a>
+              <a href="#" class="social-link behance">
+                <i class="fab fa-behance"></i>
+              </a>
+              <a href="#" class="social-link linkedin">
+                <i class="fab fa-linkedin-in"></i>
+              </a>
+              <a href="#" class="social-link github">
+                <i class="fab fa-github"></i>
+              </a>
+            </div>
+          </div>
+
+          <div class="profile-avatar">
+            <img src="/api/placeholder/110/110" alt="Profile Avatar" />
+          </div>
+        </div>
+
+        <button class="edit-button">تعديل الحساب</button>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <div class="tab">نظرة عامة</div>
+          <div class="tab">التقييمات</div>
+          <div class="tab">الإنجازات</div>
+          <div class="tab active">إدارة الخدمات</div>
+        </div>
+
+        <div>
+          <!-- Services Section -->
+          <h2 class="services-heading">الخدمات</h2>
+
+          <div class="services-grid">
+            <!-- Add New Service Card -->
+            <div class="service-card add-new">
+              <div class="add-icon">
+                <i class="fas fa-plus"></i>
+              </div>
+            </div>
+
+            <!-- Service Card 1 -->
+            <div class="service-card">
+              <div class="service-content">
+                <div class="service-header">
+                  <div class="service-title">Flutter-Career Coaching</div>
+                  <div class="service-icon">
+                    <i class="fas fa-cog"></i>
+                  </div>
+                </div>
+
+                <div class="service-details">
+                  <div class="service-type">عامة</div>
+                  <div class="service-duration">30 minutes</div>
+                </div>
+
+                <div class="service-platform">
+                  <span class="question-icon"
+                    ><img src="../mentor-images/meet.svg" alt=""
+                  /></span>
+                  <span>Google Meet</span>
+                  <div class="platform-icon"></div>
+                </div>
+
+                <div class="service-actions">
+                  <div class="action-button copy-link">
+                    <span>نسخ الرابط</span>
+                    <i class="fas fa-link copy-icon"></i>
+                  </div>
+                  <div class="action-button">
+                    <span class="question-icon"
+                      ><img src="../mentor-images/uil_share.svg" alt=""
+                    /></span>
+                    <span>مشاركة</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit-dropdown">
+                <div class="gear-icon">
+                  <i
+                    class="fas fa-cog"
+                    style="color: #555; font-size: 14px"
+                  ></i>
+                </div>
+                <div class="edit-actions" style="display: block">
+                  <div class="edit-action">
+                    <i class="fas fa-pen edit-icon"></i>
+                    <span>تعديل</span>
+                  </div>
+                  <div class="edit-action delete-action">
+                    <i class="fas fa-trash-alt delete-icon"></i>
+                    <span>حذف</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Service Card 2 -->
+            <div class="service-card">
+              <div class="service-content">
+                <div class="service-header">
+                  <div class="service-title">Flutter-Career Coaching</div>
+                  <div class="service-icon">
+                    <i class="fas fa-cog"></i>
+                  </div>
+                </div>
+
+                <div class="service-details">
+                  <div class="service-type">عامة</div>
+                  <div class="service-duration">30 minutes</div>
+                </div>
+
+                <div class="service-platform">
+                  <span class="meet-icon"
+                    ><img src="../mentor-images/meet.svg" alt=""
+                  /></span>
+                  <span>Google Meet</span>
+                </div>
+
+                <div class="service-actions">
+                  <div class="action-button copy-link">
+                    <span class="question-icon"
+                      ><img src="../mentor-images/document-copy.svg" alt=""
+                    /></span>
+                    <span>نسخ الرابط</span>
+                  </div>
+                  <div class="action-button">
+                    <span class="question-icon"
+                      ><img src="../mentor-images/uil_share.svg" alt=""
+                    /></span>
+                    <span>مشاركة</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="edit-dropdown">
+                <div class="gear-icon">
+                  <i
+                    class="fas fa-cog"
+                    style="color: #555; font-size: 14px"
+                  ></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // This would handle showing/hiding the edit dropdown menu
+      document.addEventListener("DOMContentLoaded", function () {
+        const gearIcons = document.querySelectorAll(".gear-icon");
+        gearIcons.forEach((icon) => {
+          icon.addEventListener("click", function () {
+            const dropdown = this.parentElement.querySelector(".edit-actions");
+            if (dropdown) {
+              dropdown.style.display =
+                dropdown.style.display === "block" ? "none" : "block";
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

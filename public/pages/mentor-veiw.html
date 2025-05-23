@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ملف المرشد</title>
+    <link rel="stylesheet" href="../CSS/mentor-view.css" />
+    <link rel="stylesheet" href="../CSS/UserProfile.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      .overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+      .overlay.show {
+        display: block;
+      }
+      .mainContaner {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        max-width: 500px;
+        width: 90%;
+        position: relative;
+        z-index: 1000;
+      }
+      .popup-screen {
+        display: none;
+      }
+      .popup-screen[style*="block"] {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Notifications Container -->
+    <div class="notifications-container"></div>
+
+    <!-- Profile Edit Modal -->
+    <div class="overlay" id="editProfileInfo" aria-hidden="true">
+      <div class="mainContaner mainContaner_Info scrollableContent">
+        <div class="top_con">
+          <h3>تحديث تفاصيل ملفك الشخصي</h3>
+          <img
+            id="closeBtn1"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div class="infolist">
+          <p class="checked Info" id="BasicInfoTab">معلومات أساسية</p>
+          <p class="experience" id="ExperienceTab">الخبرات</p>
+          <p class="certificates" id="CertificatesTab">الشهادات</p>
+          <p class="educationE" id="EducationTab">التعليم</p>
+          <p class="ratings" id="RatingsTab">التقييمات</p>
+          <p class="achievements" id="AchievementsTab">الإنجازات</p>
+        </div>
+        
+        <form
+          class="form_contaner"
+          action=""
+          method="post"
+          id="professionalForm"
+        >
+          <h1>تحميل صورة الملف الشخصي</h1>
+          <div class="uplodimage">
+            <div class="image">
+              <img
+                id="profileImagePreview"
+                src="../mentor-images/personal_image.png"
+                alt="صورة الملف الشخصي"
+                style="width: 75px; height: 75px; border-radius: 50%"
+              />
+            </div>
+            <div class="text">
+              <input
+                type="file"
+                id="uploadImage"
+                accept="image/*"
+                style="display: none"
+              />
+              <label for="uploadImage" class="uploadLabel">تحميل الصورة</label>
+              <p>تأكد من أن حجم الملف أقل من 5 ميجابايت</p>
+            </div>
+          </div>
+          <div class="form_group">
+            <label class="label" for="mentor_name">اسمك كامل</label>
+            <input
+              class="input"
+              type="text"
+              name="mentor_name"
+              id="mentor_name"
+              placeholder="اكتب اسمك كامل"
+              required
+              oninput="common.checkInputDirection(this)"
+            />
+            <span id="mentor_nameError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label">الجنس</label>
+            <div class="select-wrapper">
+              <select name="gender" id="gender" required>
+                <option value="">اختر الجنس</option>
+                <option value="MALE">ذكر</option>
+                <option value="FEMALE">أنثى</option>
+                <option value="OTHER">غير محدد</option>
+              </select>
+              <img
+                src="../mentor-images/arrow-down.svg"
+                alt="سهم للأسفل"
+                class="select-icon arrowDown"
+              />
+            </div>
+            <span id="genderError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label">في أي بلد تعيش؟</label>
+            <div class="select-wrapper">
+              <select name="country" id="country" required>
+                <option value="">اختر البلد</option>
+                <option value="EG">مصر</option>
+                <option value="SA">المملكة العربية السعودية</option>
+                <option value="AE">الإمارات العربية المتحدة</option>
+              </select>
+              <img
+                src="../mentor-images/arrow-down.svg"
+                alt="سهم للأسفل"
+                class="select-icon arrowDown"
+              />
+            </div>
+            <span id="countryError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label">نبذة عني:</label>
+            <textarea
+              name="about_me"
+              id="about_me"
+              placeholder="نبذة عني (20 حرف على الأقل)"
+              required
+              minlength="20"
+              oninput="common.checkInputDirection(this)"
+            ></textarea>
+            <span id="about_meError" class="error"></span>
+          </div>
+        </form>
+
+        <form class="form_contaner" action="" method="post" id="socialForm">
+          <h2>الروابط الاجتماعية (مطلوبة)</h2>
+          <div class="form_group">
+            <label class="label" for="linkedin">رابط حساب LinkedIn</label>
+            <input
+              class="input"
+              type="url"
+              name="linkedin"
+              id="linkedin"
+              placeholder="https://linkedin.com/in/username"
+              required
+              pattern="https?://(www\.)?linkedin\.com/.+"
+              oninput="common.checkInputDirection(this)"
+            />
+            <span id="linkedinError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label" for="behance"
+              >رابط حساب Behance/Dribbble</label
+            >
+            <input
+              class="input"
+              type="url"
+              name="behance"
+              id="behance"
+              placeholder="https://behance.net/username"
+              required
+              pattern="https?://(www\.)?(behance\.net|dribbble\.com)/.+"
+              oninput="common.checkInputDirection(this)"
+            />
+            <span id="behanceError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label" for="github">رابط حساب GitHub</label>
+            <input
+              class="input"
+              type="url"
+              name="github"
+              id="github"
+              placeholder="https://github.com/username"
+              required
+              pattern="https?://(www\.)?github\.com/.+"
+              oninput="common.checkInputDirection(this)"
+            />
+            <span id="githubError" class="error"></span>
+          </div>
+          <div class="form_group">
+            <label class="label" for="instagram">رابط حساب Instagram</label>
+            <input
+              class="input"
+              type="url"
+              name="instagram"
+              id="instagram"
+              placeholder="https://instagram.com/username"
+              required
+              pattern="https?://(www\.)?instagram\.com/.+"
+              oninput="common.checkInputDirection(this)"
+            />
+            <span id="instagramError" class="error"></span>
+          </div>
+          <input class="updateBtn" type="submit" value="تحديث" />
+        </form>
+      </div>
+    </div>
+
+    <!-- Experience Edit Modal -->
+    <div class="overlay" id="editProfileEx_edit" aria-hidden="true">
+      <div class="mainContaner scrollableContent mainContaner_Info">
+        <div class="top_con">
+          <h3>تعديل الخبرة</h3>
+          <img
+            id="closeBtn3"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="experienceList"></div>
+        <button class="moreExBtn" id="moreExBtn_EX">
+          أضف خبرة <img src="../mentor-images/add-square.svg" alt="إضافة" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Experience Add/Edit Form -->
+    <div
+      class="experience-popup-container overlay"
+      id="editProfileEx_edit2"
+      aria-hidden="true"
+    >
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>تعديل الخبرة</h3>
+          <img
+            id="closeBtn4"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="experienceFormScreen" class="popup-screen">
+          <form class="form_contaner" id="experienceForm">
+            <div class="form_group">
+              <label class="label" for="title">المسمى الوظيفي</label>
+              <input
+                class="input"
+                type="text"
+                name="title"
+                id="title"
+                placeholder="اكتب المسمى الوظيفي"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="titleError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="company">اسم الشركة أو المؤسسة</label>
+              <input
+                class="input"
+                type="text"
+                name="company"
+                id="companyName"
+                placeholder="اكتب اسم الشركة"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="companyNameError" class="error"></span>
+            </div>
+            <div class="date_ConF">
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="expStartDate">تاريخ البدء</label>
+                  <input
+                    class="input date-start"
+                    type="text"
+                    name="expStartDate"
+                    id="expStartDate"
+                    placeholder="اختر التاريخ"
+                    required
+                    data-pair="expEndDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="expStartDate"
+                  />
+                  <span id="expStartDateError" class="error"></span>
+                </div>
+              </div>
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="expEndDate">تاريخ الانتهاء</label>
+                  <input
+                    class="input date-end"
+                    type="text"
+                    name="expEndDate"
+                    id="expEndDate"
+                    placeholder="اختر التاريخ"
+                    data-pair="expStartDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="expEndDate"
+                  />
+                  <span id="expEndDateError" class="error"></span>
+                </div>
+              </div>
+            </div>
+            <div class="check">
+              <label for="currentlyWorking">مازلت أعمل في الشركة</label>
+              <input
+                class="checkbox"
+                type="checkbox"
+                id="currentlyWorking"
+                name="currentlyWorking"
+              />
+              <span id="currentlyWorkingError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label">اكتب ملخصًا عن مساهمتك</label>
+              <textarea
+                name="expDescription"
+                id="expDescription"
+                placeholder="نبذة عن مساهمتك"
+                required
+                oninput="common.checkInputDirection(this)"
+              ></textarea>
+              <span id="expDescriptionError" class="error"></span>
+            </div>
+            <div class="buttons_con">
+              <input type="submit" class="updateBtn" value="حفظ" />
+              <input type="button" class="removeBtn updateBtn" value="إلغاء" />
+            </div>
+          </form>
+        </div>
+        <div id="experienceSuccess" class="popup-screen" style="display: none">
+          <p>تم حفظ الخبرة بنجاح!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate Add Modal -->
+    <div
+      class="certificate-popup-container overlay"
+      id="editProfileSp_add"
+      aria-hidden="true"
+    >
+      <div class="mainContaner scrollableContent mainContaner_Info">
+        <div class="top_con">
+          <h3>إضافة شهادة</h3>
+          <img
+            id="closeBtn5"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="certificateFormScreen" class="popup-screen">
+          <form
+            class="form_contaner"
+            action=""
+            method="post"
+            id="certificateForm"
+          >
+            <div class="form_group">
+              <label class="label" for="certificateName">اسم الشهادة</label>
+              <input
+                class="input"
+                type="text"
+                name="certificateName"
+                id="certificateName"
+                placeholder="أدخل اسم الشهادة"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="certificateNameError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="issuingAuthority"
+                >الجهة المانحة للشهادة</label
+              >
+              <input
+                class="input"
+                type="text"
+                name="issuingAuthority"
+                id="issuingAuthority"
+                placeholder="أدخل اسم الجهة المانحة"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="issuingAuthorityError" class="error"></span>
+            </div>
+            <div class="date_ConF">
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="certStartDate">تاريخ الإصدار</label>
+                  <input
+                    class="input date-start"
+                    type="text"
+                    name="certStartDate"
+                    id="certStartDate"
+                    placeholder="اختر التاريخ"
+                    required
+                    data-pair="certEndDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="certStartDate"
+                  />
+                  <span id="certStartDateError" class="error"></span>
+                </div>
+              </div>
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="certEndDate">تاريخ الانتهاء</label>
+                  <input
+                    class="input date-end"
+                    type="text"
+                    name="certEndDate"
+                    id="certEndDate"
+                    placeholder="اختر التاريخ"
+                    data-pair="certStartDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="certEndDate"
+                  />
+                  <span id="certEndDateError" class="error"></span>
+                </div>
+              </div>
+            </div>
+            <div class="form_group">
+              <label class="label" for="certificateNumber">رقم الشهادة </label>
+              <input
+                class="input"
+                type="text"
+                name="certificateNumber"
+                id="certificateNumber"
+                placeholder="https://example.com/certificate"
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="certificateNumberError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="certificateLink">رابط الشهادة</label>
+              <input
+                class="input"
+                type="url"
+                name="certificateLink"
+                id="certificateLink"
+                placeholder="https://example.com/certificate"
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="certificateLinkError" class="error"></span>
+            </div>
+            <div class="buttons_con">
+              <input type="submit" class="updateBtn" value="حفظ" />
+              <input type="button" class="removeBtn updateBtn" value="إلغاء" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Certificate Edit Modal -->
+    <div class="overlay" id="editProfileSp_edit" aria-hidden="true">
+      <div class="mainContaner scrollableContent">
+        <div class="top_con">
+          <h3>تعديل الشهادة</h3>
+          <img
+            id="closeBtn9"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="certificateList"></div>
+        <button class="moreExBtn" id="moreExBtn_SP">
+          أضف شهادة <img src="../mentor-images/add-square.svg" alt="إضافة" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Education Add Modal -->
+    <div
+      class="education-popup-container overlay"
+      id="editProfileEdu_add"
+      aria-hidden="true"
+    >
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>إضافة تعليم</h3>
+          <img
+            id="closeBtn6"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="educationFormScreen" class="popup-screen">
+          <form
+            class="form_contaner"
+            action=""
+            method="post"
+            id="educationForm"
+          >
+            <div class="form_group">
+              <label class="label" for="institution">جامعة، كلية، مدرسة</label>
+              <input
+                class="input"
+                type="text"
+                name="institution"
+                id="institution"
+                placeholder="اكتب اسم المؤسسة التعليمية"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="institutionError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="degree">الدرجة العلمية والتخصص</label>
+              <input
+                class="input"
+                type="text"
+                name="degree"
+                id="degree"
+                placeholder="اكتب الدرجة العلمية (مثل: بكالوريوس)"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="degreeError" class="error"></span>
+            </div>
+            <div class="date_ConF">
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="eduStartDate">تاريخ البدء</label>
+                  <input
+                    class="input date-start"
+                    type="text"
+                    name="eduStartDate"
+                    id="eduStartDate"
+                    placeholder="اختر التاريخ"
+                    required
+                    data-pair="eduEndDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="eduStartDate"
+                  />
+                  <span id="eduStartDateError" class="error"></span>
+                </div>
+              </div>
+              <div class="select-wrapper">
+                <div class="form_group form_groupD">
+                  <label class="label" for="eduEndDate">تاريخ الانتهاء</label>
+                  <input
+                    class="input date-end"
+                    type="text"
+                    name="eduEndDate"
+                    id="eduEndDate"
+                    placeholder="اختر التاريخ"
+                    data-pair="eduStartDate"
+                  />
+                  <img
+                    src="../mentor-images/calendar.svg"
+                    alt="تقويم"
+                    class="select-icon calendar"
+                    data-target="eduEndDate"
+                  />
+                  <span id="eduEndDateError" class="error"></span>
+                </div>
+              </div>
+            </div>
+            <div class="buttons_con">
+              <input type="submit" class="updateBtn" value="حفظ" />
+              <input type="button" class="removeBtn updateBtn" value="إلغاء" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education Edit Modal -->
+    <div class="overlay" id="editProfileEdu_edit" aria-hidden="true">
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>تعديل التعليم</h3>
+          <img
+            id="closeBtn7"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="educationList"></div>
+        <button class="moreExBtn" id="moreExBtn_Edu">
+          أضف درجة علمية
+          <img src="../mentor-images/add-square.svg" alt="إضافة" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Rating Add Modal -->
+    <div
+      class="rating-popup-container overlay"
+      id="editProfileRating_add"
+      aria-hidden="true"
+    >
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>إضافة تقييم</h3>
+          <img
+            id="closeBtn10"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="ratingFormScreen" class="popup-screen">
+          <form class="form_contaner" action="" method="post" id="ratingForm">
+            <div class="form_group">
+              <label class="label" for="reviewerName">اسم المراجع</label>
+              <input
+                class="input"
+                type="text"
+                name="reviewerName"
+                id="reviewerName"
+                placeholder="اكتب اسم المراجع"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="reviewerNameError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="comment">التعليق</label>
+              <textarea
+                name="comment"
+                id="comment"
+                placeholder="اكتب تعليقك"
+                required
+                oninput="common.checkInputDirection(this)"
+              ></textarea>
+              <span id="commentError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="ratingScore">التقييم (1-5)</label>
+              <input
+                class="input"
+                type="number"
+                name="ratingScore"
+                id="ratingScore"
+                min="1"
+                max="5"
+                required
+              />
+              <span id="ratingScoreError" class="error"></span>
+            </div>
+            <div class="buttons_con">
+              <input type="submit" class="updateBtn" value="حفظ" />
+              <input type="button" class="removeBtn updateBtn" value="إلغاء" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rating Edit Modal -->
+    <div class="overlay" id="editProfileRating_edit" aria-hidden="true">
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>تعديل التقييمات</h3>
+          <img
+            id="closeBtn11"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="ratingList"></div>
+        <button class="moreExBtn" id="moreExBtn_Rating">
+          أضف تقييم
+          <img src="../mentor-images/add-square.svg" alt="إضافة" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Achievement Add Modal -->
+    <div
+      class="achievement-popup-container overlay"
+      id="editProfileAchievement_add"
+      aria-hidden="true"
+    >
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>إضافة إنجاز</h3>
+          <img
+            id="closeBtn12"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <div id="achievementFormScreen" class="popup-screen">
+          <form
+            class="form_contaner"
+            action=""
+            method="post"
+            id="achievementForm"
+          >
+            <div class="form_group">
+              <label class="label" for="achievementTitle">عنوان الإنجاز</label>
+              <input
+                class="input"
+                type="text"
+                name="achievementTitle"
+                id="achievementTitle"
+                placeholder="اكتب عنوان الإنجاز"
+                required
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="achievementTitleError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="achievementDescription">الوصف</label>
+              <textarea
+                name="achievementDescription"
+                id="achievementDescription"
+                placeholder="اكتب وصف الإنجاز"
+                required
+                oninput="common.checkInputDirection(this)"
+              ></textarea>
+              <span id="achievementDescriptionError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="achievementDate">تاريخ الإنجاز</label>
+              <input
+                class="input date-start"
+                type="text"
+                name="achievementDate"
+                id="achievementDate"
+                placeholder="اختر التاريخ"
+                required
+              />
+              <img
+                src="../mentor-images/calendar.svg"
+                alt="تقويم"
+                class="select-icon calendar"
+                data-target="achievementDate"
+              />
+              <span id="achievementDateError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="achievementLink">رابط الإنجاز</label>
+              <input
+                class="input"
+                type="url"
+                name="achievementLink"
+                id="achievementLink"
+                placeholder="https://example.com/achievement"
+                oninput="common.checkInputDirection(this)"
+              />
+              <span id="achievementLinkError" class="error"></span>
+            </div>
+            <div class="buttons_con">
+              <input type="submit" class="updateBtn" value="حفظ" />
+              <input type="button" class="removeBtn updateBtn" value="إلغاء" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievement Edit Modal -->
+    <div class="overlay" id="editProfileAchievement_edit" aria-hidden="true">
+      <div class="mainContaner">
+        <div class="top_con">
+          <h3>تعديل الإنجازات</h3>
+          <img
+            id="closeBtn13"
+            src="../mentor-images/close-circle.svg"
+            alt="إغلاق"
+            aria-label="إغلاق النافذة"
+          />
+        </div>
+        <!-- <div id="achievementList"></div> -->
+        <button class="moreExBtn" id="moreExBtn_Achievement">
+          أضف إنجاز
+          <img src="../mentor-images/add-square.svg" alt="إضافة" />
+        </button>
+      </div>
+    </div>
+
+    <header>
+      <nav>
+        <div class="left_Sec">
+          <a class="titel" href="#">
+            <img
+              id="image2"
+              src="../mentor-images/NoProfilePhoto.svg"
+              alt="صورة المرشد"
+            />
+            <p class="mentor_name">المرشد الأول</p>
+          </a>
+          <div class="buttonsNav">
+            <button class="notBtn" aria-label="الإشعارات">
+              <img src="../mentor-images/notification.svg" alt="إشعارات" />
+            </button>
+            <button class="messageBtn" aria-label="الرسائل">
+              <img src="../mentor-images/messages-2.svg" alt="رسائل" />
+            </button>
+          </div>
+        </div>
+        <div class="middleTabs">
+          <a href="#" class="active">الموجهين</a>
+          <a href="./sessions.html">الجلسات</a>
+          <a href="./joinasmentor.html">إنضم كموجه</a>
+        </div>
+        <a class="logo" href="../index.html">
+          <img src="../mentor-images/logo_campus.svg" alt="شعار كامبس" />
+        </a>
+      </nav>
+    </header>
+
+    <section id="profile-hero" class="container">
+      <figure class="bg-img">
+        <input
+          type="file"
+          id="uploadImageBackground"
+          accept="image/*"
+          style="display: none"
+          aria-label="تحميل صورة الخلفية"
+        />
+        <img id="background_image" src="" alt="صورة الخلفية" />
+        <button class="edit_bigimage" aria-label="تعديل صورة الخلفية">
+          <img src="../mentor-images/edit_bigimage.svg" alt="تعديل" />
+        </button>
+      </figure>
+      <div class="mentor_con mentor_con_rate">
+        <div class="mentorinfo">
+          <div class="personal-image">
+            <img
+              id="image1"
+              src="../mentor-images/NoProfilePhoto.svg"
+              alt="صورة المرشد"
+            />
+            <input
+              type="file"
+              id="uploadImageProfile"
+              accept="image/*"
+              style="display: none"
+              aria-label="تحميل صورة الملف الشخصي"
+            />
+            <span id="editBtnMain" aria-label="تعديل صورة الملف الشخصي">
+              <img src="../mentor-images/edit-2.svg" alt="تعديل" />
+            </span>
+          </div>
+          <div class="mentor_titele">
+            <h4 class="mentor_name"></h4>
+            <p id="mentor_jop"></p>
+            <div class="contact">
+              <a
+                href="#"
+                id="linkedinLink"
+                target="_blank"
+                aria-label="LinkedIn"
+              >
+                <img src="../mentor-images/linkedin.svg" alt="LinkedIn" />
+              </a>
+              <a href="#" id="behanceLink" target="_blank" aria-label="Behance">
+                <img src="../mentor-images/behance.svg" alt="Behance" />
+              </a>
+              <a href="#" id="githubLink" target="_blank" aria-label="GitHub">
+                <img src="../mentor-images/github.svg" alt="GitHub" />
+              </a>
+              <a
+                href="#"
+                id="instagramLink"
+                target="_blank"
+                aria-label="Instagram"
+              >
+                <img src="../mentor-images/instagram.svg" alt="Instagram" />
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="mentorButonsR mentorButons">
+          <button id="editBtn" class="editBtn" aria-label="تعديل الحساب">
+            تعديل الحساب
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="veiwMentor">
+      <div class="mentor_sec2">
+        <p id="servicesTab" class="Tab">إدارة الخدمات</p>
+        <p id="achievementsTab" class="Tab">الإنجازات</p>
+        <p id="ratingTab" class="Tab">التقييمات</p>
+        <p id="overviewTab" class="checked Tab">نظرة عامة</p>
+      </div>
+
+      <!-- Overview Tab Content -->
+      <div id="overviewContent" class="tab-content active">
+        <div class="main">
+          <div class="mentor_veiw_con">
+            <h5 id="mentorBio" style="text-align: center"></h5>
+
+            <div class="veiw_mentor1 veiw_mentorFormat">
+              <div class="top_con">
+                <h1>الخبرات</h1>
+                <div class="editIcons">
+                  <img
+                    id="edit_2BtnExp"
+                    src="../mentor-images/edit-2.svg"
+                    alt="تعديل الخبرات"
+                    aria-label="تعديل الخبرات"
+                  />
+                  <img
+                    id="edit_addExp"
+                    src="../mentor-images/add-square.svg"
+                    alt="إضافة خبرة"
+                    aria-label="إضافة خبرة"
+                  />
+                </div>
+              </div>
+              <div id="experiencesContainer"></div>
+            </div>
+
+            <div class="veiw_mentor2 veiw_mentorFormat">
+              <div class="top_con">
+                <h1>الشهادات</h1>
+                <div class="editIcons">
+                  <img
+                    id="edit_2BtnCert"
+                    src="../mentor-images/edit-2.svg"
+                    alt="تعديل الشهادات"
+                    aria-label="تعديل الشهادات"
+                  />
+                  <img
+                    id="edit_addCert"
+                    src="../mentor-images/add-square.svg"
+                    alt="إضافة شهادة"
+                    aria-label="إضافة شهادة"
+                  />
+                </div>
+              </div>
+              <div id="certificatesContainer"></div>
+              <button id="moreBtnCert" class="rtl" style="display: none">
+                <img
+                  src="../mentor-images/chevron-down.svg"
+                  alt="المزيد"
+                  class="more-icon"
+                />
+                <span class="btn-text"></span>
+              </button>
+            </div>
+
+            <div class="veiw_mentor3 veiw_mentorFormat">
+              <div class="top_con">
+                <h1>التعليم</h1>
+                <div class="editIcons">
+                  <img
+                    id="edit_2BtnEdu"
+                    src="../mentor-images/edit-2.svg"
+                    alt="تعديل التعليم"
+                    aria-label="تعديل التعليم"
+                  />
+                  <img
+                    id="edit_addEdu"
+                    src="../mentor-images/add-square.svg"
+                    alt="إضافة تعليم"
+                    aria-label="إضافة تعليم"
+                  />
+                </div>
+              </div>
+              <div id="educationContainer"></div>
+              <button id="moreBtnEdu" class="rtl" style="display: none">
+                <img
+                  src="../mentor-images/chevron-down.svg"
+                  alt="المزيد"
+                  class="more-icon"
+                />
+                <span class="btn-text"></span>
+              </button>
+            </div>
+          </div>
+
+          <aside class="left_section">
+            <div class="video">
+              <h1>فيديو تعريفي</h1>
+              <div
+                class="video_con"
+                onclick="document.getElementById('videoInput').click();"
+                aria-label="تحميل فيديو تعريفي"
+              >
+                <img
+                  id="uplodimage"
+                  src="../mentor-images/upload-cloud-02.svg"
+                  alt="تحميل"
+                />
+                <h4 id="uplodeBtn">اضغط لتحميل ملف الفيديو</h4>
+                <p id="size">MP4, 4:3 (حد أقصى 25 ميجا)</p>
+                <input
+                  type="file"
+                  id="videoInput"
+                  accept="video/mp4"
+                  style="display: none"
+                  aria-label="تحميل فيديو تعريفي"
+                />
+              </div>
+              <video
+                id="videoPlayer"
+                controls
+                style="display: none; width: 100%; margin-top: 10px"
+                aria-label="فيديو تعريفي"
+              ></video>
+            </div>
+
+            <div class="statistics">
+              <div class="top_con">
+                <h1>إحصائياتي</h1>
+                <div class="statisticsIcons">
+                  <img src="../mentor-images/arrow-down.svg" alt="المزيد" />
+                  <p>المزيد</p>
+                </div>
+              </div>
+              <div class="statistics_con">
+                <div class="veiw_conS">
+                  <img
+                    src="../mentor-images/Frame 1171278344.svg"
+                    alt="أيقونة"
+                  />
+                  <div class="text">
+                    <h4 id="totalMinutes">0 دقيقة</h4>
+                    <p>إجمالي وقت الإرشاد</p>
+                  </div>
+                </div>
+                <div class="veiw_conS">
+                  <img
+                    src="../mentor-images/Frame 1171278344.svg"
+                    alt="أيقونة"
+                  />
+                  <div class="text">
+                    <h4 id="totalSessions">0</h4>
+                    <p>الجلسات المكتملة</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <!-- Services Tab Content -->
+      <div style="display: flex; flex-direction: row-reverse; width: 100%;">
+        <div id="servicesContent" class="tab-content servicesContent" style="flex-grow: 1;">
+          <div class="services-section">
+            <h2 class="services-heading">الخدمات</h2>
+  
+            <div class="services-grid" >
+              <div id="servicesList"></div>
+              <!-- Add New Service Card -->
+              <div class="service-card add-new" id="addNewService">
+                <div class="add-icon">
+                  <a href="./Services.html"><i class="fas fa-plus"></i></a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Add New Service Card -->
+        <div class="service-card add-new" style="display: none;" id="addNewService">
+          <div class="add-icon">
+            <a href="./Services.html"><i class="fas fa-plus"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratings Tab Content -->
+      <div class="sessionSuccess_con" id="ratingContent" style="display: none">
+        <div class="session1 sessionsFormat">
+          <div class="top_con">
+            <h1>التقييمات</h1>
+            <div class="editIcons">
+              <img
+                id="edit_2BtnRating"
+                src="../mentor-images/edit-2.svg"
+                alt="تعديل التقييمات"
+                aria-label="تعديل التقييمات"
+              />
+              <img
+                id="edit_addRating"
+                src="../mentor-images/add-square.svg"
+                alt="إضافة تقييم"
+                aria-label="إضافة تقييم"
+              />
+            </div>
+          </div>
+          <div id="ratingList"></div>
+          <button id="moreBtnRating" class="rtl" style="display: none">
+            <img
+              src="../mentor-images/chevron-down.svg"
+              alt="المزيد"
+              class="more-icon"
+            />
+            <span class="btn-text"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Achievements Tab Content -->
+      <div
+        class="achievementsContent"
+        id="achievementsContent"
+        style="display: none"
+      >
+        <div class="sessionSuccess_con">
+          <div class="session1 sessionsFormat">
+            <div class="top_con">
+              <h1>الإنجازات</h1>
+              <div class="editIcons">
+                <img
+                  id="edit_2BtnAchievement"
+                  src="../mentor-images/edit-2.svg"
+                  alt="تعديل الإنجازات"
+                  aria-label="تعديل الإنجازات"
+                />
+                <img
+                  id="edit_addAchievement"
+                  src="../mentor-images/add-square.svg"
+                  alt="إضافة إنجاز"
+                  aria-label="إضافة إنجاز"
+                />
+              </div>
+            </div>
+            <div id="achievementList"></div>
+            <button id="moreBtnAchievement" class="rtl" style="display: none">
+              <img
+                src="../mentor-images/chevron-down.svg"
+                alt="المزيد"
+                class="more-icon"
+              />
+              <span class="btn-text"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ar.js"></script>
+    <script src="../JS/common.js"></script>
+    <script src="../JS/APIs.js"></script>
+    <script type="module" src="../JS/ProfileJS/MentorPage.js"></script>
+    <script src="../JS/ProfileJS/api.js"></script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'93a6f7c129f153d3',t:'MTc0NjM1MDkwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

@@ -58,6 +58,5 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 db
-public
 uploads
 .vercel

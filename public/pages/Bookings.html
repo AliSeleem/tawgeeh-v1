@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Coaching - Campus</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../CSS/common.css" />
+    <link rel="stylesheet" href="../CSS/Bookings.css" />
+  </head>
+  <body>
+    <!-- Header -->
+    <header>
+      <nav>
+        <a class="logo" href="../index.html">
+          <img src="../mentor-images/logo_campus.svg" alt="شعار كامبس" />
+        </a>
+        <div class="middleTabs">
+          <a href="../index.html">الموجهين</a>
+          <a href="../pages/Sessions.html" class="active">الجلسات</a>
+          <a href="#" id="joinAsMentorLink">إنضم كموجه</a>
+        </div>
+        <div class="left_Sec auth-section">
+          <!-- Dynamically populated by JavaScript -->
+        </div>
+      </nav>
+    </header>
+    <div class="Booking-container">
+      <!-- Notification section -->
+      <div class="notifications-container" style="display: none">
+        <!-- Dynamically populated by JavaScript -->
+      </div>
+      <!-- Coach Profile -->
+      <div class="coach-profile">
+        <div class="coach-image">
+          <img src="/api/placeholder/70/70" alt="Coach Profile" />
+        </div>
+        <div class="coach-info">
+          <h2 class="coach-info">معتصم شعبان</h2>
+          <p>Product Designer, Campus</p>
+        </div>
+        <div class="session-details">
+          <h2>Career Coaching</h2>
+          <div class="session-info">
+            <div>30 دقيقة مدة الجلسة</div>
+            <div>نبذة عن الجلسة</div>
+            <div>وصف الخدمة</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="date-title">اختيار التاريخ و الوقت</h3>
+      <div class="timezone">
+        <i class="fas fa-globe"></i> في منطقتك الزمنية (أفريقيا/القاهرة)
+      </div>
+      <!-- Date Selection -->
+      <div class="date-selection">
+        <!-- Month Calendar -->
+        <div class="month-calendar">
+          <div class="month-header">
+            <div class="arrow" id="prev-month">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+            <div id="month-year">April 2025</div>
+            <div class="arrow" id="next-month">
+              <i class="fas fa-chevron-left"></i>
+            </div>
+          </div>
+          <div class="month-grid" id="month-grid">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+        <!-- Day Calendar -->
+        <div class="day-calendar">
+          <div class="calendar-arrows">
+            <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+          </div>
+
+          <div class="calendar-columns" id="calendar-columns">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../JS/common.js"></script>
+    <script src="../JS/Booking.js"></script>
+  </body>
+</html>

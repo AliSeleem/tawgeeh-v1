@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Coaching - Campus</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #4a26fd;
+        --accent-color: #ff4081;
+        --text-color: #333;
+        --text-light: #666;
+        --border-color: #e0e0e0;
+        --background-light: #f9f9f9;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        --radius: 12px;
+        --radius-sm: 8px;
+        --transition: all 0.3s ease;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 1200px;
+        background-color: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Header */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        border-bottom: 1px solid var(--border-color);
+        background-color: white;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .user-profile {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: var(--radius-sm);
+        transition: var(--transition);
+      }
+
+      .user-profile:hover {
+        background-color: var(--background-light);
+      }
+
+      .user-profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--primary-color);
+      }
+
+      .dropdown-icon {
+        color: var(--text-light);
+        font-size: 12px;
+        transition: var(--transition);
+      }
+
+      .user-profile:hover .dropdown-icon {
+        transform: rotate(180deg);
+      }
+
+      .notification-icons {
+        display: flex;
+        gap: 20px;
+      }
+
+      .notification-icons i {
+        color: var(--text-light);
+        font-size: 20px;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .notification-icons i:hover {
+        color: var(--primary-color);
+      }
+
+      .nav-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+      }
+
+      .nav-tabs a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-weight: 600;
+        padding: 10px 5px;
+        position: relative;
+        transition: var(--transition);
+      }
+
+      .nav-tabs a.active {
+        color: var(--accent-color);
+      }
+
+      .nav-tabs a.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background-color: var(--accent-color);
+        border-radius: 3px 3px 0 0;
+      }
+
+      .nav-tabs a:hover:not(.active) {
+        color: var(--primary-color);
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: var(--primary-color);
+      }
+
+      .logo-icon {
+        display: flex;
+        position: relative;
+      }
+
+      .logo-icon span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var(--primary-color);
+        position: absolute;
+      }
+
+      .logo-icon span:nth-child(1) {
+        background-color: var(--primary-color);
+        top: 0;
+        left: 0;
+      }
+
+      .logo-icon span:nth-child(2) {
+        background-color: #6348ff;
+        top: 0;
+        right: 0;
+      }
+
+      .logo-icon span:nth-child(3) {
+        background-color: var(--accent-color);
+        bottom: 0;
+        left: 0;
+      }
+
+      .logo-icon span:nth-child(4) {
+        background-color: #ffab40;
+        bottom: 0;
+        right: 0;
+      }
+
+      /* Coach Profile */
+      .coach-profile {
+        display: flex;
+        justify-content: space-between;
+        padding: 30px 25px;
+        align-items: center;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .coach-info {
+        text-align: left;
+      }
+
+      .coach-info h2 {
+        font-size: 1.8rem;
+        margin-bottom: 5px;
+        color: var(--text-color);
+      }
+
+      .coach-info p {
+        color: var(--text-light);
+        font-size: 1rem;
+      }
+
+      .coach-image {
+        text-align: right;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .coach-image img {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--primary-color);
+        padding: 2px;
+        background-color: white;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .coach-image div {
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      /* Session Info */
+      .session-info {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px 25px;
+        color: var(--text-light);
+        background-color: var(--background-light);
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .session-info div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .session-info div i {
+        color: var(--primary-color);
+      }
+
+      /* Date Selection */
+      .date-selection {
+        padding: 25px;
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+      }
+
+      .date-title {
+        margin-bottom: 15px;
+        text-align: right;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      .timezone {
+        font-size: 0.9rem;
+        color: var(--text-light);
+        text-align: right;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .timezone i {
+        color: var(--primary-color);
+      }
+
+      /* Calendar */
+      .calendar-container {
+        display: flex;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        margin-bottom: 30px;
+        background-color: white;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+      }
+
+      .weekday-column {
+        flex: 1;
+        padding: 5px;
+        text-align: center;
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+      }
+
+      .weekday-column:last-child {
+        border-right: none;
+      }
+
+      .day-header {
+        padding: 12px 5px;
+        text-align: center;
+        font-weight: bold;
+        background-color: var(--background-light);
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-size: 0.85rem;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        justify-content: center;
+      }
+
+      .day-header span:first-child {
+        font-size: 0.7rem;
+        color: var(--text-light);
+      }
+
+      .day-header span:last-child {
+        font-size: 1.1rem;
+      }
+
+      .time-slots {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 10px 5px;
+        flex-grow: 1;
+      }
+
+      .time-slot {
+        padding: 10px 5px;
+        text-align: center;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: var(--transition);
+      }
+
+      .time-slot.available {
+        background-color: white;
+      }
+
+      .time-slot.available:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 3px 8px rgba(74, 38, 253, 0.2);
+      }
+
+      .time-slot.unavailable {
+        color: #ccc;
+        border-color: #eee;
+        cursor: not-allowed;
+        background-color: #fafafa;
+      }
+
+      .day-calendar {
+        display: flex;
+        margin-bottom: 30px;
+        position: relative;
+        width: 100%;
+      }
+
+      .calendar-arrows {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        pointer-events: none;
+        z-index: 1;
+        display: none;
+      }
+
+      .calendar-arrows .arrow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        cursor: pointer;
+        pointer-events: auto;
+        transition: var(--transition);
+      }
+
+      .calendar-arrows .arrow:hover {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .calendar-columns {
+        display: flex;
+        flex: 1;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+
+      .calendar-columns::-webkit-scrollbar {
+        display: none;
+      }
+
+      .month-calendar {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        /* overflow: hidden; */
+        margin-bottom: 20px;
+        background-color: white;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+        width: 350px;
+
+        height: 50vh;
+      }
+
+      .month-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        background-color: var(--background-light);
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-color);
+        font-weight: 600;
+      }
+
+      .month-header .arrow {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+      }
+
+      .month-header .arrow:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .month-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        padding: 10px;
+      }
+
+      .day-cell {
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 3px auto;
+        transition: var(--transition);
+      }
+
+      .day-cell.header {
+        cursor: default;
+        color: var(--text-light);
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .day-cell:not(.header):hover {
+        background-color: rgba(74, 38, 253, 0.1);
+      }
+
+      .day-cell.selected {
+        background-color: var(--accent-color);
+        color: white;
+        font-weight: bold;
+      }
+
+      .day-cell.today {
+        border: 2px solid var(--primary-color);
+        font-weight: bold;
+      }
+
+      .day-cell.other-month {
+        color: #ccc;
+      }
+
+      @media (max-width: 768px) {
+        .nav-tabs {
+          gap: 15px;
+        }
+
+        .nav-tabs a {
+          font-size: 0.9rem;
+        }
+
+        .coach-profile {
+          flex-direction: column-reverse;
+          gap: 20px;
+          text-align: center;
+        }
+
+        .coach-info {
+          text-align: center;
+        }
+
+        .session-info {
+          flex-direction: column;
+          gap: 10px;
+          align-items: center;
+        }
+
+        .calendar-arrows .arrow {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="user-profile">
+          <img src="/api/placeholder/40/40" alt="User Profile" />
+          <span>معتصم شعبان</span>
+          <span class="dropdown-icon"><i class="fas fa-chevron-down"></i></span>
+        </div>
+
+        <div class="nav-tabs">
+          <a href="#" class="active">الموجهين</a>
+          <a href="#">الجلسات</a>
+          <a href="#">إنضم كموجه</a>
+        </div>
+
+        <div class="notification-icons">
+          <i class="fas fa-bell"></i>
+          <i class="fas fa-search"></i>
+        </div>
+
+        <div class="logo">
+          <div class="logo-icon">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          campus
+        </div>
+      </div>
+
+      <!-- Coach Profile -->
+      <div class="coach-profile">
+        <div class="coach-info">
+          <h2>Career Coaching</h2>
+          <p>Product Designer, Campus</p>
+        </div>
+        <div class="coach-image">
+          <img src="/api/placeholder/70/70" alt="Coach Profile" />
+          <div>معتصم شعبان</div>
+        </div>
+      </div>
+
+      <!-- Session Info -->
+      <div class="session-info">
+        <div><i class="far fa-clock"></i> 30 دقيقة مدة الجلسة</div>
+        <div><i class="far fa-file-alt"></i> نبذة عن الجلسة</div>
+        <div><i class="far fa-list-alt"></i> وصف الخدمة</div>
+      </div>
+
+      <h3 class="date-title">اختيار التاريخ و الوقت</h3>
+      <div class="timezone">
+        <i class="fas fa-globe"></i> في منطقتك الزمنية (أفريقيا/القاهرة)
+      </div>
+      <!-- Date Selection -->
+      <div class="date-selection">
+        <!-- Day Calendar -->
+        <div class="day-calendar">
+          <div class="calendar-arrows">
+            <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+            <div class="arrow"><i class="fas fa-chevron-left"></i></div>
+          </div>
+
+          <div class="calendar-columns" id="calendar-columns">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Month Calendar -->
+        <div class="month-calendar">
+          <div class="month-header">
+            <div class="arrow" id="prev-month">
+              <i class="fas fa-chevron-right"></i>
+            </div>
+            <div id="month-year">April 2025</div>
+            <div class="arrow" id="next-month">
+              <i class="fas fa-chevron-left"></i>
+            </div>
+          </div>
+          <div class="month-grid" id="month-grid">
+            <!-- Dynamically populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Current date (April 28, 2025)
+        let currentDate = new Date(2025, 3, 28); // Months are 0-indexed in JavaScript
+        let selectedDate = new Date(currentDate);
+
+        // Function to populate the day calendar
+        function populateDayCalendar(date) {
+          const calendarColumns = document.getElementById("calendar-columns");
+          calendarColumns.innerHTML = "";
+
+          const daysOfWeek = [
+            "السبت",
+            "الأحد",
+            "الإثنين",
+            "الثلاثاء",
+            "الأربعاء",
+            "الخميس",
+            "الجمعة",
+          ];
+          const startDate = new Date(date);
+          startDate.setDate(date.getDate() - 3); // Start 3 days before the selected date
+
+          for (let i = 0; i < 7; i++) {
+            const dayDate = new Date(startDate);
+            dayDate.setDate(startDate.getDate() + i);
+            const dayName = daysOfWeek[dayDate.getDay()];
+            const dayNumber = dayDate.getDate();
+
+            const column = document.createElement("div");
+            column.classList.add("weekday-column");
+
+            const header = document.createElement("div");
+            header.classList.add("day-header");
+            header.innerHTML = `<span>${dayName}</span><span>${dayNumber}</span>`;
+            column.appendChild(header);
+
+            const timeSlots = document.createElement("div");
+            timeSlots.classList.add("time-slots");
+
+            // Example time slots (same as in the image)
+            const slots =
+              i < 2
+                ? [
+                    "6:00 م",
+                    "6:00 م",
+                    "6:00 م",
+                    "6:00 م",
+                    "6:00 م",
+                    "6:00 م",
+                    "6:00 م",
+                  ]
+                : ["—", "—", "—", "—", "—", "—", "—"];
+            slots.forEach((slot) => {
+              const timeSlot = document.createElement("div");
+              timeSlot.classList.add("time-slot");
+              timeSlot.classList.add(
+                slot === "—" ? "unavailable" : "available"
+              );
+              timeSlot.textContent = slot;
+              timeSlots.appendChild(timeSlot);
+            });
+
+            column.appendChild(timeSlots);
+            calendarColumns.appendChild(column);
+          }
+
+          // Add event listeners to available time slots
+          const timeSlotsElements = document.querySelectorAll(
+            ".time-slot.available"
+          );
+          timeSlotsElements.forEach((slot) => {
+            slot.addEventListener("click", function () {
+              timeSlotsElements.forEach((s) => s.classList.remove("selected"));
+              this.classList.add("selected");
+            });
+          });
+        }
+
+        // Function to populate the month calendar
+        function populateMonthCalendar(date) {
+          const monthGrid = document.getElementById("month-grid");
+          const monthYear = document.getElementById("month-year");
+          monthGrid.innerHTML = "";
+
+          const monthNames = [
+            "يناير",
+            "فبراير",
+            "مارس",
+            "أبريل",
+            "مايو",
+            "يونيو",
+            "يوليو",
+            "أغسطس",
+            "سبتمبر",
+            "أكتوبر",
+            "نوفمبر",
+            "ديسمبر",
+          ];
+          const daysOfWeek = [
+            "السبت",
+            "الأحد",
+            "الإثنين",
+            "الثلاثاء",
+            "الأربعاء",
+            "الخميس",
+            "الجمعة",
+          ];
+
+          const year = date.getFullYear();
+          const month = date.getMonth();
+          monthYear.textContent = `${monthNames[month]} ${year}`;
+
+          // Add day headers
+          daysOfWeek.forEach((day) => {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("day-cell", "header");
+            dayCell.textContent = day;
+            monthGrid.appendChild(dayCell);
+          });
+
+          // Get the first day of the month
+          const firstDay = new Date(year, month, 1).getDay();
+          const daysInMonth = new Date(year, month + 1, 0).getDate();
+          const prevMonthDays = new Date(year, month, 0).getDate();
+
+          // Add previous month's days
+          for (let i = firstDay - 1; i >= 0; i--) {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("day-cell", "other-month");
+            dayCell.textContent = prevMonthDays - i;
+            monthGrid.appendChild(dayCell);
+          }
+
+          // Add current month's days
+          for (let i = 1; i <= daysInMonth; i++) {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("day-cell");
+            if (
+              i === currentDate.getDate() &&
+              month === currentDate.getMonth() &&
+              year === currentDate.getFullYear()
+            ) {
+              dayCell.classList.add("today");
+            }
+            if (i === 13) {
+              // Match the selected date in the image
+              dayCell.classList.add("selected");
+            }
+            dayCell.textContent = i;
+            monthGrid.appendChild(dayCell);
+          }
+
+          // Add next month's days
+          const lastDay = new Date(year, month, daysInMonth).getDay();
+          for (let i = 1; i <= 6 - lastDay; i++) {
+            const dayCell = document.createElement("div");
+            dayCell.classList.add("day-cell", "other-month");
+            dayCell.textContent = i;
+            monthGrid.appendChild(dayCell);
+          }
+
+          // Add event listeners to selectable days
+          const dayCells = document.querySelectorAll(
+            ".day-cell:not(.header):not(.other-month)"
+          );
+          dayCells.forEach((cell) => {
+            cell.addEventListener("click", function () {
+              dayCells.forEach((c) => c.classList.remove("selected"));
+              this.classList.add("selected");
+              selectedDate = new Date(year, month, parseInt(this.textContent));
+              populateDayCalendar(selectedDate);
+            });
+          });
+        }
+
+        // Navigation for month calendar
+        document.getElementById("prev-month").addEventListener("click", () => {
+          selectedDate.setMonth(selectedDate.getMonth() - 1);
+          populateMonthCalendar(selectedDate);
+        });
+
+        document.getElementById("next-month").addEventListener("click", () => {
+          selectedDate.setMonth(selectedDate.getMonth() + 1);
+          populateMonthCalendar(selectedDate);
+        });
+
+        // Navigation for day calendar
+        document
+          .querySelector(".calendar-arrows .arrow:first-child")
+          .addEventListener("click", () => {
+            selectedDate.setDate(selectedDate.getDate() - 7);
+            populateDayCalendar(selectedDate);
+          });
+
+        document
+          .querySelector(".calendar-arrows .arrow:last-child")
+          .addEventListener("click", () => {
+            selectedDate.setDate(selectedDate.getDate() + 7);
+            populateDayCalendar(selectedDate);
+          });
+
+        // Initial population of calendars
+        populateDayCalendar(selectedDate);
+        populateMonthCalendar(selectedDate);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,497 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: "Baloo Bhaijaan 2";
+    src: url("/font/BalooBhaijaan2-VariableFont_wght.ttf") format("truetype");
+  }
+  
+  :root {
+    --mainColor: #101828;
+    --second-color: #A4A4A4;
+    --praimary-color: #F82548;
+    --Colors-Neutral-300: #D2D2D2;
+  }
+
+body{
+    font-family: "Baloo Bhaijaan 2";
+    margin-inline: 62px;
+    margin-block: 32px;
+}
+main{
+    width: 50%;
+    
+}
+.main{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+
+}
+button{
+    border: none;
+    cursor: pointer;
+}
+.none{
+  display: none;
+}
+/* .block{
+  display: block;
+} */
+nav{
+    display: flex;
+    justify-content: space-between;
+align-items: center;
+align-self: stretch;
+    padding-inline: 24px;
+    padding-block: 8px;
+    border-radius: 16px;
+border: 1px solid var(--Colors-Neutral-200, #E8E8E8);
+background: #FFF;
+box-shadow: 0px 2px 15px 0px rgba(0, 0, 0, 0.12);
+margin-bottom: 19px;
+}
+.left_Sec{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+}
+.titel{
+    display: flex;
+    flex-direction: row-reverse;
+    gap: 13px;
+    align-items: center;
+}
+.titel p{
+    color: var(--Colors-Neutral-1000, #333);
+text-align: right;
+font-size: 16px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
+#image1{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    border: 5px solid var(--Colors-Neutral-100, #FFF);
+}
+#image2{
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    
+}
+.buttonsNav{
+    display: flex;
+    gap: 8px;
+}
+.buttonsNav .notBtn,.messageBtn{
+padding: 8px;
+gap: 8px;
+border-radius: 8px;
+border: 1px solid var(--Colors-Neutral-200, #E8E8E8);
+background-color: #fff;
+display: flex;
+    align-items: center;
+}
+.logo{
+    display: flex;
+align-items: center;
+}
+
+.headinng{
+    color: var(--Colors-Neutral-1000, #333);
+font-family: "Baloo Bhaijaan 2";
+font-size: 32px;
+font-style: normal;
+font-weight: 600;
+text-align: right;
+line-height: 33px; /* 103.125% */
+}
+.GeneralSettings{
+    display: flex;
+flex-direction: column;
+align-items: flex-start;
+justify-content: flex-end;
+gap: 21px;
+margin-top: 16px;
+}
+.GeneralSettings h2{
+    display: flex;
+padding: 8px;
+justify-content: flex-end;
+align-items: center;
+gap: 8px;
+align-self: stretch;
+border-bottom: 1px solid var(--Colors-Neutral-400, #BBB);
+color: var(--Colors-Neutral-1000, #333);
+font-family: "Baloo Bhaijaan 2";
+font-size: 24px;
+font-style: normal;
+font-weight: 500;
+line-height: 33px; /* 137.5% */
+}
+.GeneralSettings_content{
+    display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 9px;
+align-self: stretch;
+border-radius: 8px;
+border: 1px solid var(--Colors-Neutral-200, #E8E8E8);
+}
+.GeneralSettings_contentFlex{
+    display: flex;
+padding: 8px;
+justify-content: space-between;
+align-items: center;
+align-self: stretch;
+border-radius: 8px;
+flex-direction: row-reverse;
+}
+.GeneralSettings_content h4{
+    color: var(--Colors-Neutral-1000, #333);
+font-family: "Baloo Bhaijaan 2";
+font-size: 20px;
+font-style: normal;
+font-weight: 500;
+line-height: 33px; /* 165% */
+}
+.changePassWordBtn{
+    display: flex;
+padding: var(--1, 4px) var(--2, 8px);
+align-items: center;
+gap: var(--1, 4px);
+border-radius: 0.25rem;
+background: var(--Colors-Primary-500, #F82548);
+color: #fff;
+
+/* Global Tokens/Body/B-2 */
+font-family: "Baloo Bhaijaan 2";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 24px; /* 150% */
+}
+.changePassWordBtn:hover{
+  background: #AD0012;
+}
+.deleteBtn{
+    display: flex;
+padding: var(--1, 4px) var(--2, 8px);
+align-items: center;
+gap: var(--1, 4px);
+color: var(--Colors-Primary-500, #F82548);
+background-color: #fff;
+/* Global Tokens/Body/B-2 */
+font-family: "Baloo Bhaijaan 2";
+font-size: 16px;
+font-style: normal;
+font-weight: 400;
+line-height: 24px; /* 150% */
+}
+.deleteBtn:hover{
+
+}
+.delete_profile h4{
+    color: var(--Colors-Neutral-500, #A4A4A4);
+}
+
+/* From Uiverse.io by AbanoubMagdy1 */ 
+.switch {
+  --circle-dim: 1.4em;
+  font-size: 17px;
+  position: relative;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #D1D1D6;
+  transition: .4s;
+  border-radius: 30px;
+  
+}
+
+.slider-card {
+  position: absolute;
+  content: "";
+  height: var(--circle-dim);
+  width: var(--circle-dim);
+  border-radius: 20px;
+  right: 0.3em;
+  bottom: 0.3em;
+  transition: .4s;
+  pointer-events: none;
+}
+
+.slider-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  border-radius: 50%;
+  transition: .4s transform;
+}
+
+.slider-card-front {
+  background-color: #fff;
+}
+
+.slider-card-back {
+  background-color: #fff;
+  transform: rotateY(180deg);
+}
+
+input:checked ~ .slider-card .slider-card-back {
+  transform: rotateY(0);
+}
+
+input:checked ~ .slider-card .slider-card-front {
+  transform: rotateY(-180deg);
+}
+
+input:checked ~ .slider-card {
+  transform: translateX(-1.5em);
+}
+
+input:checked ~ .slider {
+  background-color: #F82548;
+}
+
+.edit_screens{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.overlay {
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(51, 51, 51, 0.50);
+            z-index: 1; 
+}
+
+.typeNotefication{
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  display: flex;
+width: 461px;
+padding: 16px;
+flex-direction: column;
+align-items: flex-end;
+gap: 8px;
+border-radius: 16px;
+border: 1px solid var(--Colors-Neutral-400, #BBB);
+background: #FFF;
+
+/* Global Tokens/E2 */
+box-shadow: 0px 16px 32px -12px rgba(88, 92, 95, 0.10);
+}
+.GeneralSettings_contentFlex_N{
+  border-bottom: 1px solid var(--Colors-Neutral-200, #E8E8E8);
+}
+.typeNotefication h3{
+  color: var(--Colors-Neutral-800, #606060);
+  font-family: "Baloo Bhaijaan 2";
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 33px; /* 165% */
+}
+.typeNotefication h1{
+  color: var(--Colors-Neutral-1000, #333);
+text-align: right;
+font-family: "Baloo Bhaijaan 2";
+font-size: 24px;
+font-style: normal;
+font-weight: 600;
+line-height: 33px; /* 137.5% */
+}
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+
+
+ input[type="checkbox"]:checked{
+  
+  accent-color: var(--praimary-color);
+
+}
+
+.changePassWord_screen{
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  display: flex;
+width: 443px;
+padding: 32px;
+flex-direction: column;
+align-items: center;
+gap: 16px;
+border-radius: 16px;
+border: 1px solid var(--Colors-Neutral-400, #BBB);
+background: #FFF;
+
+/* Global Tokens/E2 */
+box-shadow: 0px 16px 32px -12px rgba(88, 92, 95, 0.10);
+}
+
+.changePassWord_screen .text{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+}
+.changePassWord_screen .text h1{
+  color: var(--Gray-900, #101828);
+text-align: center;
+
+/* Global Tokens/Headings/H-9 */
+font-family: "Baloo Bhaijaan 2";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: 39px; /* 162.5% */
+}
+
+.changePassWord_screen .text p{
+  color: var(--COLORS-Primary-1000, #202020);
+text-align: center;
+font-family: "Baloo Bhaijaan 2";
+font-size: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: 27px; /* 150% */
+}
+
+.or{
+  display: flex;
+  align-items: center;
+flex-direction: row; 
+ gap: 8px;
+}
+.or p{
+  color: var(--COLORS-Neutral-500, #A4A4A4) !important;
+  text-align: center;
+  
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%; 
+}
+.or span{
+  width: 176.5px;
+  height: 1px;
+background: var(--Colors-Neutral-300, #D2D2D2);
+}
+
+.form_contaner{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: 100%;
+}
+.secon_con{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form_group{
+  display: flex;
+  flex-direction: column;
+  text-align: end;
+color: var(--mainColor);
+gap: 1px;
+
+}
+.form_group .label{
+  font-size: 18px;
+font-style: normal;
+font-weight: 500;
+}
+.form_group .input{
+  padding-block: 12px;
+  border-radius: 0.25rem;
+  border: 1.5px solid var(--Colors-Neutral-300, #D2D2D2);
+  width: 100%;
+  gap: 8px;
+  direction: ltr;
+}
+
+
+.input::placeholder{
+  font-size: 14px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+color: var(--second-color);
+font-family: "Baloo Bhaijaan 2";
+/* text-align: end; */
+position: relative;
+right: 1.11vw;
+text-align: right;
+}
+.wrapper{
+  width: 100%;
+}
+
+
+.loginbtn_con{
+  display: flex;
+flex-direction: column;
+gap: 16px;
+width: 100%;
+}
+#forgtPasswordBtn{
+  color: var(--COLORS-Neutral-1000, #333);
+font-family: "Baloo Bhaijaan 2";
+font-size: 18px;
+font-style: normal;
+font-weight: 700;
+line-height: 27px; /* 150% */
+text-align: center;
+}
+.loginbtn{
+  background-color: var(--praimary-color);
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Baloo Bhaijaan 2";
+  border: 1px solid var(--praimary-color);
+  padding: 8px;
+  border-radius: 0.25rem;
+}
+.loginbtn:hover{
+  background: #AD0012;
+}

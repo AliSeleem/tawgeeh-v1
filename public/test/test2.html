@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Notifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo img {
+            height: 30px;
+        }
+        
+        .nav {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-item {
+            padding: 8px 12px;
+            cursor: pointer;
+            position: relative;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        .nav-item.active {
+            color: #ff3b5c;
+            font-weight: bold;
+            border-bottom: 2px solid #ff3b5c;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #555;
+            font-size: 18px;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .dropdown-icon {
+            font-size: 12px;
+        }
+        
+        .page-title {
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .notification-card {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .notification-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        
+        .notification-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .notification-text {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #e3e6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar img {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .notification-heading {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .action-btn.primary {
+            background-color: #ff3b5c;
+            color: white;
+        }
+        
+        .action-btn.secondary {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <img src="/api/placeholder/120/40" alt="Campus Logo" style="width: 120px;">
+        </div>
+        
+        <div class="nav">
+            <div class="nav-item active">الموجهين</div>
+            <div class="nav-item">الجلسات</div>
+            <div class="nav-item">انضم كموجه</div>
+        </div>
+        
+        <div class="user-actions">
+            <button class="icon-btn">💬</button>
+            <button class="icon-btn">🔔</button>
+            <div class="user-profile">
+                <span class="dropdown-icon">▼</span>
+                <span>معتصم شعبان</span>
+                <img src="/api/placeholder/40/40" alt="User profile">
+            </div>
+        </div>
+    </div>
+    
+    <div class="page-title">الإشعارات</div>
+    
+    <!-- Notification Cards -->
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text">You can add components to your app using the cli.</div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn secondary">Action 2</button>
+                <button class="action-btn primary">Action 1</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text"></div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn primary">Action</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text">You can add components to your app using the cli.</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text">You can add components to your app using the cli.</div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn secondary">Action 2</button>
+                <button class="action-btn primary">Action 1</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text"></div>
+            </div>
+            <div class="action-btns">
+                <button class="action-btn primary">Action</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text">You can add components to your app using the cli.</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="notification-card">
+        <div class="notification-left">
+            <button class="close-btn">✕</button>
+        </div>
+        <div class="notification-right">
+            <div class="avatar">
+                <img src="/api/placeholder/24/24" alt="Notification icon">
+            </div>
+            <div class="notification-content">
+                <div class="notification-heading">Heads up!</div>
+                <div class="notification-text"></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,875 @@
+/*
+ * Global Reset and Font Import
+ * Resetting default styles and importing custom font for consistent typography.
+ */
+* {
+  padding: 0;
+  margin: 0;
+}
+
+@font-face {
+  font-family: "Baloo Bhaijaan 2";
+  src: url("/font/BalooBhaijaan2-VariableFont_wght.ttf") format("truetype");
+}
+
+/*
+ * CSS Variables and Body Styling
+ * Defining color variables for consistent theming and setting the base font for the body.
+ */
+:root {
+  --mainColor: #101828;
+  --second-color: #a4a4a4;
+  --praimary-color: #f82548;
+  --Colors-Neutral-300: #d2d2d2;
+}
+
+body {
+  font-family: "Baloo Bhaijaan 2";
+  height: 1000px;
+}
+
+/*
+ * Form Feedback Styling
+ * Styles for error and success messages to provide user feedback.
+ */
+.error {
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+  color: red;
+}
+
+.success {
+  color: green;
+}
+
+.hidden {
+  display: none;
+}
+
+/*
+ * Container Indicator Styling
+ * Styling for progress or step indicators in the login process.
+ */
+.con {
+  display: flex;
+  gap: 2px;
+  text-align: center;
+  flex-direction: row-reverse;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.conformat {
+  border: 1px solid #ececec;
+  border-radius: 8px;
+  width: 38px;
+  height: 8px;
+  background-color: #ececec;
+}
+
+.conChecked {
+  background-color: var(--praimary-color);
+}
+
+/*
+ * Main Login Container
+ * Positioning and styling the main login form container for centering and visual appeal.
+ */
+.main_contaner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  padding: 32px;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  border: 1.5px solid var(--Colors-Neutral-300, #d2d2d2);
+  background: #fff;
+  font-family: "Baloo Bhaijaan 2";
+  box-shadow: 0px 16px 32px -12px rgba(88, 92, 95, 0.1);
+  z-index: 1000;
+  width: 415px;
+}
+
+.main_contanerS {
+  top: 70% !important;
+}
+
+.main_contaner h1 {
+  font-size: 24px;
+  color: var(--mainColor);
+  text-align: center;
+}
+
+.main_contaner p {
+  text-align: center;
+}
+
+.login4 p {
+  color: #646262;
+}
+
+/*
+ * Form Container and Grouping
+ * Structuring the form layout for clear input grouping and spacing.
+ */
+.form_contaner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.secon_con {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form_group {
+  display: flex;
+  flex-direction: column;
+  text-align: end;
+  color: var(--mainColor);
+  gap: 1px;
+}
+
+.form_group .label {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  text-align: start;
+}
+
+.form_group .input {
+  padding-block: 12px;
+  border-radius: 0.25rem;
+  border: 1.5px solid var(--Colors-Neutral-300, #d2d2d2);
+  width: 100%;
+  gap: 8px;
+  direction: ltr;
+  padding-left: 20px;
+}
+
+.input::placeholder {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--second-color);
+  font-family: "Baloo Bhaijaan 2";
+  /* text-align: end; */
+  position: relative;
+  right: 1.11vw;
+  text-align: right;
+}
+
+.wrapper {
+  width: 100%;
+}
+
+/*
+ * Checkbox and Password Visibility Controls
+ * Styling for interactive elements like checkboxes and password visibility toggles.
+ */
+.check {
+  display: flex;
+  gap: 8px;
+  justify-content: end;
+}
+
+.check label {
+  line-height: 24px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.password_con {
+  flex-direction: row;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.check input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.check input[type="checkbox"]:checked {
+  accent-color: var(--praimary-color);
+}
+
+/*
+ * Separator Styling
+ * Visual separator for alternative login options or form sections.
+ */
+.or {
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.or p {
+  color: var(--COLORS-Neutral-500, #a4a4a4);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 160%;
+}
+
+.or span {
+  width: 100%;
+  background: var(--Colors-Neutral-300, #d2d2d2);
+  height: 1px;
+}
+
+.buttons_con {
+  flex-direction: row;
+  gap: 8px;
+}
+
+input[type="button"] {
+  border: none;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1.5px solid var(--Colors-Neutral-400, #bbb);
+  width: 100%;
+  background-color: var(--praimary-color);
+}
+
+.linkedinBtn,
+.GoogleBtn {
+  border: none;
+  cursor: pointer;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1.5px solid var(--Colors-Neutral-400, #bbb);
+  width: 100%;
+}
+
+.linkedinBtn {
+  background-color: #1275b1 !important;
+  border-color: #1275b1 !important;
+}
+
+.GoogleBtn {
+  background-color: #fff !important;
+}
+
+.loginbtn {
+  background-color: var(--praimary-color);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  font-family: "Baloo Bhaijaan 2";
+  border: 1px solid var(--praimary-color);
+  padding: 8px;
+}
+
+.loginbtn:hover {
+  background: #ad0012;
+}
+
+/*
+ * Sign Up and Alternative Action Links
+ * Styling for links or buttons prompting users to sign up or take alternative actions.
+ */
+.signup_con {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  justify-content: center;
+}
+
+.signup_con h4 {
+  font-family: "Baloo Bhaijaan 2";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 27px; /* 150% */
+  color: var(--mainColor);
+  cursor: pointer;
+}
+
+.signup_con h4:hover {
+  color: var(--praimary-color);
+}
+
+.signup_con p {
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  color: var(--second-color);
+  cursor: pointer;
+}
+
+/*
+ * Additional Form Elements
+ * Styling for additional form elements like select boxes and textareas.
+ */
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100%;
+  padding-block: 12px;
+  padding-right: 12px;
+  border: 1.5px solid var(--Colors-Neutral-300, #d2d2d2);
+  border-radius: 0.25rem;
+  background-color: var(--white);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--second-color);
+  font-family: "Baloo Bhaijaan 2";
+  text-align: right;
+  position: relative;
+  outline: none;
+  cursor: pointer;
+}
+
+select:focus {
+  border-color: var(--Colors-Neutral-300);
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper::after {
+  display: none;
+}
+
+.select-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1.2rem;
+  height: 1.2rem;
+  pointer-events: none;
+}
+
+.select-icon {
+  transition: transform 0.3s ease;
+}
+
+.select-icon.rotate {
+  transform: rotate(180deg);
+}
+
+textarea {
+  width: 100%;
+  border: 1.5px solid var(--Colors-Neutral-300, #d2d2d2);
+  border-radius: 0.25rem;
+  background-color: var(--white);
+  color: var(--second-color);
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  color: var(--second-color);
+  font-family: "Baloo Bhaijaan 2";
+  text-align: end;
+  outline: none;
+  height: 6rem;
+  resize: none;
+}
+
+textarea::placeholder {
+  position: relative;
+  right: 12px;
+  top: 8px;
+}
+
+.code-input-group {
+  display: flex;
+  /* justify-content: space-between; */
+  gap: 16px;
+}
+
+.code-input {
+  width: 74px;
+  height: 74px;
+  text-align: center;
+  font-size: 18px;
+  border: none;
+  border-bottom: 1px solid #000;
+}
+
+.code-input:focus {
+  outline: none;
+}
+
+.arrowRight {
+  position: absolute;
+  right: 2.22vw;
+  top: 32px;
+  cursor: pointer;
+}
+
+.form_contanerP {
+  gap: 16px;
+}
+
+.group2 {
+  gap: 16px !important;
+}
+.signup-popup-container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  direction: rtl;
+}
+
+.signup-popup-container.show {
+  display: flex;
+}
+
+.signup-popup-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1999;
+}
+
+.signup-popup-overlay.show {
+  display: block;
+}
+
+.signup-popup-close {
+  /* top: 70px; */
+  top: -246px;
+  right: -164px;
+  position: relative;
+  z-index: 2001;
+  /* right: 570px; */
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.signup-popup-close:hover {
+  color: var(--primary-color);
+}
+
+/* Enhanced form styling */
+.form_group .input:focus,
+.form_group textarea:focus,
+.select-wrapper select:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(248, 37, 72, 0.1);
+  outline: none;
+}
+
+.form_group .input.error,
+.form_group textarea.error,
+.select-wrapper select.error {
+  border-color: #ff3b30;
+}
+
+.error {
+  font-size: 12px;
+  margin-top: 5px;
+  display: none;
+  color: #ff3b30;
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Improved button styling */
+.loginbtn {
+  background-color: var(--primary-color);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(248, 37, 72, 0.2);
+}
+
+.loginbtn:hover {
+  background-color: #e01e3c;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(248, 37, 72, 0.3);
+}
+
+.loginbtn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(248, 37, 72, 0.2);
+}
+
+.loginbtn:disabled {
+  background-color: #f8a4b0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Enhanced code input styling */
+.code_contaner {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.code-input {
+  width: 60px;
+  height: 60px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 600;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.code-input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(248, 37, 72, 0.1);
+  outline: none;
+}
+
+/* Progress indicator enhancement */
+.con {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.conformat {
+  border-radius: 4px;
+  width: 40px;
+  height: 6px;
+  background-color: #ececec;
+  transition: background-color 0.3s ease;
+}
+
+.conChecked {
+  background-color: var(--primary-color);
+}
+
+/* Loading spinner enhancement */
+.loading-spinner {
+  display: none;
+  text-align: center;
+  padding: 20px;
+}
+
+.loading-spinner::after {
+  content: "";
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(248, 37, 72, 0.2);
+  border-top: 3px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main_contaner {
+    width: 90%;
+    max-width: 400px;
+    padding: 24px;
+  }
+
+  .code-input {
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+  }
+
+  .code_contaner {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main_contaner {
+    width: 95%;
+    padding: 20px;
+  }
+
+  .code-input {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .form_group .label {
+    font-size: 16px;
+  }
+}
+
+/* Transition animations */
+#signup1,
+#signup2,
+#signup3 {
+  transition: all 0.3s ease;
+}
+
+/* Back button enhancement */
+.arrowRight {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.arrowRight:hover {
+  background-color: rgba(248, 37, 72, 0.1);
+  transform: translateX(-2px);
+}
+
+/* Resend code link styling */
+#resendCode {
+  color: var(--primary-color);
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+#resendCode:hover {
+  color: #e01e3c;
+  text-decoration: none;
+}
+/* edit errors fixing  */
+/* SVG Placeholder Images */
+.pending-image {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%23F82548' stroke-width='3' fill='none'/%3E%3Cpath d='M50 30V50L65 65' stroke='%23F82548' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.field-image {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect x='10' y='30' width='80' height='40' rx='5' stroke='%23F82548' stroke-width='3' fill='none'/%3E%3Cpath d='M20 50h60' stroke='%23F82548' stroke-width='2' stroke-dasharray='5,5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+.success-image {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' stroke='%2327AE60' stroke-width='3' fill='none'/%3E%3Cpath d='M30 50L45 65L70 35' stroke='%2327AE60' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+
+/* FontAwesome Alternative */
+.fa-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.fa-user {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='currentColor' d='M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.fa-envelope {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='currentColor' d='M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.fa-lock {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 448 512'%3E%3Cpath fill='currentColor' d='M400 224h-24v-72C376 68.2 307.8 0 224 0S72 68.2 72 152v72H48c-26.5 0-48 21.5-48 48v192c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V272c0-26.5-21.5-48-48-48zm-104 0H152v-72c0-39.7 32.3-72 72-72s72 32.3 72 72v72z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.fa-phone {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath fill='currentColor' d='M493.4 24.6l-104-24c-11.3-2.6-22.9 3.3-27.5 13.9l-48 112c-4.2 9.8-1.4 21.3 6.9 28l60.6 49.6c-36 76.7-98.9 140.5-177.2 177.2l-49.6-60.6c-6.8-8.3-18.2-11.1-28-6.9l-112 48C3.9 366.5-2 378.1.6 389.4l24 104C27.1 504.2 36.7 512 48 512c256.1 0 464-207.5 464-464 0-11.2-7.7-20.9-18.6-23.4z'%3E%3C/path%3E%3C/svg%3E");
+}
+
+
+/* Notification panel styling */
+.notifications-panel {
+  display: none;
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 320px;
+  max-height: 400px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.notifications-panel.show {
+  display: block;
+}
+
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+}
+
+.notifications-header h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.close-notifications {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.notifications-list {
+  padding: 8px 0;
+}
+
+.notification-item {
+  display: flex;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.notification-avatar {
+  width: 40px;
+  height: 40px;
+  margin-left: 12px;
+}
+
+.notification-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.notification-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #888;
+}
+
+.notification-text {
+  margin: 0 0 8px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.notification-action {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.notification-action.primary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.notification-action.secondary {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.no-notifications {
+  padding: 16px;
+  text-align: center;
+  color: #888;
+}
+
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  width: 18px;
+  height: 18px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

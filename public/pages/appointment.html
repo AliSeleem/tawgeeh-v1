@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>جدول المواعيد</title>
+    <style>
+      :root {
+        --primary-color: #1a73e8;
+        --secondary-color: #f5f5f5;
+        --border-color: #e0e0e0;
+        --text-color: #333;
+        --light-text: #777;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        --radius: 4px;
+        --available-bg: rgba(
+          29,
+          161,
+          242,
+          0.1
+        ); /* Light blue for availability */
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        color: var(--text-color);
+        direction: rtl;
+      }
+
+      .container {
+        display: flex;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        gap: 20px;
+      }
+
+      /* Calendar Section */
+      .calendar-section {
+        flex: 3;
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .calendar-controls {
+        padding: 10px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .calendar-controls button {
+        background: none;
+        border: 1px solid var(--border-color);
+        padding: 5px 10px;
+        border-radius: var(--radius);
+        cursor: pointer;
+      }
+
+      .calendar-controls button:hover {
+        background-color: #e0e0e0;
+      }
+
+      .calendar-header {
+        display: grid;
+        grid-template-columns: 60px repeat(7, 1fr);
+        background-color: white;
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 2;
+      }
+
+      .time-label {
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        color: #666;
+        background-color: #f8f8f8;
+      }
+
+      .day-label {
+        padding: 10px;
+        text-align: center;
+        font-weight: bold;
+        border-bottom: 1px solid var(--border-color);
+        border-left: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f8f8f8;
+      }
+
+      .day-name {
+        margin-bottom: 5px;
+        font-size: 0.9em;
+      }
+
+      .day-date {
+        font-size: 0.8em;
+        color: var(--light-text);
+      }
+
+      .calendar-body {
+        display: grid;
+        grid-template-columns: 60px repeat(7, 1fr);
+        grid-auto-rows: 60px;
+        position: relative;
+      }
+
+      .time-cell {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 0.85em;
+        color: #666;
+        background-color: #f8f8f8;
+      }
+
+      .calendar-cell {
+        border-left: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        padding: 2px;
+        cursor: pointer;
+      }
+
+      .calendar-cell.available {
+        background-color: var(--available-bg);
+      }
+
+      .calendar-cell:hover {
+        background-color: #f0f0f0;
+      }
+
+      .event {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 5px;
+        border-radius: var(--radius);
+        font-size: 0.8em;
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        right: 2px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+        cursor: move;
+        resize: both;
+        overflow: auto;
+        min-height: 20px;
+        z-index: 2;
+      }
+
+      .event .title {
+        font-weight: bold;
+        margin-bottom: 2px;
+      }
+
+      .event .time {
+        font-size: 0.7em;
+        opacity: 0.8;
+      }
+
+      /* Settings Section */
+      .settings-section {
+        flex: 2;
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .settings-header {
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .settings-header h2 {
+        font-size: 1.5em;
+        color: #444;
+      }
+
+      .settings-group {
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .settings-title {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #444;
+      }
+
+      .settings-description {
+        color: var(--light-text);
+        font-size: 0.85em;
+        margin-bottom: 15px;
+        line-height: 1.4;
+      }
+
+      .day-availability {
+        width: 10rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 8px 0;
+      }
+
+      .availability-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px dashed #eee;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      .day-name-label {
+        font-weight: bold;
+        font-size: 0.9em;
+      }
+
+      .availability-status {
+        color: var(--light-text);
+        font-size: 0.85em;
+      }
+      .time-slots {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .time-slot {
+        padding: 8px 16px;
+        display: flex;
+        gap: 5px;
+        margin-top: 5px;
+        font-size: 0.85em;
+        color: var(--text-color);
+        background-color: #e8e8e8;
+        border-radius: 8px;
+      }
+
+      /* Form Elements */
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .form-label {
+        font-size: 0.9em;
+        color: #555;
+      }
+
+      .input-number {
+        width: 60px;
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        text-align: center;
+        font-size: 0.85em;
+      }
+
+      .form-input {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .form-input span {
+        font-size: 0.85em;
+        color: #555;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+
+      .modal-content {
+        background: white;
+        margin: 15% auto;
+        padding: 20px;
+        border-radius: var(--radius);
+        width: 400px;
+        box-shadow: var(--shadow);
+        position: relative;
+      }
+
+      .modal-content input,
+      .modal-content select,
+      .modal-content textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+      }
+
+      .modal-content button {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        margin-top: 10px;
+      }
+
+      .modal-content button:hover {
+        opacity: 0.9;
+      }
+
+      .time-slot-entry {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+        align-items: center;
+      }
+
+      .time-slot-entry input {
+        width: 120px;
+      }
+
+      .time-slot-entry button {
+        background-color: #ff4444;
+        padding: 5px 10px;
+      }
+
+      /* Notification Styles */
+      .notifications {
+        position: fixed;
+        top: 60px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .notification {
+        background: white;
+        border: 1px solid #e0e0e0;
+        border-radius: var(--radius);
+        padding: 10px 15px;
+        box-shadow: var(--shadow);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 300px;
+        animation: slideIn 0.3s ease-out;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+        }
+        to {
+          transform: translateX(0);
+        }
+      }
+
+      .notification .close-btn {
+        cursor: pointer;
+        font-size: 1.2em;
+        color: #666;
+        margin-left: 10px;
+      }
+
+      .notification .message {
+        flex-grow: 1;
+        font-size: 0.9em;
+        color: var(--text-color);
+      }
+
+      .notification .actions {
+        display: flex;
+        gap: 5px;
+      }
+
+      .notification .action-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-size: 0.8em;
+      }
+
+      .notification .action-btn:hover {
+        opacity: 0.9;
+      }
+
+      /* Responsive Design */
+      @media screen and (max-width: 1200px) {
+        .container {
+          flex-direction: column;
+        }
+      }
+
+      @media screen and (max-width: 768px) {
+        .day-date {
+          display: none;
+        }
+
+        .calendar-header,
+        .calendar-body {
+          grid-template-columns: 50px repeat(7, 1fr);
+          font-size: 0.9em;
+        }
+
+        .event {
+          font-size: 0.7em;
+        }
+      }
+
+      @media screen and (max-width: 480px) {
+        .calendar-header,
+        .calendar-body {
+          grid-template-columns: 40px repeat(3, 1fr);
+        }
+
+        .calendar-header .day-label:nth-child(n + 5),
+        .calendar-body .calendar-cell:nth-child(8n + 5),
+        .calendar-body .calendar-cell:nth-child(8n + 6),
+        .calendar-body .calendar-cell:nth-child(8n + 7),
+        .calendar-body .calendar-cell:nth-child(8n + 8) {
+          display: none;
+        }
+
+        .notification {
+          width: 250px;
+        }
+      }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Settings Section -->
+      <div class="settings-section">
+        <div class="settings-header">
+          <h2>إعدادات المواعيد</h2>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">مدى التوفر العام</div>
+          <div class="settings-description">
+            يمكنك تحديد المواعيد التي تكون فيها متاحًا
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">التكرار</div>
+            <select id="recurrence">
+              <option value="none">لا يتكرر</option>
+              <option value="daily">يوميًا</option>
+              <option value="weekly" selected>أسبوعيًا</option>
+              <option value="monthly">شهريًا</option>
+            </select>
+          </div>
+
+          <div class="availability-row" data-day="الأحد">
+            <div class="day-availability">
+              <p class="day-name-label">الأحد</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الإثنين">
+            <div class="day-availability">
+              <p class="day-name-label">الإثنين</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الثلاثاء">
+            <div class="day-availability">
+              <p class="day-name-label">الثلاثاء</p>
+              <div class="time-slots"></div>
+              <div class="availability-status">غير متاح</div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الأربعاء">
+            <div class="day-availability">
+              <p class="day-name-label">الأربعاء</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الخميس">
+            <div class="day-availability">
+              <p class="day-name-label">الخميس</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الجمعة">
+            <div class="day-availability">
+              <p class="day-name-label">الجمعة</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="السبت">
+            <div class="day-availability">
+              <p class="day-name-label">السبت</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="../mentor-images/add-square.svg" alt="Add" />
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">الإطار الزمني</div>
+          <div class="settings-description">تحديد النطاق الزمني للمواعيد</div>
+
+          <div class="form-row">
+            <div class="form-label">الحد الأقصى للحجز المسبق</div>
+            <div class="form-input">
+              <input
+                type="number"
+                class="input-number"
+                id="max-advance"
+                value="30"
+                min="1"
+              />
+              <span>أيام</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">الحد الأدنى للوقت قبل الموعد</div>
+            <div class="form-input">
+              <input
+                type="number"
+                class="input-number"
+                id="min-lead"
+                value="1"
+                min="0"
+              />
+              <span>ساعات</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">إعدادات المواعيد</div>
+          <div class="settings-description">إدارة تفاصيل المواعيد</div>
+
+          <div class="form-row">
+            <div class="form-label">المدة الافتراضية</div>
+            <div class="form-input">
+              <input
+                type="number"
+                class="input-number"
+                id="default-duration"
+                value="30"
+                min="5"
+                step="5"
+              />
+              <span>دقيقة</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">الحد الأقصى للحجوزات يوميًا</div>
+          <div class="settings-description">
+            الحد الأقصى لعدد المواعيد في يوم واحد
+          </div>
+
+          <div class="form-row">
+            <div class="form-input" style="margin-left: auto">
+              <input
+                type="number"
+                class="input-number"
+                id="max-daily"
+                value="10"
+                min="1"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <div class="calendar-controls">
+          <button id="prev-week">الأسبوع السابق</button>
+          <span id="current-week"></span>
+          <button id="next-week">الأسبوع التالي</button>
+        </div>
+        <div class="calendar-header" id="calendar-header"></div>
+        <div class="calendar-body" id="calendar-body"></div>
+      </div>
+    </div>
+
+    <!-- Modal for Event Creation -->
+    <div class="modal" id="event-modal">
+      <div class="modal-content">
+        <h3>إضافة موعد</h3>
+        <input
+          type="text"
+          id="event-title"
+          placeholder="عنوان الموعد"
+          required
+        />
+        <textarea
+          id="event-description"
+          placeholder="الوصف"
+          rows="3"
+        ></textarea>
+        <input type="datetime-local" id="event-start" required />
+        <input type="datetime-local" id="event-end" required />
+        <select id="event-recurrence">
+          <option value="none">لا يتكرر</option>
+          <option value="daily">يوميًا</option>
+          <option value="weekly">أسبوعيًا</option>
+          <option value="monthly">شهريًا</option>
+        </select>
+        <input type="date" id="recurrence-end" placeholder="تاريخ الانتهاء" />
+        <button onclick="saveEvent()">حفظ</button>
+        <button onclick="closeModal('event-modal')">إلغاء</button>
+      </div>
+    </div>
+
+    <!-- Modal for Adding Availability -->
+    <div class="modal" id="availability-modal">
+      <div class="modal-content">
+        <h3>إضافة توفر ليوم <span id="availability-day"></span></h3>
+        <div id="time-slots-container">
+          <div class="time-slot-entry">
+            <input type="time" class="slot-start" value="09:00" />
+            <input type="time" class="slot-end" value="17:00" />
+            <button onclick="removeTimeSlot(this)">-</button>
+          </div>
+        </div>
+        <button onclick="addTimeSlot()">إضافة فترة أخرى</button>
+        <button onclick="saveAvailability()">حفظ</button>
+        <button onclick="closeModal('availability-modal')">إلغاء</button>
+      </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div class="notifications" id="notifications"></div>
+
+    <script>
+      let currentWeekStart = new Date();
+      currentWeekStart.setDate(
+        currentWeekStart.getDate() - currentWeekStart.getDay()
+      );
+
+      const dayNameMap = {
+        الأحد: "Sunday",
+        الإثنين: "Monday",
+        الثلاثاء: "Tuesday",
+        الأربعاء: "Wednesday",
+        الخميس: "Thursday",
+        الجمعة: "Friday",
+        السبت: "Saturday",
+      };
+      const reverseDayNameMap = Object.fromEntries(
+        Object.entries(dayNameMap).map(([k, v]) => [v, k])
+      );
+      const monthNames = [
+        "يناير",
+        "فبراير",
+        "مارس",
+        "أبريل",
+        "مايو",
+        "يونيو",
+        "يوليو",
+        "أغسطس",
+        "سبتمبر",
+        "أكتوبر",
+        "نوفمبر",
+        "ديسمبر",
+      ];
+
+      let availability = {
+        Sunday: { available: false, hours: [] },
+        Monday: { available: false, hours: [] },
+        Tuesday: { available: false, hours: [] },
+        Wednesday: { available: false, hours: [] },
+        Thursday: { available: false, hours: [] },
+        Friday: { available: false, hours: [] },
+        Saturday: { available: false, hours: [] },
+      };
+      let appointments = [];
+      let currentAvailabilityDay = null;
+
+      const calendarSection = document.querySelector(".calendar-section");
+      const calendarHeader = document.getElementById("calendar-header");
+      const calendarBody = document.getElementById("calendar-body");
+      const prevWeekBtn = document.getElementById("prev-week");
+      const nextWeekBtn = document.getElementById("next-week");
+      const currentWeekDisplay = document.getElementById("current-week");
+      const eventModal = document.getElementById("event-modal");
+      const availabilityModal = document.getElementById("availability-modal");
+      const notificationsContainer = document.getElementById("notifications");
+      const availabilityRows = document.querySelectorAll(".availability-row");
+      const recurrenceSelect = document.getElementById("recurrence");
+      const maxAdvanceInput = document.getElementById("max-advance");
+      const minLeadTimeInput = document.getElementById("min-lead");
+      const defaultDurationInput = document.getElementById("default-duration");
+      const maxDailyBookingsInput = document.getElementById("max-daily");
+
+      availabilityRows.forEach((row) => {
+        const day = row.dataset.day;
+        const status = row.querySelector(".availability-status");
+        const timeSlots = row.querySelector(".time-slots");
+        const addButton = row.querySelector(".add-availability");
+        row.addEventListener("click", () => {
+          const englishDay = dayNameMap[day];
+          if (availability[englishDay].hours.length === 0) {
+            status.textContent = "غير متاح";
+            availability[englishDay].available = false;
+            availability[englishDay].hours = [];
+            timeSlots.innerHTML = "";
+          }
+          generateCalendar();
+        });
+        addButton.addEventListener("click", (e) => {
+          e.stopPropagation();
+          currentAvailabilityDay = day;
+          document.getElementById("availability-day").textContent = day;
+          const englishDay = dayNameMap[day];
+          const slotsContainer = document.getElementById(
+            "time-slots-container"
+          );
+          slotsContainer.innerHTML = "";
+          if (availability[englishDay].hours.length > 0) {
+            availability[englishDay].hours.forEach((slot) => {
+              slotsContainer.innerHTML += `
+                <div class="time-slot-entry">
+                  <input type="time" class="slot-start" value="${slot[0]}" />
+                  <input type="time" class="slot-end" value="${slot[1]}" />
+                  <button onclick="removeTimeSlot(this)">-</button>
+                </div>
+              `;
+            });
+          } else {
+            slotsContainer.innerHTML = `
+              <div class="time-slot-entry">
+                <input type="time" class="slot-start" value="09:00" />
+                <input type="time" class="slot-end" value="17:00" />
+                <button onclick="removeTimeSlot(this)">-</button>
+              </div>
+            `;
+          }
+          availabilityModal.style.display = "block";
+        });
+      });
+
+      function addTimeSlot() {
+        const slotsContainer = document.getElementById("time-slots-container");
+        slotsContainer.innerHTML += `
+          <div class="time-slot-entry">
+            <input type="time" class="slot-start" value="09:00" />
+            <input type="time" class="slot-end" value="17:00" />
+            <button onclick="removeTimeSlot(this)">-</button>
+          </div>
+        `;
+      }
+
+      function removeTimeSlot(button) {
+        button.parentElement.remove();
+      }
+
+      function saveAvailability() {
+        const englishDay = dayNameMap[currentAvailabilityDay];
+        const slotsContainer = document.getElementById("time-slots-container");
+        const slots = slotsContainer.querySelectorAll(".time-slot-entry");
+        const newHours = [];
+        let valid = true;
+        slots.forEach((slot) => {
+          const start = slot.querySelector(".slot-start").value;
+          const end = slot.querySelector(".slot-end").value;
+          if (start >= end) {
+            showNotification("وقت البداية يجب أن يكون قبل وقت النهاية", [
+              "إغلاق",
+            ]);
+            valid = false;
+            return;
+          }
+          newHours.push([start, end]);
+        });
+        if (!valid) return;
+        availability[englishDay].hours = newHours;
+        availability[englishDay].available = newHours.length > 0;
+        const row = document.querySelector(
+          `.availability-row[data-day="${currentAvailabilityDay}"]`
+        );
+        const status = row.querySelector(".availability-status");
+        const timeSlots = row.querySelector(".time-slots");
+        if (newHours.length > 0) {
+          status.textContent = "";
+          timeSlots.innerHTML = newHours
+            .map(
+              (slot) => `<div class="time-slot">${slot[0]} - ${slot[1]}</div>`
+            )
+            .join("");
+        } else {
+          status.textContent = "غير متاح";
+          timeSlots.innerHTML = "";
+        }
+        generateCalendar();
+        closeModal("availability-modal");
+      }
+
+      function generateCalendar() {
+        calendarHeader.innerHTML = '<div class="time-label">الوقت</div>';
+        calendarBody.innerHTML = "";
+        const weekStart = new Date(currentWeekStart);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        currentWeekDisplay.textContent = `${weekStart.getDate()} ${
+          monthNames[weekStart.getMonth()]
+        } - ${weekEnd.getDate()} ${monthNames[weekEnd.getMonth()]}`;
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + i);
+          const dayName =
+            reverseDayNameMap[
+              [
+                "Sunday",
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+              ][i]
+            ];
+          const dayDate = `${date.getDate()} ${monthNames[date.getMonth()]}`;
+          calendarHeader.innerHTML += `
+            <div class="day-label" data-day="${dayName}" data-date="${
+            date.toISOString().split("T")[0]
+          }">
+              <div class="day-name">${dayName}</div>
+              <div class="day-date">${dayDate}</div>
+            </div>
+          `;
+        }
+
+        const timeSlots = generateTimeSlots(15); // 15-minute slots
+        timeSlots.forEach((time) => {
+          calendarBody.innerHTML += `<div class="time-cell">${time}</div>`;
+          for (let i = 0; i < 7; i++) {
+            const date = new Date(weekStart);
+            date.setDate(weekStart.getDate() + i);
+            const dayName =
+              reverseDayNameMap[
+                [
+                  "Sunday",
+                  "Monday",
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                ][i]
+              ];
+            const isAvailable = isTimeAvailable(dayName, time);
+            const cellContent = getEventContent(dayName, date, time);
+            calendarBody.innerHTML += `
+              <div class="calendar-cell ${
+                isAvailable ? "available" : ""
+              }" data-day="${dayName}" data-date="${date.toISOString()}" data-time="${time}">
+                ${cellContent}
+              </div>`;
+          }
+        });
+        renderEvents();
+      }
+
+      function generateTimeSlots(interval) {
+        const slots = [];
+        for (let hour = 0; hour < 24; hour++) {
+          for (let minute = 0; minute < 60; minute += interval) {
+            slots.push(
+              `${hour.toString().padStart(2, "0")}:${minute
+                .toString()
+                .padStart(2, "0")}`
+            );
+          }
+        }
+        return slots;
+      }
+
+      function isTimeAvailable(day, time) {
+        const englishDay = dayNameMap[day];
+        if (!availability[englishDay].available) return false;
+        return availability[englishDay].hours.some(
+          ([start, end]) => time >= start && time < end
+        );
+      }
+
+      function getEventContent(day, date, time) {
+        const event = appointments.find(
+          (appt) =>
+            appt.day === day &&
+            new Date(appt.date).toDateString() === date.toDateString() &&
+            appt.startTime <= time &&
+            appt.endTime > time
+        );
+        if (event) {
+          const startIndex = generateTimeSlots(15).indexOf(event.startTime);
+          const endIndex =
+            generateTimeSlots(15).indexOf(event.endTime) ||
+            generateTimeSlots(15).length - 1;
+          const height = (endIndex - startIndex) * 60 + 2;
+          return `<div class="event" data-id="${event.id}" style="height: ${height}px">
+            <div class="title">${event.title}</div>
+            <div class="time">${event.startTime} - ${event.endTime}</div>
+          </div>`;
+        }
+        return "";
+      }
+
+      function validateEvent(event) {
+        const { day, startTime, endTime, date } = event;
+        const englishDay = dayNameMap[day];
+        if (!availability[englishDay].available) {
+          showNotification(`اليوم ${day} غير متاح`, ["إغلاق"]);
+          return false;
+        }
+        let withinAvailability = false;
+        for (const [startHour, endHour] of availability[englishDay].hours) {
+          if (startTime >= startHour && endTime <= endHour) {
+            withinAvailability = true;
+            break;
+          }
+        }
+        if (!withinAvailability) {
+          showNotification(`الوقت خارج ساعات التوفر`, ["إغلاق"]);
+          return false;
+        }
+        const maxAdvanceDays = parseInt(maxAdvanceInput.value);
+        const currentDate = new Date();
+        const maxAdvanceDate = new Date(currentDate);
+        maxAdvanceDate.setDate(currentDate.getDate() + maxAdvanceDays);
+        if (new Date(date) > maxAdvanceDate) {
+          showNotification(
+            `تاريخ الموعد يتجاوز الحد الأقصى (${maxAdvanceDays} أيام)`,
+            ["إغلاق"]
+          );
+          return false;
+        }
+        const minLeadHours = parseInt(minLeadTimeInput.value);
+        const eventStart = new Date(date + "T" + startTime);
+        const minLeadTime = new Date(currentDate);
+        minLeadTime.setHours(currentDate.getHours() + minLeadHours);
+        if (eventStart < minLeadTime) {
+          showNotification(
+            `الوقت ${startTime} قريب جدًا (الحد الأدنى: ${minLeadHours} ساعات)`,
+            ["إغلاق"]
+          );
+          return false;
+        }
+        const maxDaily = parseInt(maxDailyBookingsInput.value);
+        const dailyEvents = appointments.filter(
+          (appt) =>
+            appt.day === day &&
+            new Date(appt.date).toDateString() === new Date(date).toDateString()
+        );
+        if (dailyEvents.length >= maxDaily) {
+          showNotification(
+            `تم الوصول إلى الحد الأقصى (${maxDaily} مواعيد يوميًا)`,
+            ["إغلاق"]
+          );
+          return false;
+        }
+        if (hasOverlap(event)) {
+          showNotification(`تتعارض مع موعد آخر`, ["إغلاق"]);
+          return false;
+        }
+        return true;
+      }
+
+      function hasOverlap(event) {
+        const { day, date, startTime, endTime } = event;
+        const [startHours, startMinutes] = startTime.split(":").map(Number);
+        const [endHours, endMinutes] = endTime.split(":").map(Number);
+        const startMinutesTotal = startHours * 60 + startMinutes;
+        const endMinutesTotal = endHours * 60 + endMinutes;
+        return appointments.some((appt) => {
+          if (
+            appt.day !== day ||
+            new Date(appt.date).toDateString() !== new Date(date).toDateString()
+          )
+            return false;
+          const [apptStartHours, apptStartMinutes] = appt.startTime
+            .split(":")
+            .map(Number);
+          const [apptEndHours, apptEndMinutes] = appt.endTime
+            .split(":")
+            .map(Number);
+          const apptStartMinutesTotal = apptStartHours * 60 + apptStartMinutes;
+          const apptEndMinutesTotal = apptEndHours * 60 + apptEndMinutes;
+          return (
+            startMinutesTotal < apptEndMinutesTotal &&
+            endMinutesTotal > apptStartMinutesTotal
+          );
+        });
+      }
+
+      function addEvent(event) {
+        if (validateEvent(event)) {
+          appointments.push(event);
+          renderEvents();
+          showNotification("تم إضافة الموعد بنجاح", ["إغلاق"]);
+          closeModal("event-modal");
+        }
+      }
+
+      function renderEvents() {
+        const cells = document.querySelectorAll(".calendar-cell");
+        cells.forEach((cell) => {
+          cell.innerHTML = getEventContent(
+            cell.dataset.day,
+            new Date(cell.dataset.date),
+            cell.dataset.time
+          );
+        });
+      }
+
+      calendarBody.addEventListener("dblclick", (e) => {
+        const cell = e.target.closest(".calendar-cell");
+        if (cell && !cell.querySelector(".event")) {
+          const day = cell.dataset.day;
+          const date = cell.dataset.date.split("T")[0];
+          const time = cell.dataset.time;
+          document.getElementById("event-start").value = `${date}T${time}:00`;
+          document.getElementById("event-end").value = `${date}T${addMinutes(
+            time,
+            parseInt(defaultDurationInput.value)
+          )}:00`;
+          document.getElementById("event-modal").style.display = "block";
+        }
+      });
+
+      prevWeekBtn.addEventListener("click", () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() - 7);
+        generateCalendar();
+      });
+
+      nextWeekBtn.addEventListener("click", () => {
+        currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+        generateCalendar();
+      });
+
+      function addMinutes(time, minutes) {
+        const [hours, mins] = time.split(":").map(Number);
+        const totalMinutes = hours * 60 + mins + minutes;
+        const newHours = Math.floor(totalMinutes / 60) % 24;
+        const newMins = totalMinutes % 60;
+        return `${newHours.toString().padStart(2, "0")}:${newMins
+          .toString()
+          .padStart(2, "0")}`;
+      }
+
+      function saveEvent() {
+        const title = document.getElementById("event-title").value;
+        const description = document.getElementById("event-description").value;
+        const start = document.getElementById("event-start").value;
+        const end = document.getElementById("event-end").value;
+        const recurrence = document.getElementById("event-recurrence").value;
+        const recurrenceEnd = document.getElementById("recurrence-end").value;
+        const [date] = start.split("T");
+        const [startTime] = start.split("T")[1].split(":00");
+        const [endTime] = end.split("T")[1].split(":00");
+        const day =
+          reverseDayNameMap[
+            new Date(date).toLocaleString("en-US", { weekday: "long" })
+          ];
+
+        const event = {
+          id: Date.now(),
+          title,
+          description,
+          day,
+          date,
+          startTime,
+          endTime,
+          recurrence,
+          recurrenceEnd: recurrenceEnd || null,
+        };
+
+        if (recurrence !== "none") {
+          const newEvents = generateRecurringEvents(event);
+          newEvents.forEach(addEvent);
+        } else {
+          addEvent(event);
+        }
+      }
+
+      function generateRecurringEvents(event) {
+        const events = [event];
+        const startDate = new Date(event.date);
+        const endDate = event.recurrenceEnd
+          ? new Date(event.recurrenceEnd)
+          : new Date(startDate);
+        endDate.setDate(startDate.getDate() + 30); // Default 30-day limit if no end date
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          if (event.recurrence === "daily")
+            currentDate.setDate(currentDate.getDate() + 1);
+          else if (event.recurrence === "weekly")
+            currentDate.setDate(currentDate.getDate() + 7);
+          else if (event.recurrence === "monthly")
+            currentDate.setMonth(currentDate.getMonth() + 1);
+          if (currentDate <= endDate) {
+            const newDate = currentDate.toISOString().split("T")[0];
+            const newDay =
+              reverseDayNameMap[
+                currentDate.toLocaleString("en-US", { weekday: "long" })
+              ];
+            events.push({
+              ...event,
+              date: newDate,
+              day: newDay,
+              id: Date.now() + Math.random(),
+            });
+          }
+        }
+        return events;
+      }
+
+      function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+        if (modalId === "event-modal") {
+          document.getElementById("event-title").value = "";
+          document.getElementById("event-description").value = "";
+          document.getElementById("event-start").value = "";
+          document.getElementById("event-end").value = "";
+          document.getElementById("event-recurrence").value = "none";
+          document.getElementById("recurrence-end").value = "";
+        }
+      }
+
+      function showNotification(message, actions = ["إغلاق"]) {
+        const notification = document.createElement("div");
+        notification.className = "notification";
+        notification.innerHTML = `
+          <span class="close-btn">×</span>
+          <div class="message">${message}</div>
+          <div class="actions">
+            ${actions
+              .map((action) => `<button class="action-btn">${action}</button>`)
+              .join("")}
+          </div>
+        `;
+        notificationsContainer.appendChild(notification);
+        setTimeout(() => notification.remove(), 5000);
+        notification
+          .querySelector(".close-btn")
+          .addEventListener("click", () => notification.remove());
+        notification.querySelectorAll(".action-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (btn.textContent === "إغلاق") notification.remove();
+          });
+        });
+      }
+
+      // p5.js setup for drag-and-drop and resize
+      let draggedEvent = null;
+      let offsetX = 0,
+        offsetY = 0;
+      let resizing = false;
+
+      function setup() {
+        let canvas = createCanvas(
+          calendarSection.offsetWidth,
+          calendarSection.offsetHeight
+        );
+        canvas.parent("calendar-body");
+        canvas.style("position", "absolute");
+        canvas.style("top", "0");
+        canvas.style("left", "0");
+        canvas.style("z-index", "1");
+
+        calendarBody.addEventListener("mousedown", (e) => {
+          const eventDiv = e.target.closest(".event");
+          if (eventDiv) {
+            draggedEvent = eventDiv;
+            const rect = eventDiv.getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+            resizing = e.offsetY > rect.height - 10; // Resize if near bottom
+          }
+        });
+
+        document.addEventListener("mousemove", (e) => {
+          if (draggedEvent) {
+            const parentRect = calendarBody.getBoundingClientRect();
+            let newLeft = e.clientX - offsetX - parentRect.left;
+            let newTop = e.clientY - offsetY - parentRect.top;
+            const cellWidth = parentRect.width / 8;
+            const cellHeight = 60;
+            const col = Math.max(
+              0,
+              Math.min(6, Math.floor(newLeft / cellWidth))
+            );
+            const row = Math.max(0, Math.floor(newTop / cellHeight));
+            const timeSlots = generateTimeSlots(15);
+            const newTime = timeSlots[row] || timeSlots[0];
+            const dayCells = document.querySelectorAll(".day-label");
+            const newDay = dayCells[col + 1].dataset.day;
+            const newDate = dayCells[col + 1].dataset.date;
+
+            const event = appointments.find(
+              (appt) => appt.id == draggedEvent.dataset.id
+            );
+            if (event) {
+              if (resizing) {
+                const endRow = Math.min(
+                  generateTimeSlots(15).length - 1,
+                  row + Math.floor((e.clientY - newTop) / cellHeight)
+                );
+                event.endTime = generateTimeSlots(15)[endRow] || event.endTime;
+              } else {
+                event.day = newDay;
+                event.date = newDate;
+                event.startTime = newTime;
+              }
+              renderEvents();
+            }
+          }
+        });
+
+        document.addEventListener("mouseup", () => {
+          draggedEvent = null;
+          resizing = false;
+        });
+      }
+
+      generateCalendar();
+    </script>
+  </body>
+</html>

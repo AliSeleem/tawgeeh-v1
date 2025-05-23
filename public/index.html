@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>منصة الموجهين</title>
+    <link rel="stylesheet" href="./CSS/exploreStyles.css" />
+    <link rel="stylesheet" href="./CSS/common.css" />
+    <link rel="stylesheet" href="./CSS/login.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .loading-spinner {
+        display: none;
+        text-align: center;
+        padding: 20px;
+      }
+      .loading-spinner::after {
+        content: "";
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border: 3px solid #ccc;
+        border-top: 3px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .error-message {
+        color: red;
+        text-align: center;
+        display: none;
+        padding: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a class="logo" href="index.html">
+          <img src="./mentor-images/logo_campus.svg" alt="شعار كامبس" />
+        </a>
+        <div class="middleTabs">
+          <a href="#" class="active">الموجهين</a>
+          <a href="./pages/Sessions.html" id="sessionsLink">الجلسات</a>
+          <a href="#" id="joinAsMentorLink">إنضم كموجه</a>
+        </div>
+        <div class="left_Sec auth-section">
+          <!-- Dynamically populated by JavaScript -->
+        </div>
+      </nav>
+    </header>
+    <!-- Login Popup -->
+    <div class="login-popup-container" style="display: none">
+      <div class="main_contaner" id="login1">
+        <button class="login-popup-close">×</button>
+        <h1>تسجيل الدخول</h1>
+        <form class="form_contaner" id="loginForm">
+          <div class="form_group">
+            <label class="label" for="email">البريد الإلكتروني</label>
+            <div class="wrapper">
+              <input
+                class="input"
+                type="email"
+                name="email"
+                id="email"
+                placeholder="Moatasmshabaan@gmail.com"
+                oninput="checkInputDirection(this)"
+                aria-describedby="emailError"
+              />
+              <span id="emailError" class="error"></span>
+            </div>
+          </div>
+          <div class="secon_con">
+            <div class="form_group">
+              <label class="label" for="password">كلمة المرور</label>
+              <input
+                class="input"
+                type="password"
+                name="password"
+                id="password"
+                placeholder="************************"
+                oninput="checkInputDirection(this)"
+                aria-describedby="passwordError"
+              />
+              <span id="passwordError" class="error"></span>
+            </div>
+            <div class="password_con form_group">
+              <h4 id="forgetBtn">هل نسيت كلمة المرور؟</h4>
+              <div class="check">
+                <label for="ch1">تذكرني</label>
+                <input class="checkbox" type="checkbox" id="ch1" />
+              </div>
+            </div>
+            <div class="or form_group">
+              <span></span>
+              <p>أو</p>
+              <span></span>
+            </div>
+            <div class="buttons_con form_group">
+              <button
+                type="button"
+                class="GoogleBtn"
+                id="GoogleBtn"
+                data-provider="google"
+              >
+                <img
+                  src="../images/Google.svg"
+                  alt="تسجيل الدخول باستخدام Google"
+                />
+              </button>
+              <button
+                type="button"
+                class="linkedinBtn"
+                id="linkedinBtn"
+                data-provider="linkedin"
+              >
+                <img
+                  src="../images/linkedin.svg"
+                  alt="تسجيل الدخول باستخدام LinkedIn"
+                />
+              </button>
+            </div>
+          </div>
+          <div class="loginbtn_con">
+            <input
+              type="button"
+              class="loginbtn"
+              id="loginButton"
+              value="تسجيل الدخول"
+            />
+          </div>
+          <div class="signup_con form_group">
+            <h4 id="signupBtn1">انشاء حساب جديد</h4>
+            <p>هل ليس لديك حساب بعد؟</p>
+          </div>
+        </form>
+        <div class="loading-spinner"></div>
+      </div>
+    </div>
+    <div class="login-popup-overlay" style="display: none"></div>
+    <!-- Signup Popup -->
+    <div
+      class="signup-popup-container"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="signup-title"
+    >
+      <div class="main_contaner">
+        <!-- Signup Step 1 -->
+        <div id="signup1" style="display: block">
+          <div class="con">
+            <div class="con1 conformat conChecked"></div>
+            <div class="con2 conformat"></div>
+            <div class="con3 conformat"></div>
+          </div>
+          <h1 id="signup-title">انشاء حساب جديد</h1>
+          <form id="signupForm1" class="form_contaner">
+            <div class="form_group">
+              <label class="label" for="fullName">الإسم كاملا</label>
+              <input
+                class="input"
+                type="text"
+                name="fullName"
+                id="fullName"
+                placeholder="ادخل اسمك كاملا"
+                oninput="checkInputDirection(this)"
+                aria-describedby="fullNameError"
+              />
+              <span id="fullNameError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="signupEmail">البريد الإلكتروني</label>
+              <input
+                class="input"
+                type="email"
+                name="signupEmail"
+                id="signupEmail"
+                placeholder="Moatasmshabaan@gmail.com"
+                oninput="checkInputDirection(this)"
+                aria-describedby="signupEmailError"
+              />
+              <span id="signupEmailError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="phone">رقم الهاتف</label>
+              <input
+                class="input"
+                type="tel"
+                name="phone"
+                id="phone"
+                placeholder="+20123456789"
+                pattern="\+[0-9]{10,15}"
+                oninput="checkInputDirection(this)"
+                aria-describedby="phoneError"
+              />
+              <span id="phoneError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="signupPassword">كلمة المرور</label>
+              <input
+                class="input"
+                type="password"
+                name="signupPassword"
+                id="signupPassword"
+                placeholder="************************"
+                oninput="checkInputDirection(this)"
+                aria-describedby="signupPasswordError"
+              />
+              <span id="signupPasswordError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label" for="confirmPassword"
+                >تأكيد كلمة المرور</label
+              >
+              <input
+                class="input"
+                type="password"
+                name="confirmPassword"
+                id="confirmPassword"
+                placeholder="************************"
+                oninput="checkInputDirection(this)"
+                aria-describedby="confirmPasswordError"
+              />
+              <span id="confirmPasswordError" class="error"></span>
+            </div>
+            <div class="group2 form_group">
+              <div class="check">
+                <label for="privacyCheckbox1"
+                  >لقد قرأت وفهمت سياسة الخصوصية</label
+                >
+                <input class="checkbox" type="checkbox" id="privacyCheckbox1" />
+                <span id="privacyError" class="error"></span>
+              </div>
+              <div class="or form_group">
+                <span></span>
+                <p>أو</p>
+                <span></span>
+              </div>
+              <div class="buttons_con form_group">
+                <button type="button" class="GoogleBtn" data-provider="google">
+                  <img
+                    src="../images/Google.svg"
+                    alt="تسجيل الدخول باستخدام Google"
+                  />
+                </button>
+                <button
+                  type="button"
+                  class="linkedinBtn"
+                  data-provider="linkedin"
+                >
+                  <img
+                    src="../images/linkedin.svg"
+                    alt="تسجيل الدخول باستخدام LinkedIn"
+                  />
+                </button>
+              </div>
+              <div class="loginbtn_con">
+                <input
+                  type="button"
+                  value="التالي"
+                  id="signupBtn"
+                  class="loginbtn"
+                />
+              </div>
+              <div class="signup_con form_group">
+                <h4 id="registerBtn">تسجيل الدخول</h4>
+                <p>هل لديك حساب بالفعل؟</p>
+              </div>
+            </div>
+          </form>
+        </div>
+        <!-- Signup Step 2 -->
+        <div id="signup2" style="display: none">
+          <div class="con">
+            <div class="con1 conformat conChecked"></div>
+            <div class="con2 conformat conChecked"></div>
+            <div class="con3 conformat"></div>
+          </div>
+          <div id="arrowRightS1" class="arrowRight">
+            <img src="./images/arrow-right.svg" alt="Back" />
+          </div>
+          <h1>انشاء حساب جديد</h1>
+          <form id="signupForm2" class="form_contaner">
+            <div class="form_group">
+              <label class="label" for="specialization">التخصص</label>
+              <input
+                class="input"
+                type="text"
+                name="specialization"
+                id="specialization"
+                placeholder="اكتب تخصصك (مثل: برمجة، تصميم)"
+                oninput="checkInputDirection(this)"
+                aria-describedby="specializationError"
+              />
+              <span id="specializationError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label">البلد</label>
+              <div class="select-wrapper">
+                <select
+                  name="country"
+                  id="country"
+                  required
+                  aria-describedby="countryError"
+                >
+                  <option value="">اختر البلد</option>
+                  <option value="EG">مصر</option>
+                  <option value="SA">السعودية</option>
+                  <option value="AE">الإمارات</option>
+                  <option value="other">دولة أخرى</option>
+                </select>
+                <img
+                  src="./images/CaretDown.svg"
+                  alt="Dropdown Arrow"
+                  class="select-icon arrowDown"
+                />
+              </div>
+              <span id="countryError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label">عدد سنوات الخبرة</label>
+              <div class="select-wrapper">
+                <select
+                  name="experience"
+                  id="experience"
+                  required
+                  aria-describedby="experienceError"
+                >
+                  <option value="">اختر عدد السنوات</option>
+                  <option value="zero-one">0-1 سنين خبرة (JUNIOR)</option>
+                  <option value="one-three">
+                    1-3 سنين خبرة (INTERMEDIATE)
+                  </option>
+                  <option value="three-five">3-5 سنين خبرة (SENIOR)</option>
+                  <option value="PlusFive">أكثر من 5 سنوات (EXPERT)</option>
+                </select>
+                <img
+                  src="./images/CaretDown.svg"
+                  alt="Dropdown Arrow"
+                  class="select-icon arrowDown"
+                />
+              </div>
+              <span id="experienceError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label">الجنس</label>
+              <div class="select-wrapper">
+                <select
+                  name="gender"
+                  id="gender"
+                  required
+                  aria-describedby="genderError"
+                >
+                  <option value="">اختر الجنس</option>
+                  <option value="MALE">ذكر</option>
+                  <option value="FEMALE">أنثى</option>
+                  <option value="OTHER">غير محدد</option>
+                </select>
+                <img
+                  src="./images/CaretDown.svg"
+                  alt="Dropdown Arrow"
+                  class="select-icon arrowDown"
+                />
+              </div>
+              <span id="genderError" class="error"></span>
+            </div>
+            <div class="form_group">
+              <label class="label">نبذة عني:</label>
+              <textarea
+                name="about_me"
+                id="about_me"
+                placeholder="نبذه عني (20-500 حرف)"
+                required
+                oninput="checkInputDirection(this)"
+                maxlength="500"
+                aria-describedby="aboutMeError"
+              ></textarea>
+              <span id="aboutMeError" class="error"></span>
+            </div>
+            <div class="group2 form_group">
+              <div class="check">
+                <label for="privacyCheckbox2"
+                  >لقد قرأت وفهمت سياسة الخصوصية</label
+                >
+                <input class="checkbox" type="checkbox" id="privacyCheckbox2" />
+                <span id="privacyError2" class="error"></span>
+              </div>
+              <div class="or form_group">
+                <span></span>
+                <p>أو</p>
+                <span></span>
+              </div>
+              <div class="buttons_con form_group">
+                <button type="button" class="GoogleBtn" data-provider="google">
+                  <img
+                    src="../images/Google.svg"
+                    alt="تسجيل الدخول باستخدام Google"
+                  />
+                </button>
+                <button
+                  type="button"
+                  class="linkedinBtn"
+                  data-provider="linkedin"
+                >
+                  <img
+                    src="../images/linkedin.svg"
+                    alt="تسجيل الدخول باستخدام LinkedIn"
+                  />
+                </button>
+              </div>
+              <div class="loginbtn_con">
+                <input
+                  type="button"
+                  id="loginbtn2"
+                  class="loginbtn"
+                  value="إنشاء حساب"
+                />
+              </div>
+              <div class="signup_con form_group">
+                <h4 id="registerBtn2">تسجيل الدخول</h4>
+                <p>هل لديك حساب بالفعل؟</p>
+              </div>
+            </div>
+          </form>
+          <div class="loading-spinner"></div>
+        </div>
+        <!-- Signup Step 3 -->
+        <div id="signup3" style="display: none">
+          <div class="con">
+            <div class="con1 conformat conChecked"></div>
+            <div class="con2 conformat conChecked"></div>
+            <div class="con3 conformat conChecked"></div>
+          </div>
+          <div id="arrowRightS2" class="arrowRight">
+            <img src="../images/arrow-right.svg" alt="Back" />
+          </div>
+          <h1>تأكيد حساب الجيميل</h1>
+          <p>من فضلك أدخل الكود المرسل إلى حسابك الالكتروني لتأكيده.</p>
+          <form class="form_contaner form_contanerP" id="signupForm3">
+            <div class="code-input-group">
+              <input
+                type="text"
+                name="resetCode1"
+                maxlength="1"
+                class="code-input resetCode"
+                aria-label="رمز التحقق الأول"
+                aria-describedby="verificationCodeError"
+              />
+              <input
+                type="text"
+                name="resetCode2"
+                maxlength="1"
+                class="code-input resetCode"
+                aria-label="رمز التحقق الثاني"
+                aria-describedby="verificationCodeError"
+              />
+              <input
+                type="text"
+                name="resetCode3"
+                maxlength="1"
+                class="code-input resetCode"
+                aria-label="رمز التحقق الثالث"
+                aria-describedby="verificationCodeError"
+              />
+              <input
+                type="text"
+                name="resetCode4"
+                maxlength="1"
+                class="code-input resetCode"
+                aria-label="رمز التحقق الرابع"
+                aria-describedby="verificationCodeError"
+              />
+              <span id="verificationCodeError" class="error"></span>
+            </div>
+            <div class="loginbtn_con">
+              <input type="button" id="loginbtn3" class="loginbtn" value="تم" />
+            </div>
+            <div class="signup_con form_group">
+              <h4 id="resendCode">ارسل الكود مرة اخرى</h4>
+              <p>لم يتم ارسال الكود؟</p>
+            </div>
+          </form>
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+      <button class="signup-popup-close" aria-label="إغلاق النافذة">×</button>
+    </div>
+    <div class="signup-popup-overlay" style="display: none"></div>
+    <!-- Password Reset Popup -->
+    <div
+      class="password-reset-popup-container"
+      style="display: none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="password-reset-title"
+    >
+      <div class="main_contaner">
+        <!-- Password Reset Screen 1 -->
+        <div class="login4" id="passwordScreen1" style="display: block">
+          <div id="arrowRightP1" class="arrowRight">
+            <img src="./images/arrow-right.svg" alt="Back" />
+          </div>
+          <h1 id="password-reset-title">نسيت كلمة المرور؟</h1>
+          <p>لا تقلق, سنرسل لك تعليمات إعادة تعيين كلمة المرور.</p>
+          <form class="form_contaner form_contanerP" id="passwordForm1">
+            <div class Wesbite:
+            https://www.w3schools.com/howto/howto_css_form.asp
+            <div class="form_group">
+              <label class="label" for="resetEmail">البريد الإلكتروني</label>
+              <div class="wrapper">
+                <input
+                  class="input"
+                  type="email"
+                  name="resetEmail"
+                  id="resetEmail"
+                  placeholder="Moatasmshabaan@gmail.com"
+                  oninput="checkInputDirection(this)"
+                  aria-describedby="resetEmailError"
+                />
+                <span id="resetEmailError" class="error"></span>
+              </div>
+            </div>
+            <div class="loginbtn_con">
+              <input
+                type="button"
+                id="repassword"
+                class="loginbtn"
+                value="إعادة تعيين كلمة المرور"
+              />
+            </div>
+            <div class="signup_con form_group">
+              <h4 id="signupBtnP1">انشاء حساب جديد</h4>
+              <p>هل ليس لديك حساب بعد؟</p>
+            </div>
+          </form>
+          <div class="loading-spinner"></div>
+        </div>
+        <!-- Password Reset Screen 2 -->
+        <div class="login4" id="passwordScreen2" style="display: none">
+          <div id="arrowRightP2" class="arrowRight">
+            <img src="./images/arrow-right.svg" alt="Back" />
+          </div>
+          <h1>إعادة تعيين كلمة المرور</h1>
+          <p>سنرسل لك كود اعادة تعيين كلمة المرور عبر البريد الالكتروني.</p>
+          <form class="form_contaner form_contanerP" id="passwordForm2">
+            <div class="code-input-group">
+              <input
+                type="text"
+                name="resetCode1"
+                maxlength="1"
+                class="code-input resetCodePass1"
+                aria-label="رمز التحقق الأول"
+              />
+              <input
+                type="text"
+                name="resetCode2"
+                maxlength="1"
+                class="code-input resetCodePass1"
+                aria-label="رمز التحقق الثاني"
+              />
+              <input
+                type="text"
+                name="resetCode3"
+                maxlength="1"
+                class="code-input resetCodePass1"
+                aria-label="رمز التحقق الثالث"
+              />
+              <input
+                type="text"
+                name="resetCode4"
+                maxlength="1"
+                class="code-input resetCodePass1"
+                aria-label="رمز التحقق الرابع"
+              />
+              <span id="resetCodeError" class="error"></span>
+            </div>
+            <div class="loginbtn_con">
+              <input type="button" id="donePass" class="loginbtn" value="تم" />
+            </div>
+            <div class="signup_con form_group">
+              <h4 id="resendCodeP2">ارسل الكود مرة اخرى</h4>
+              <p id="verification-code">لم يتم ارسال الكود؟</p>
+            </div>
+          </form>
+          <div class="loading-spinner"></div>
+        </div>
+        <!-- Password Reset Screen 3 -->
+        <div class="login4" id="passwordScreen3" style="display: none">
+          <h1>تعيين كلمة مرور جديدة</h1>
+          <p>يجب ان يكون الطول 8 احرف على الأقل</p>
+          <form class="form_contaner form_contanerP" id="passwordForm3">
+            <div class="form_group">
+              <label class="label" for="newPassword">كلمة المرور</label>
+              <div class="wrapper">
+                <input
+                  class="input"
+                  type="password"
+                  name="newPassword"
+                  id="newPassword"
+                  placeholder="*********************"
+                  oninput="checkInputDirection(this)"
+                  aria-describedby="newPasswordError"
+                />
+                <span id="newPasswordError" class="error"></span>
+              </div>
+            </div>
+            <div class="form_group">
+              <label class="label" for="confirmNewPassword"
+                >تأكيد كلمة المرور</label
+              >
+              <div class="wrapper">
+                <input
+                  class="input"
+                  type="password"
+                  name="confirmNewPassword"
+                  id="confirmNewPassword"
+                  placeholder="*********************"
+                  oninput="checkInputDirection(this)"
+                  aria-describedby="confirmNewPasswordError"
+                />
+                <span id="confirmNewPasswordError" class="error"></span>
+              </div>
+            </div>
+            <div class="loginbtn_con">
+              <input
+                type="button"
+                class="loginbtn"
+                id="changePasswordBtn"
+                value="تغيير كلمة المرور"
+              />
+            </div>
+            <div class="signup_con form_group">
+              <h4 id="signupBtnP3">انشاء حساب جديد</h4>
+              <p>هل ليس لديك حساب بعد؟</p>
+            </div>
+          </form>
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+      <button class="password-reset-popup-close" aria-label="إغلاق النافذة">
+        ×
+      </button>
+    </div>
+    <div class="password-reset-popup-overlay" style="display: none"></div>
+    <div class="main-container">
+      <section class="search-group">
+        <div class="search-container">
+          <div class="search-section">
+            <div class="search-bar">
+              <div class="search-input-group">
+                <span class="search-placeholder"
+                  >البحث حسب الاسم و الشركة و الدور</span
+                >
+                <div class="search-icon">
+                  <div class="search-icon-img"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="filter-container">
+            <div class="filter-section">
+              <div class="filter-toggle">
+                <div class="filter-toggle-icon">
+                  <div class="filter-toggle-img"></div>
+                </div>
+              </div>
+              <div class="filter-categories">
+                <div class="filter-category active">الكل</div>
+                <div class="filter-category">البرمجة</div>
+                <div class="filter-category">التصميم</div>
+                <div class="filter-category small">HR</div>
+                <div class="filter-category large">ريادة اعمال</div>
+              </div>
+              <div class="sort-toggle">
+                <div class="sort-icon">
+                  <div class="sort-icon-img"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <main class="mentors-container">
+          <div class="loading-spinner"></div>
+          <div class="error-message"></div>
+          <!-- Mentor cards populated by JavaScript -->
+        </main>
+      </section>
+      <div class="notifications-container" style="display: none">
+        <div class="loading-spinner"></div>
+        <div class="error-message"></div>
+        <!-- Notifications populated by JavaScript -->
+      </div>
+      <div class="mentor-popup-container" style="display: none">
+        <div class="right-section">
+          <h1 class="profile-name"></h1>
+          <p class="profile-title"></p>
+          <p class="profile-bio"></p>
+          <div class="buttons-container">
+            <button class="button button-outline">عرض الملف الشخصي</button>
+            <button class="button button-filled">احجز الآن</button>
+          </div>
+        </div>
+        <div class="left-section">
+          <div class="video-label">فيديو تعريفي</div>
+          <div class="profile-image-container">
+            <img src="" alt="Profile Image" class="profile-image" />
+            <div class="video-play-icon"></div>
+          </div>
+        </div>
+        <button class="mentor-popup-close">×</button>
+      </div>
+      <div class="mentor-popup-overlay" style="display: none"></div>
+      <!-- Mentor Application Popup -->
+      <div
+        class="mentor-application-popup-container"
+        style="display: none"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="mentor-application-title"
+      >
+        <div class="mentor-application-content">
+          <div class="overlay" id="instructions">
+            <div class="mainContaner">
+              <h1 id="mentor-application-title">هل تريد الانضمام كموجه؟</h1>
+              <div class="content">
+                <div class="text">
+                  <h4>إليك إرشادات مجتمع Campus !</h4>
+                  <p>
+                    للاستمرار، يُرجى قراءة وقبول إرشادات المجتمع. يساعدنا ذلك في
+                    الحفاظ على تجربة موثوقة لجميع أعضاء المجتمع.
+                  </p>
+                </div>
+                <div class="text">
+                  <h4>كن محترمًا</h4>
+                  <p>
+                    نحترم الوقت والطاقة والجهود التي قدمها المجتمع لمنصة Campus؛
+                    ويجب أن تعكس تفاعلاتنا هذا الاحترام.
+                  </p>
+                </div>
+                <div class="text">
+                  <h4>كن ممتنًا</h4>
+                  <p>
+                    نقدر فعل الإحسان ومشاركة الخبرات، وما نتعلمه وننموه من خلال
+                    دروس وتجارب الآخرين.
+                  </p>
+                </div>
+                <div class="text">
+                  <h4>تفاعل بإيجابية</h4>
+                  <p>
+                    سنرد الجميل بالطاقة والجهد، من خلال الالتزام بالحضور،
+                    والتفاعل الجاد، وتقديم أفضل ما لدينا.
+                  </p>
+                </div>
+              </div>
+              <button class="joinBtn" id="joinBtn">موافق</button>
+            </div>
+          </div>
+          <div class="overlay" id="joinAs">
+            <div class="mainContaner_2">
+              <h1>انضم كموجه مهني</h1>
+              <form class="content_joinAs" action="" method="post">
+                <div class="form_content">
+                  <div class="form_group">
+                    <label class="label" for="specialization">التخصص :</label>
+                    <div class="select-wrapper">
+                      <select
+                        name="specialization"
+                        id="specialization"
+                        required
+                        aria-describedby="specializationError"
+                      >
+                        <option value="">اختر التخصص</option>
+                        <option value="software-engineering">
+                          Software Engineering
+                        </option>
+                        <option value="data-science">Data Science</option>
+                        <option value="cyber-security">Cyber Security</option>
+                        <option value="ai-ml">AI & Machine Learning</option>
+                      </select>
+                      <img
+                        src="./images/arrow-down.svg"
+                        alt="Arrow Down"
+                        class="select-icon arrowDown"
+                      />
+                    </div>
+                    <span
+                      id="specializationError"
+                      class="error"
+                      aria-live="polite"
+                    ></span>
+                  </div>
+                  <div class="form_group">
+                    <label class="label" for="target_audience"
+                      >الفئه المستهدفه من المتدربين:</label
+                    >
+                    <div class="select-wrapper">
+                      <select
+                        name="target_audience"
+                        id="target_audience"
+                        required
+                        aria-describedby="targetAudienceError"
+                      >
+                        <option value="">اختر الفئة المستهدفة</option>
+                        <option value="students">طلاب جامعيون</option>
+                        <option value="graduates">خريجون جدد</option>
+                        <option value="career-switchers">
+                          الراغبون في تغيير مجال العمل
+                        </option>
+                        <option value="professionals">
+                          المحترفون الراغبون في تطوير مهاراتهم
+                        </option>
+                      </select>
+                      <img
+                        src="./images/arrow-down.svg"
+                        alt="Arrow Down"
+                        class="select-icon arrowDown"
+                      />
+                    </div>
+                    <span
+                      id="targetAudienceError"
+                      class="error"
+                      aria-live="polite"
+                    ></span>
+                  </div>
+                  <div class="form_group">
+                    <label class="label">عدد سنوات الخبرة :</label>
+                    <div class="select-wrapper">
+                      <select
+                        name="experience"
+                        id="experience"
+                        required
+                        aria-describedby="experienceError"
+                      >
+                        <option value="">اختر عدد السنوات</option>
+                        <option value="zero-one">0-1 سنين خبرة</option>
+                        <option value="one-three">1-3 سنين خبرة</option>
+                        <option value="three-five">3-5 سنين خبرة</option>
+                        <option value="PlusFive">أكثر من 5 سنوات</option>
+                      </select>
+                      <img
+                        src="./images/arrow-down.svg"
+                        alt="Arrow Down"
+                        class="select-icon arrowDown"
+                      />
+                    </div>
+                    <span
+                      id="experienceError"
+                      class="error"
+                      aria-live="polite"
+                    ></span>
+                  </div>
+                  <div class="form_group">
+                    <label class="label" for="linkedin_url"
+                      >رابط حساب LinkedIn</label
+                    >
+                    <input
+                      class="input"
+                      type="text"
+                      name="linkedin_url"
+                      id="linkedin_url"
+                      placeholder="https://www.linkedin.com/in/username"
+                      oninput="checkInputDirection(this)"
+                      aria-describedby="linkedinError"
+                    />
+                    <span
+                      id="linkedinError"
+                      class="error"
+                      aria-live="polite"
+                    ></span>
+                  </div>
+                  <div class="form_group">
+                    <label class="label" for="about_me">نبذة عني:</label>
+                    <textarea
+                      name="about_me"
+                      id="about_me"
+                      placeholder="اكتب نبذة مختصرة عن خبراتك ومهاراتك (20-500 حرف)"
+                      required
+                      oninput="checkInputDirection(this)"
+                      maxlength="500"
+                      aria-describedby="aboutMeError"
+                    ></textarea>
+                    <span
+                      id="aboutMeError"
+                      class="error"
+                      aria-live="polite"
+                    ></span>
+                  </div>
+                </div>
+                <input
+                  type="submit"
+                  value="انضم"
+                  class="joinBtn"
+                  id="submitBtn"
+                />
+              </form>
+            </div>
+          </div>
+          <div class="overlay" id="pendingScreen">
+            <div class="penddingScreen_container">
+              <div class="penddingScreen">
+                <div class="penddingScreenContent">
+                  <img
+                    src="./images/pending_image.svg"
+                    alt="Pending"
+                    class="penddingIcon"
+                  />
+                  <h1>طلبك قيد المراجعة</h1>
+                  <p>
+                    تم استلام طلب الإنضمام لدينا في Campus بنجاح و لكن سيرتك
+                    الذاتية قيد المراجعة و سيصلك إشعار في حالة القبول او الرفض
+                  </p>
+                </div>
+                <button class="joinBtn" id="joinBtn_Pendding">تم</button>
+              </div>
+            </div>
+          </div>
+          <div class="overlay" id="fieldScreen">
+            <div class="penddingScreen_container">
+              <div class="penddingScreen">
+                <div class="penddingScreenContent">
+                  <img
+                    src="./images/field_image.svg"
+                    alt="Field"
+                    class="penddingIcon"
+                  />
+                  <h1>تم رفض طلبك</h1>
+                  <p>
+                    للأسف لم يتم قبول طلبك لدينا. برجاء إعادة تقديم الطلب و رفع
+                    السيرة الذاتية ثم تواصل معنا
+                  </p>
+                </div>
+                <button class="joinBtn" id="joinBtn_Feild">
+                  تقديم مرة اخرى
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="overlay" id="successScreen">
+            <div class="penddingScreen_container">
+              <div class="penddingScreen">
+                <div class="penddingScreenContent">
+                  <img
+                    src="./images/success_image.svg"
+                    alt="Success"
+                    class="penddingIcon"
+                  />
+                  <h1>تم قبول طلبك بنجاح</h1>
+                  <p>
+                    تهانينا! تم قبول طلبك للإنضمام كومجه مهني لدينا في Campus.
+                    بإمكانك الآن البدء في الترتيب لمواعيد جلساتك الإرشادية
+                  </p>
+                </div>
+                <button class="joinBtn" id="joinBtn_Sucsess">
+                  الرجوع الى الصفحة الرئيسية
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button
+          class="mentor-application-popup-close"
+          aria-label="إغلاق النافذة"
+        >
+          ×
+        </button>
+      </div>
+      <div class="mentor-application-popup-overlay" style="display: none"></div>
+    </div>
+    <script src="./JS/APIs.js"></script>
+    <script src="./JS/common.js"></script>
+    <script src="./JS/explore.js"></script>
+    <script src="./JS/signup.js"></script>
+    <script
+      src="https://kit.fontawesome.com/a076d05399.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Handle code input navigation for signup verification
+        const signupCodeInputs = document.querySelectorAll(
+          ".code-input.resetCode"
+        );
+        signupCodeInputs.forEach((input, index) => {
+          input.addEventListener("input", function () {
+            if (this.value.length === this.maxLength) {
+              const nextInput = signupCodeInputs[index + 1];
+              if (nextInput) {
+                nextInput.focus();
+              }
+            }
+          });
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && this.value.length === 0) {
+              const prevInput = signupCodeInputs[index - 1];
+              if (prevInput) {
+                prevInput.focus();
+              }
+            }
+          });
+        });
+
+        // Handle code input navigation for password reset
+        const passwordCodeInputs = document.querySelectorAll(
+          ".code-input.resetCodePass1"
+        );
+        passwordCodeInputs.forEach((input, index) => {
+          input.addEventListener("input", function () {
+            if (this.value.length === this.maxLength) {
+              const nextInput = passwordCodeInputs[index + 1];
+              if (nextInput) {
+                nextInput.focus();
+              }
+            }
+          });
+          input.addEventListener("keydown", function (e) {
+            if (e.key === "Backspace" && this.value.length === 0) {
+              const prevInput = passwordCodeInputs[index - 1];
+              if (prevInput) {
+                prevInput.focus();
+              }
+            }
+          });
+        });
+
+        // Handle Sessions link click
+        const sessionsLink = document.getElementById("sessionsLink");
+        if (junctiveLink) {
+          sessionsLink.addEventListener("click", function (e) {
+            const authToken = localStorage.getItem("authToken");
+            if (!authToken) {
+              e.preventDefault(); // Prevent navigation
+              common.showSignupPopup(); // Show signup popup
+            }
+            // If authToken exists, allow default navigation to Sessions.html
+          });
+        }
+      });
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'93883cf06aff12e1',t:'MTc0NjAyODY3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+        Cornel;
+      })();
+    </script>
+    <script>
+      (function () {
+        function c() {
+          var b = a.contentDocument || a.contentWindow.document;
+          if (b) {
+            var d = b.createElement("script");
+            d.innerHTML =
+              "window.__CF$cv$params={r:'93a60a5e196fbf66',t:'MTc0NjM0MTE4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";
+            b.getElementsByTagName("head")[0].appendChild(d);
+          }
+        }
+        if (document.body) {
+          var a = document.createElement("iframe");
+          a.height = 1;
+          a.width = 1;
+          a.style.position = "absolute";
+          a.style.top = 0;
+          a.style.left = 0;
+          a.style.border = "none";
+          a.style.visibility = "hidden";
+          document.body.appendChild(a);
+          if ("loading" !== document.readyState) c();
+          else if (window.addEventListener)
+            document.addEventListener("DOMContentLoaded", c);
+          else {
+            var e = document.onreadystatechange || function () {};
+            document.onreadystatechange = function (b) {
+              e(b);
+              "loading" !== document.readyState &&
+                ((document.onreadystatechange = e), c());
+            };
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

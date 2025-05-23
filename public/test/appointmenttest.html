@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>جدول المواعيد</title>
+    <style>
+      :root {
+        --primary-color: #1a73e8;
+        --secondary-color: #f5f5f5;
+        --border-color: #e0e0e0;
+        --text-color: #333;
+        --light-text: #777;
+        --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        --radius: 4px;
+        --button-color: #e91e63;
+        --available-bg: rgba(29, 161, 242, 0.1);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        color: var(--text-color);
+        direction: rtl;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .calendar-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .title {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .calendar-grid {
+        display: grid;
+        grid-template-columns: 80px repeat(7, 1fr);
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border-color);
+      }
+
+      .date-header,
+      .time-header,
+      .grid-cell,
+      .time-column {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .date-header {
+        border-right: 1px solid var(--border-color);
+        background-color: #fafafa;
+        padding: 10px 5px;
+      }
+
+      .grid-cell {
+        border-right: 1px solid var(--border-color);
+        min-height: 60px;
+        position: relative;
+        user-select: none;
+      }
+
+      .day-num {
+        font-weight: bold;
+      }
+
+      .day-month {
+        font-size: 0.8em;
+        color: var(--light-text);
+      }
+
+      .time-column {
+        background-color: #fafafa;
+        font-size: 0.9em;
+        color: var(--light-text);
+      }
+
+      .time-slot {
+        background-color: var(--button-color);
+        color: white;
+        border-radius: var(--radius);
+        padding: 5px;
+        margin: 2px 0;
+        width: 100%;
+        font-size: 0.8em;
+      }
+
+      .time-slot.grey {
+        background-color: #9e9e9e;
+      }
+
+      /* Settings Panel */
+      .settings-panel {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        margin-top: 30px;
+        padding: 20px;
+      }
+
+      .settings-section {
+        margin-bottom: 30px;
+      }
+
+      .settings-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+      }
+
+      .settings-desc {
+        color: var(--light-text);
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+      }
+
+      .day-list {
+        margin-bottom: 20px;
+      }
+
+      .day-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .day-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .day-name {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .day-status {
+        color: var(--light-text);
+        font-size: 0.85rem;
+      }
+
+      .time-slots-container {
+        margin-top: 5px;
+      }
+
+      .time-range {
+        font-size: 0.85rem;
+        color: var(--text-color);
+        margin-bottom: 2px;
+      }
+
+      .add-button {
+        background-color: white;
+        border: 1px solid #ddd;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: var(--primary-color);
+        font-size: 1.2rem;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .form-label {
+        font-weight: 500;
+      }
+
+      .form-control {
+        width: 100px;
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+        text-align: center;
+      }
+
+      select.form-control {
+        width: 150px;
+      }
+
+      .input-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .input-group .form-control {
+        margin-left: 5px;
+      }
+
+      /* Modal */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 8px;
+        padding: 25px;
+        width: 450px;
+        max-width: 90%;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .modal-header {
+        margin-bottom: 20px;
+      }
+
+      .modal-title {
+        font-size: 1.2rem;
+        font-weight: bold;
+      }
+
+      .time-slot-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+        gap: 10px;
+      }
+
+      .time-input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius);
+      }
+
+      .remove-slot {
+        background-color: #ff4444;
+        color: white;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .add-slot-btn {
+        background-color: #f0f0f0;
+        border: none;
+        padding: 8px 15px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 30px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        font-weight: bold;
+        border: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      .btn-secondary {
+        background-color: #f0f0f0;
+        color: var(--text-color);
+      }
+
+      .save-btn {
+        background-color: var(--button-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: var(--radius);
+        cursor: pointer;
+        margin-top: 20px;
+        font-weight: bold;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .calendar-grid {
+          grid-template-columns: 60px repeat(3, 1fr);
+        }
+
+        .date-header:nth-child(n + 5),
+        .grid-cell:nth-child(n + 5) {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Calendar Section -->
+      <div class="calendar-header">
+        <div class="title">العنوان</div>
+        <div>GMT +5</div>
+      </div>
+
+      <div class="calendar-grid">
+        <!-- Date Headers -->
+        <div class="time-header"></div>
+        <div class="date-header">
+          <div class="day-num">25</div>
+          <div class="day-name">الإثنين</div>
+          <div class="day-month">أبريل</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">26</div>
+          <div class="day-name">الثلاثاء</div>
+          <div class="day-month">أبريل</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">27</div>
+          <div class="day-name">الأربعاء</div>
+          <div class="day-month">أبريل</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">28</div>
+          <div class="day-name">الخميس</div>
+          <div class="day-month">أبريل</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">29</div>
+          <div class="day-name">الجمعة</div>
+          <div class="day-month">مايو</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">30</div>
+          <div class="day-name">السبت</div>
+          <div class="day-month">مايو</div>
+        </div>
+        <div class="date-header">
+          <div class="day-num">01</div>
+          <div class="day-name">الأحد</div>
+          <div class="day-month">مايو</div>
+        </div>
+
+        <!-- Time Slots -->
+        <div class="time-column">07:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">08:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">09:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">10:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">11:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">12:00</div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">13:00</div>
+        <div class="grid-cell">
+          <div class="time-slot">13:00 (60 min)</div>
+          <div class="time-slot grey">13:00 (60 min)</div>
+        </div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">14:00</div>
+        <div class="grid-cell">
+          <div class="time-slot">13:00 (60 min)</div>
+          <div class="time-slot grey">13:00 (60 min)</div>
+        </div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+
+        <div class="time-column">15:00</div>
+        <div class="grid-cell">
+          <div class="time-slot">13:00 (60 min)</div>
+        </div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+        <div class="grid-cell"></div>
+      </div>
+
+      <!-- Settings Panel -->
+      <div class="settings-panel">
+        <div class="settings-section">
+          <div class="settings-title">مدى التوفر العام</div>
+          <div class="settings-desc">
+            يمكنك تحديد المواعيد التي تكون فيها متاحاً بانتظام للمواعيد
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">التكرار</div>
+            <select class="form-control">
+              <option>أسبوعياً</option>
+              <option>يومياً</option>
+              <option>شهرياً</option>
+              <option>لا يتكرر</option>
+            </select>
+          </div>
+
+          <div class="day-list">
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الأحد</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الأحد')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الإثنين</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الإثنين')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الثلاثاء</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الثلاثاء')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الأربعاء</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الأربعاء')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الخميس</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الخميس')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">الجمعة</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('الجمعة')">+</div>
+            </div>
+
+            <div class="day-item">
+              <div class="day-info">
+                <div class="day-name">السبت</div>
+                <div class="day-status">غير متاح</div>
+                <div class="time-slots-container"></div>
+              </div>
+              <div class="add-button" onclick="openModal('السبت')">+</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-title">الإطار الزمني لتحديد المواعيد</div>
+          <div class="settings-desc">
+            تحديد النطاق الزمني الذي يمكن حجز المواعيد من خلاله
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              الحد الأقصى الذي يمكن حجز موعد خلاله مسبقاً
+            </div>
+            <div class="input-group">
+              <input type="number" class="form-control" value="3" />
+              <span>أيام</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              الحد الأدنى للوقت الذي يمكن إجراء حجز خلاله قبل بدء الموعد
+            </div>
+            <div class="input-group">
+              <input type="number" class="form-control" value="4" />
+              <span>ساعات</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <div class="settings-title">إعدادات المواعيد المحجوزة</div>
+          <div class="settings-desc">
+            إدارة المواعيد المحجوزة التي ستظهر في تقويمك
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">المدة الفاصلة</div>
+            <div class="input-group">
+              <select class="form-control">
+                <option>30 دقيقة</option>
+                <option>15 دقيقة</option>
+                <option>45 دقيقة</option>
+                <option>60 دقيقة</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">الحد الأقصى من الحجوزات يومياً</div>
+            <div class="input-group">
+              <input type="number" class="form-control" value="4" />
+            </div>
+          </div>
+        </div>
+
+        <button class="save-btn">حفظ</button>
+      </div>
+    </div>
+
+    <!-- Modal for Adding Availability -->
+    <div class="modal" id="availability-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">
+            إضافة توفر ليوم <span id="selected-day"></span>
+          </div>
+        </div>
+
+        <div id="time-slots-container">
+          <div class="time-slot-row">
+            <input type="time" class="time-input start-time" value="09:00" />
+            <input type="time" class="time-input end-time" value="17:00" />
+            <button class="remove-slot" onclick="removeTimeSlot(this)">
+              -
+            </button>
+          </div>
+        </div>
+
+        <button class="add-slot-btn" onclick="addTimeSlot()">
+          + إضافة فترة أخرى
+        </button>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="closeModal()">
+            إلغاء
+          </button>
+          <button class="btn btn-primary" onclick="saveAvailability()">
+            حفظ
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Global variables
+      let currentDay = "";
+      let availability = {
+        الأحد: [],
+        الإثنين: [],
+        الثلاثاء: [],
+        الأربعاء: [],
+        الخميس: [],
+        الجمعة: [],
+        السبت: [],
+      };
+
+      // Functions for modal operation
+      function openModal(day) {
+        currentDay = day;
+        document.getElementById("selected-day").textContent = day;
+
+        // Reset or populate time slots based on existing availability
+        const timeSlotContainer = document.getElementById(
+          "time-slots-container"
+        );
+        timeSlotContainer.innerHTML = "";
+
+        if (availability[day].length > 0) {
+          // Populate with existing time slots
+          availability[day].forEach((slot) => {
+            const slotRow = document.createElement("div");
+            slotRow.className = "time-slot-row";
+            slotRow.innerHTML = `
+              <input type="time" class="time-input start-time" value="${slot.start}">
+              <input type="time" class="time-input end-time" value="${slot.end}">
+              <button class="remove-slot" onclick="removeTimeSlot(this)">-</button>
+            `;
+            timeSlotContainer.appendChild(slotRow);
+          });
+        } else {
+          // Add default time slot
+          const slotRow = document.createElement("div");
+          slotRow.className = "time-slot-row";
+          slotRow.innerHTML = `
+            <input type="time" class="time-input start-time" value="09:00">
+            <input type="time" class="time-input end-time" value="17:00">
+            <button class="remove-slot" onclick="removeTimeSlot(this)">-</button>
+          `;
+          timeSlotContainer.appendChild(slotRow);
+        }
+
+        document.getElementById("availability-modal").style.display = "flex";
+      }
+
+      function closeModal() {
+        document.getElementById("availability-modal").style.display = "none";
+      }
+
+      function addTimeSlot() {
+        const timeSlotContainer = document.getElementById(
+          "time-slots-container"
+        );
+        const slotRow = document.createElement("div");
+        slotRow.className = "time-slot-row";
+        slotRow.innerHTML = `
+          <input type="time" class="time-input start-time" value="09:00">
+          <input type="time" class="time-input end-time" value="17:00">
+          <button class="remove-slot" onclick="removeTimeSlot(this)">-</button>
+        `;
+        timeSlotContainer.appendChild(slotRow);
+      }
+
+      function removeTimeSlot(button) {
+        button.closest(".time-slot-row").remove();
+      }
+
+      function saveAvailability() {
+        // Get all time slots from modal
+        const startTimes = document.querySelectorAll(".start-time");
+        const endTimes = document.querySelectorAll(".end-time");
+        const slots = [];
+
+        // Validate and collect time slots
+        for (let i = 0; i < startTimes.length; i++) {
+          const start = startTimes[i].value;
+          const end = endTimes[i].value;
+
+          if (start >= end) {
+            alert("وقت البداية يجب أن يكون قبل وقت النهاية");
+            return;
+          }
+
+          slots.push({
+            start: start,
+            end: end,
+          });
+        }
+
+        // Update availability
+        availability[currentDay] = slots;
+
+        // Update UI
+        updateAvailabilityDisplay(currentDay);
+
+        // Close modal
+        closeModal();
+      }
+
+      function updateAvailabilityDisplay(day) {
+        const dayItem = document.querySelector(
+          `.day-item:has(.day-name:contains('${day}'))`
+        );
+        const dayStatus = dayItem.querySelector(".day-status");
+        const timeSlotsContainer = dayItem.querySelector(
+          ".time-slots-container"
+        );
+
+        if (availability[day].length > 0) {
+          dayStatus.textContent = ""; // Clear "not available" status
+          timeSlotsContainer.innerHTML = "";
+
+          // Add time slots to display
+          availability[day].forEach((slot) => {
+            const timeRange = document.createElement("div");
+            timeRange.className = "time-range";
+            timeRange.textContent = `${slot.start} - ${slot.end}`;
+            timeSlotsContainer.appendChild(timeRange);
+          });
+        } else {
+          dayStatus.textContent = "غير متاح";
+          timeSlotsContainer.innerHTML = "";
+        }
+      }
+
+      // Helper for CSS selector to handle text content
+      document.querySelector = function (selector) {
+        return document.querySelectorAll(selector)[0];
+      };
+    </script>
+  </body>
+</html>

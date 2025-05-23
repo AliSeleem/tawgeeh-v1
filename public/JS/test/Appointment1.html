@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>جدول المواعيد</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container" id="main-container">
+      <!-- Calendar Section -->
+      <div class="calendar-section">
+        <div class="calendar-controls">
+          <button id="prev-week">الأسبوع السابق</button>
+          <span id="current-week"></span>
+          <button id="next-week">الأسبوع التالي</button>
+        </div>
+        <div class="calendar-header" id="calendar-header"></div>
+        <div class="calendar-body" id="calendar-body"></div>
+      </div>
+
+      <!-- Settings Section -->
+      <div class="settings-section">
+        <div class="settings-header">
+          <h2>العنوان</h2>
+          <input
+            type="text"
+            id="title-input"
+            placeholder="العنوان"
+            value="وقت العمل"
+          />
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">مدى التوفر العام</div>
+          <div class="settings-description">
+            يمكنك تحديد المواعيد التي تكون فيها متاحًا بانتظام للمواعيد
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">التكرار أسبوعيًا</div>
+            <select id="recurrence">
+              <option value="none">لا يتكرر</option>
+              <option value="daily">يوميًا</option>
+              <option value="weekly" selected>أسبوعيًا</option>
+              <option value="monthly">شهريًا</option>
+            </select>
+          </div>
+
+          <div class="availability-row" data-day="الأحد">
+            <div class="day-availability">
+              <p class="day-name-label">الأحد</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <img src="E:\Campus\temp\images\add-square.svg" alt="Add" />
+            </div>
+          </div>
+          <div class="availability-row" data-day="الإثنين">
+            <div class="day-availability">
+              <p class="day-name-label">الإثنين</p>
+              <div class="availability-status">متاح</div>
+              <div class="time-slots">
+                <div class="time-slot">
+                  <input type="time" class="slot-start" value="13:00" />
+                  <span>-</span>
+                  <input type="time" class="slot-end" value="14:00" />
+                  <button class="remove-slot-btn">×</button>
+                </div>
+              </div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+          <div class="availability-row" data-day="الثلاثاء">
+            <div class="day-availability">
+              <p class="day-name-label">الثلاثاء</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+          <div class="availability-row" data-day="الأربعاء">
+            <div class="day-availability">
+              <p class="day-name-label">الأربعاء</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+          <div class="availability-row" data-day="الخميس">
+            <div class="day-availability">
+              <p class="day-name-label">الخميس</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+          <div class="availability-row" data-day="الجمعة">
+            <div class="day-availability">
+              <p class="day-name-label">الجمعة</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+          <div class="availability-row" data-day="السبت">
+            <div class="day-availability">
+              <p class="day-name-label">السبت</p>
+              <div class="availability-status">غير متاح</div>
+              <div class="time-slots"></div>
+            </div>
+            <div class="add-availability">
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-title">الإطار الزمني لتحديد المواعيد</div>
+          <div class="settings-description">
+            تحديد النطاق الزمني الذي يمكن حجز المواعيد من خلاله
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              <input
+                type="radio"
+                name="timeframe"
+                id="available-now"
+                value="available_now"
+                checked
+              />
+              <label for="available-now">متاح الآن</label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              <input
+                type="radio"
+                name="timeframe"
+                id="date-range"
+                value="date_range"
+              />
+              <label for="date-range">تاريخ البدء و تاريخ الانتهاء</label>
+            </div>
+            <button id="change-dates-btn" class="btn-secondary">
+              تغيير التواريخ
+            </button>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              الحد الأقصى الذي يمكن حجز موعد خلاله مسبقًا
+            </div>
+            <div class="form-input">
+              <input
+                type="number"
+                class="input-number"
+                id="max-days-before"
+                value="30"
+                min="1"
+              />
+              <span>أيام</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-label">
+              الحد الأدنى للوقت الذي يمكن إجراء حجز خلاله قبل بدء الموعد
+            </div>
+            <div class="form-input">
+              <input
+                type="number"
+                class="input-number"
+                id="min-hours-before"
+                value="4"
+                min="0"
+              />
+              <span>ساعات</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button class="btn btn-danger" id="save-btn">حفظ</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

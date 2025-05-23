@@ -1,0 +1,161 @@
+/**
+ * CSS styles for profile edit and view modes
+ * Enhances the existing UserProfile.css with mode-specific styling
+ */
+
+/* Edit Mode Specific Styles */
+.edit-mode-profile .editIcons,
+.edit-mode-profile #editBtn,
+.edit-mode-profile #editBtnMain,
+.edit-mode-profile .edit_bigimage {
+  display: flex !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-mode-profile .editIcons:hover,
+.edit-mode-profile #editBtn:hover,
+.edit-mode-profile #editBtnMain:hover,
+.edit-mode-profile .edit_bigimage:hover {
+  transform: scale(1.1);
+  opacity: 0.9;
+}
+
+.edit-mode-profile .moreExBtn {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 8px 16px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-mode-profile .moreExBtn:hover {
+  background-color: #e8e8e8;
+}
+
+.edit-mode-profile .personal-image {
+  position: relative;
+}
+
+.edit-mode-profile .personal-image span {
+  position: absolute;
+  right: 155px;
+  bottom: 12px;
+  display: flex;
+  width: 24px;
+  height: 24px;
+  padding: 8px;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+  background: var(--Colors-Neutral-200, #e8e8e8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.edit-mode-profile .personal-image span:hover {
+  background: #ddd;
+  transform: scale(1.1);
+}
+
+.edit-mode-section .edit-exp,
+.edit-mode-section .delete-exp,
+.edit-mode-section .edit-cert,
+.edit-mode-section .delete-cert,
+.edit-mode-section .edit-edu,
+.edit-mode-section .delete-edu,
+.edit-mode-section .edit-btn,
+.edit-mode-section .delete-btn {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-mode-section .edit-exp:hover,
+.edit-mode-section .edit-cert:hover,
+.edit-mode-section .edit-edu:hover,
+.edit-mode-section .edit-btn:hover {
+  transform: scale(1.1);
+}
+
+.edit-mode-section .delete-exp:hover,
+.edit-mode-section .delete-cert:hover,
+.edit-mode-section .delete-edu:hover,
+.edit-mode-section .delete-btn:hover {
+  transform: scale(1.1);
+  filter: brightness(0.8);
+}
+
+/* View-Only Mode Specific Styles */
+.view-only-profile .editIcons,
+.view-only-profile #editBtn,
+.view-only-profile #editBtnMain,
+.view-only-profile .edit_bigimage,
+.view-only-profile .moreExBtn {
+  display: none !important;
+}
+
+.view-only-profile .personal-image span {
+  display: none !important;
+}
+
+.view-only-section .edit-exp,
+.view-only-section .delete-exp,
+.view-only-section .edit-cert,
+.view-only-section .delete-cert,
+.view-only-section .edit-edu,
+.view-only-section .delete-edu,
+.view-only-section .edit-btn,
+.view-only-section .delete-btn {
+  display: none !important;
+}
+
+.view-only-section input,
+.view-only-section textarea,
+.view-only-section select {
+  pointer-events: none;
+  background-color: #f9f9f9;
+  border-color: #e8e8e8;
+}
+
+.view-only-section input.read-only,
+.view-only-section textarea.read-only,
+.view-only-section select.read-only {
+  cursor: default;
+}
+
+/* Form Validation Styles */
+.error {
+  color: #f82548;
+  font-size: 12px;
+  margin-top: 4px;
+  display: block;
+}
+
+input.invalid,
+textarea.invalid,
+select.invalid {
+  border-color: #f82548 !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .edit-mode-profile .personal-image span {
+    right: 50%;
+    transform: translateX(50%);
+  }
+  
+  .edit-mode-profile .editIcons {
+    flex-direction: column;
+  }
+  
+  .edit-mode-section .date2_con {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+}

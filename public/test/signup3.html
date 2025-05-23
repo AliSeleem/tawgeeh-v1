@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="./CSS/login.css" />
+  </head>
+  <body>
+    <div class="main_contaner login4" id="signup3">
+      <div class="con">
+        <div class="con1 conformat conChecked"></div>
+        <div class="con2 conformat conChecked"></div>
+        <div class="con3 conformat conChecked"></div>
+      </div>
+
+      <div id="arrowRightS2" class="arrowRight">
+        <img src="./images/arrow-right.svg" alt="" />
+      </div>
+      <h1>تأكيد حساب الجيميل</h1>
+      <p>من فضلك أدخل الكود المرسل إلى حسابك الالكتروني لتأكيده.</p>
+
+      <form
+        action="/verify-phone"
+        method="POST"
+        class="form_contaner form_contanerP"
+      >
+        <div class="code-input-group">
+          <input
+            type="text"
+            name="resetCode1"
+            maxlength="1"
+            class="code-input resetCode"
+          />
+          <input
+            type="text"
+            name="resetCode2"
+            maxlength="1"
+            class="code-input resetCode"
+          />
+          <input
+            type="text"
+            name="resetCode3"
+            maxlength="1"
+            class="code-input resetCode"
+          />
+          <input
+            type="text"
+            name="resetCode4"
+            maxlength="1"
+            class="code-input resetCode"
+          />
+        </div>
+        <div class="loginbtn_con">
+          <input type="button" id="loginbtn3" class="loginbtn" value="تم" />
+        </div>
+        <div class="signup_con form_group">
+          <h4>ارسل الكود مرة اخرى</h4>
+          <p>لم يتم ارسال الكود ؟</p>
+        </div>
+      </form>
+    </div>
+    <script src="./JS/APIs.js"></script>
+    <script src="./JS/validation.js"></script>
+    <script src="./JS/login.js"></script>
+  </body>
+</html>
