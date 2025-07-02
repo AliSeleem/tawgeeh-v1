@@ -12,12 +12,12 @@ async function bootstrap() {
     abortOnError: false,
   });
 
-  // serve static files
-  const publicPath = path.join(__dirname, '..', 'public');
-  app.useStaticAssets(publicPath);
+  // // serve static files
+  // const publicPath = path.join(__dirname, '..', 'public');
+  // app.useStaticAssets(publicPath);
 
-  // set index.html as default
-  app.setBaseViewsDir(path.join(__dirname, '..', 'public', 'index.html'));
+  // // set index.html as default
+  // app.setBaseViewsDir(path.join(__dirname, '..', 'public', 'index.html'));
   // Enable Global Validation
   app.useGlobalPipes(
     new ValidationPipe({
@@ -52,7 +52,7 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/docs', app, document);
+  SwaggerModule.setup('/', app, document);
 
   // listen on port
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
