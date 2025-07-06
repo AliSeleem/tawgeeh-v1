@@ -81,6 +81,36 @@ export class UsersController {
     return this.usersService.getAllUsers(query);
   }
 
+  @Get('explore')
+  @ApiOperation({
+    summary: 'Explore users',
+    description: 'Retrieve a list of users for exploration purposes',
+  })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    example: 'John Doe',
+    description: 'Search users by name or company or role in this company',
+  })
+  @ApiQuery({
+    name: 'specialization',
+    required: false,
+    type: String,
+    example: 'Developer',
+    description: 'Filter users by specialization',
+  })
+  @ApiQuery({
+    name: 'email',
+    required: false,
+    type: String,
+    example: 'user@example.com',
+    description: 'Filter users by email address',
+  })
+  async exploreUsers(@Query() query: any): Promise<ApiResponse<any>> {
+    return this.usersService.explore(query);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Get user by ID',

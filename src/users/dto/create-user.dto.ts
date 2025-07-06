@@ -1,4 +1,4 @@
-import { ExperienceLevel, Gender } from '@prisma/client';
+import { Gender } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsEmail,
@@ -8,7 +8,6 @@ import {
   MaxLength,
   Matches,
   IsIn,
-  IsOptional,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -44,18 +43,6 @@ export class CreateUserDto {
   password: string;
 
   @ApiProperty({
-    example: '01012345678',
-    description: 'Egyptian phone number starting with 010, 011, 012, or 015',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Phone number is required.' })
-  @Matches(/^01[0125][0-9]{8}$/, {
-    message:
-      'Please enter a valid Egyptian phone number starting with 010, 011, 012, or 015.',
-  })
-  phone: string;
-
-  @ApiProperty({
     enum: Gender,
     example: Gender.MALE,
     description: 'User gender',
@@ -66,41 +53,4 @@ export class CreateUserDto {
     message: 'Gender must be either Male or Female.',
   })
   gender: Gender;
-
-  @ApiProperty({
-    example: 'Egypt',
-    description: 'Country of residence',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Country is required.' })
-  country: string;
-
-  @ApiProperty({
-    example: 'Software Engineering',
-    description: 'Professional specialization',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Specialization is required.' })
-  specialization: string;
-
-  @ApiProperty({
-    enum: ExperienceLevel,
-    example: ExperienceLevel.INTERMEDIATE,
-    description: 'Professional experience level',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Experience level is required.' })
-  @IsIn(['BEGINNER', 'INTERMEDIATE', 'EXPERT'], {
-    message: 'Please select a valid experience level.',
-  })
-  experienceLevel: ExperienceLevel;
-
-  @ApiProperty({
-    required: false,
-    example: 'Full-stack developer with 5 years experience',
-    description: 'Optional bio information',
-  })
-  @IsString()
-  @IsOptional()
-  bio?: string;
 }
