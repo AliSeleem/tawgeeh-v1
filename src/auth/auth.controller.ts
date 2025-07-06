@@ -21,6 +21,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -37,6 +38,7 @@ import axios from 'axios';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly usersService: UsersService,
     private readonly configService: ConfigService,
   ) {}
 
@@ -283,6 +285,6 @@ export class AuthController {
     description: 'Unauthorized',
   })
   profile(@Req() req: any) {
-    return req.user;
+    return this.usersService.getUserById(req.user.id);
   }
 }
