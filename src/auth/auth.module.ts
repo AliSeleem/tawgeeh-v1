@@ -9,6 +9,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { LinkedInStrategy } from './strategies/linkedin.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersModule } from '../users/users.module';
 import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
@@ -16,6 +17,7 @@ import { NotificationModule } from 'src/notification/notification.module';
     ConfigModule.forRoot(),
     PassportModule,
     NotificationModule,
+    UsersModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
