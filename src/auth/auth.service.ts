@@ -126,6 +126,12 @@ export class AuthService {
           expiresIn: '1d',
         },
       ),
+      user: {
+        id: user.id,
+        name: user.name,
+        role: user.role,
+        image_url: user.image_url,
+      },
     };
   }
 
