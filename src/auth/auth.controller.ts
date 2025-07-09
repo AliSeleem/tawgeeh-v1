@@ -32,6 +32,7 @@ import { ForgetPasswordDto } from './dto/forget-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { CompleteRegistrationDto } from './dto/complete-registration.dto';
 import axios from 'axios';
+import { VerifyResetCodeDto } from './dto/verify-reset-code.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -207,17 +208,24 @@ export class AuthController {
     return this.authService.forgetPassword(dto.email);
   }
 
+  @Post('verify-reset-code')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Verify reset code for password reset' })
+  @ApiBody({
+    type: VerifyResetCodeDto,
+  })
+  async verifyResetCode(@Req() req, @Body() dto: VerifyResetCodeDto) {
+    return this.authService.verifyResetCode(req.user.userId, dto.code);
+  }
+
   @Post('reset-password')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Reset user password with verification code' })
   @ApiBody({ type: ResetPasswordDto })
   async resetPassword(@Req() req: any, @Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(
-      req.user.userId,
-      dto.resetCode,
-      dto.newPassword,
-    );
+    return this.authService.resetPassword(req.user.userId, dto.newPassword);
   }
 
   @Patch('verify-email')

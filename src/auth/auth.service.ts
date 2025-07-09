@@ -120,7 +120,12 @@ export class AuthService {
 
   private generateToken(user: User) {
     return {
-      access_token: this.jwtService.sign({ sub: user.id, role: user.role }),
+      access_token: this.jwtService.sign(
+        { sub: user.id, role: user.role },
+        {
+          expiresIn: '1d',
+        },
+      ),
     };
   }
 
@@ -199,6 +204,7 @@ export class AuthService {
         where: { id: user.id },
         data: {
           resetCode,
+          resetCodeVerified: false,
           resetCodeExpires: new Date(Date.now() + 15 * 60 * 1000), // 15 minutes
         },
       });
@@ -220,10 +226,10 @@ export class AuthService {
     }
   }
 
-  async resetPassword(userId: number, resetCode: string, newPassword: string) {
+  async verifyResetCode(userId: number, resetCode: string) {
     // Validate input
-    if (!resetCode || !newPassword) {
-      throw new BadRequestException('Reset code and new password are required');
+    if (!resetCode) {
+      throw new BadRequestException('Reset code is required');
     }
 
     try {
@@ -231,15 +237,50 @@ export class AuthService {
       const user = await this.prisma.user.findFirst({
         where: {
           id: userId,
+          resetCode,
+          resetCodeExpires: { gt: new Date() }, // Check if the code is not expired
+        },
+      });
+
+      if (!user) {
+        throw new BadRequestException('Invalid or expired reset code');
+      }
+
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          resetCodeVerified: true, // Mark the reset code as verified
+        },
+      });
+
+      return { message: 'Reset code is valid' };
+    } catch (error) {
+      console.error('Reset code verification error:', error);
+      throw new BadRequestException('Unable to verify reset code');
+    }
+  }
+
+  async resetPassword(userId: number, newPassword: string) {
+    // Validate input
+    if (!newPassword) {
+      throw new BadRequestException('New password are required');
+    }
+
+    try {
+      // Find user with matching reset code and valid expiration
+      const user = await this.prisma.user.findFirst({
+        where: {
+          id: userId,
+          resetCodeVerified: true, // Ensure the reset code has been verified
         },
       });
 
       // check if the code is expired
       if (
-        !(resetCode === user?.resetCode) ||
+        !user?.resetCodeVerified ||
         (user.resetCodeExpires && user.resetCodeExpires < new Date(Date.now()))
       ) {
-        throw new BadRequestException('Invalid or expired reset code');
+        throw new BadRequestException('Inverified or expired reset code');
       }
 
       // Hash the new password
@@ -251,6 +292,7 @@ export class AuthService {
         data: {
           password: hashedPassword,
           resetCode: null,
+          resetCodeVerified: false,
           resetCodeExpires: null,
         },
       });

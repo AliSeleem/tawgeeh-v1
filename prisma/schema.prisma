@@ -20,6 +20,7 @@ model User {
   verificationCode        String?
   verificationCodeExpires DateTime?
   resetCode               String?
+  resetCodeVerified       Boolean?     @default(false)
   resetCodeExpires        DateTime?
   googleId                String?      @unique
   linkedinId              String?      @unique

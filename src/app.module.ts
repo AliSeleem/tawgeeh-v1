@@ -23,6 +23,6 @@ import { join } from 'path';
   ],
   controllers: [],
   providers: [],
-  exports: []
+  exports: [],
 })
 export class AppModule {}
