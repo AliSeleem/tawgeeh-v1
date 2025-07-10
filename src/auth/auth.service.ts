@@ -201,7 +201,7 @@ export class AuthService {
 
     // make reset code
     const resetCode: string = Math.floor(
-      100000 + Math.random() * 900000,
+      1000 + Math.random() * 9000,
     ).toString();
 
     try {
