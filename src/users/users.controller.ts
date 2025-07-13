@@ -30,7 +30,7 @@ import { Role } from 'src/common/enums/role.enum';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-@ApiTags('Users')
+@ApiTags('Userss')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
