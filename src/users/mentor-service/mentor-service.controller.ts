@@ -47,7 +47,7 @@ export class MentorServiceController {
     summary: 'Get all mentor services',
     description: 'Get all mentor services',
   })
-  findAll(@Param('userId') userId: number) {
+  findAll(@Param('userId') userId: string) {
     return this.mentorServiceService.findAll(userId);
   }
 
@@ -56,8 +56,8 @@ export class MentorServiceController {
     summary: 'Get one mentor service',
     description: 'Get one mentor service',
   })
-  findOne(@Param('id') id: number, @Param('userId') userId: number) {
-    return this.mentorServiceService.findOne(userId, id);
+  findOne(@Param('id') id: number, @Param('userId') userId: string) {
+    return this.mentorServiceService.findOne(id, userId);
   }
 
   @Patch(':id')
@@ -77,8 +77,8 @@ export class MentorServiceController {
     @Body() updateMentorServiceDto: UpdateMentorServiceDto,
   ) {
     return this.mentorServiceService.update(
-      req.user.id,
       id,
+      req.user.id,
       updateMentorServiceDto,
     );
   }
@@ -91,6 +91,6 @@ export class MentorServiceController {
     description: 'Remove a mentor service',
   })
   remove(@Req() req: any, @Param('id') id: string) {
-    return this.mentorServiceService.remove(req.user.id, +id);
+    return this.mentorServiceService.remove(+id, req.user.id);
   }
 }

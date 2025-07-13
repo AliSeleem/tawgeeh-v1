@@ -15,7 +15,7 @@ export class MentorAvailabilityService {
 
   async create(
     createMentorAvailabilityDto: CreateMentorAvailabilityDto,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<MentorAvailability>> {
     // Check if the mentor exists
     const mentor = await this.prisma.user.findUnique({
@@ -64,7 +64,7 @@ export class MentorAvailabilityService {
     };
   }
 
-  async findAll(mentorId: number): Promise<ApiResponse<MentorAvailability[]>> {
+  async findAll(mentorId: string): Promise<ApiResponse<MentorAvailability[]>> {
     const availabilities = await this.prisma.mentorAvailability.findMany({
       where: { mentorId },
       orderBy: { createdAt: 'desc' },
@@ -86,7 +86,7 @@ export class MentorAvailabilityService {
 
   async findOne(
     id: number,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<MentorAvailability>> {
     const availability = await this.prisma.mentorAvailability.findUnique({
       where: { id, mentorId },
@@ -112,7 +112,7 @@ export class MentorAvailabilityService {
 
   async update(
     id: number,
-    mentorId: number,
+    mentorId: string,
     updateMentorAvailabilityDto: UpdateMentorAvailabilityDto,
   ): Promise<ApiResponse<any>> {
     try {
@@ -231,7 +231,7 @@ export class MentorAvailabilityService {
 
   async validateAvailabilityIds(
     availabilityIds: number[],
-    mentorId: number,
+    mentorId: string,
   ): Promise<any[]> {
     const availabilities = await this.prisma.mentorAvailability.findMany({
       where: {
@@ -244,7 +244,7 @@ export class MentorAvailabilityService {
     return availabilities;
   }
 
-  async remove(id: number, mentorId: number): Promise<ApiResponse<void>> {
+  async remove(id: number, mentorId: string): Promise<ApiResponse<void>> {
     try {
       // Check if availability exists
       const existingAvailability =

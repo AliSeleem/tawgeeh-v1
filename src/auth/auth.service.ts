@@ -98,7 +98,7 @@ export class AuthService {
     };
   }
 
-  async completeRegistration(userId: number, data: CompleteRegistrationDto) {
+  async completeRegistration(userId: string, data: CompleteRegistrationDto) {
     // fined the user
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -136,7 +136,7 @@ export class AuthService {
   }
 
   async generateAndSendVerificationCode(user: {
-    id: number;
+    id: string;
     name: string;
     email: string;
   }): Promise<string> {
@@ -163,7 +163,7 @@ export class AuthService {
     return verificationCode;
   }
 
-  async verifyEmail(userId: number, code: string): Promise<boolean> {
+  async verifyEmail(userId: string, code: string): Promise<boolean> {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -232,7 +232,7 @@ export class AuthService {
     }
   }
 
-  async verifyResetCode(userId: number, resetCode: string) {
+  async verifyResetCode(userId: string, resetCode: string) {
     // Validate input
     if (!resetCode) {
       throw new BadRequestException('Reset code is required');
@@ -266,7 +266,7 @@ export class AuthService {
     }
   }
 
-  async resetPassword(userId: number, newPassword: string) {
+  async resetPassword(userId: string, newPassword: string) {
     // Validate input
     if (!newPassword) {
       throw new BadRequestException('New password are required');

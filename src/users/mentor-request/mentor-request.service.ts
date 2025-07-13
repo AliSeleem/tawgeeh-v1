@@ -16,7 +16,7 @@ export class MentorRequestService {
   constructor(private prisma: PrismaService) {}
 
   async createMentorRequest(
-    userId: number,
+    userId: string,
     dto: CreateMentorRequestDto,
   ): Promise<ApiResponse<MentorRequest>> {
     // check if the user is already a mentor
@@ -69,7 +69,7 @@ export class MentorRequestService {
   async updateMentorRequest(
     requestId: number,
     dto: UpdateMentorRequestDto,
-    adminId: number,
+    adminId: string,
   ): Promise<ApiResponse<any>> {
     const request = await this.prisma.mentorRequest.findUnique({
       where: { id: requestId },

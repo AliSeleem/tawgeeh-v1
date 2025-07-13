@@ -7,7 +7,7 @@ import { ApiResponse } from 'src/common/interfaces/response.interface';
 @Injectable()
 export class ExperiencesService {
   constructor(private prisma: PrismaService) {}
-  async addExperience(userId: number, experienceDto: CreateExperiencesDto) {
+  async addExperience(userId: string, experienceDto: CreateExperiencesDto) {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,7 +30,7 @@ export class ExperiencesService {
     };
   }
 
-  async getExperiences(userId: number): Promise<ApiResponse<any>> {
+  async getExperiences(userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -49,7 +49,7 @@ export class ExperiencesService {
     };
   }
 
-  async getExperience(id: number, userId: number): Promise<ApiResponse<any>> {
+  async getExperience(id: number, userId: string): Promise<ApiResponse<any>> {
     // check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -74,7 +74,7 @@ export class ExperiencesService {
   }
   async updateExperience(
     id: number,
-    userId: number,
+    userId: string,
     experienceDto: UpdateExperiencesDto,
   ): Promise<ApiResponse<any>> {
     // Check if experience exists
@@ -100,7 +100,7 @@ export class ExperiencesService {
 
   async deleteExperience(
     id: number,
-    userId: number,
+    userId: string,
   ): Promise<ApiResponse<any>> {
     const experience = await this.prisma.experience.findUnique({
       where: { id, userId },

@@ -47,7 +47,7 @@ export class CertificationsController {
     summary: "get user's certifications",
     description: 'Get all certifications of the user',
   })
-  async getCerts(@Param('userId') userId: number): Promise<ApiResponse<any>> {
+  async getCerts(@Param('userId') userId: string): Promise<ApiResponse<any>> {
     return this.certificationsServices.getCerts(userId);
   }
 
@@ -57,7 +57,7 @@ export class CertificationsController {
     description: 'Get a specific certification of the user',
   })
   async getCert(
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Param('id') id: number,
   ): Promise<ApiResponse<any>> {
     return this.certificationsServices.getCert(id, userId);

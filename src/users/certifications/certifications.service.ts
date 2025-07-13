@@ -7,7 +7,7 @@ import { ApiResponse } from 'src/common/interfaces/response.interface';
 @Injectable()
 export class CertificationsService {
   constructor(private prisma: PrismaService) {}
-  async addCert(cert: CreateCertificationsDto, userId: number) {
+  async addCert(cert: CreateCertificationsDto, userId: string) {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,7 +30,7 @@ export class CertificationsService {
     };
   }
 
-  async getCerts(userId: number): Promise<ApiResponse<any>> {
+  async getCerts(userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -50,7 +50,7 @@ export class CertificationsService {
     };
   }
 
-  async getCert(id: number, userId: number): Promise<ApiResponse<any>> {
+  async getCert(id: number, userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -73,7 +73,7 @@ export class CertificationsService {
     };
   }
 
-  async updateCert(id: number, cert: UpdateCertificationsDto, userId: number) {
+  async updateCert(id: number, cert: UpdateCertificationsDto, userId: string) {
     // Check if certificate exists
     const certificate = await this.prisma.certificate.findUnique({
       where: { id, userId },
@@ -95,7 +95,7 @@ export class CertificationsService {
     };
   }
 
-  async deleteCert(id: number, userId: number): Promise<ApiResponse<any>> {
+  async deleteCert(id: number, userId: string): Promise<ApiResponse<any>> {
     const certificate = await this.prisma.certificate.findUnique({
       where: { id: id, userId },
     });

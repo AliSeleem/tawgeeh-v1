@@ -10,7 +10,7 @@ export class ChatService {
   constructor(private prisma: PrismaService) {}
 
   // 🟢 Create or Find a Chat
-  async getOrCreateChat(user1Id: number, user2Id: number) {
+  async getOrCreateChat(user1Id: string, user2Id: string) {
     const existingChat = await this.prisma.chat.findFirst({
       where: {
         type: 'DIRECT',
@@ -39,7 +39,7 @@ export class ChatService {
   }
 
   // 🟢 Send a Message
-  async sendMessage(chatId: string, senderId: number, content: string) {
+  async sendMessage(chatId: string, senderId: string, content: string) {
     const chat = await this.prisma.chat.findUnique({ where: { id: chatId } });
     if (!chat) throw new NotFoundException('Chat not found');
 
@@ -50,7 +50,7 @@ export class ChatService {
   }
 
   // 🟢 Get User's Chats
-  async getUserChats(userId: number) {
+  async getUserChats(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -111,7 +111,7 @@ export class ChatService {
   }
 
   // 🟢 Mark Messages as Read
-  async markMessagesAsRead(chatId: string, userId: number) {
+  async markMessagesAsRead(chatId: string, userId: string) {
     return await this.prisma.message.updateMany({
       where: { chatId, senderId: { not: userId }, read: false },
       data: { read: true },

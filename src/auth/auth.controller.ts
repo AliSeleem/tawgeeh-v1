@@ -216,7 +216,7 @@ export class AuthController {
     type: VerifyResetCodeDto,
   })
   async verifyResetCode(@Req() req, @Body() dto: VerifyResetCodeDto) {
-    return this.authService.verifyResetCode(req.user.userId, dto.code);
+    return this.authService.verifyResetCode(req.user.id, dto.code);
   }
 
   @Post('reset-password')
@@ -225,7 +225,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Reset user password with verification code' })
   @ApiBody({ type: ResetPasswordDto })
   async resetPassword(@Req() req: any, @Body() dto: ResetPasswordDto) {
-    return this.authService.resetPassword(req.user.userId, dto.newPassword);
+    return this.authService.resetPassword(req.user.id, dto.newPassword);
   }
 
   @Patch('verify-email')

@@ -6,7 +6,7 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 @Injectable()
 export class EducationService {
   constructor(private prisma: PrismaService) {}
-  async addEdu(edu: CreateEducationDto, userId: number) {
+  async addEdu(edu: CreateEducationDto, userId: string) {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -30,7 +30,7 @@ export class EducationService {
     };
   }
 
-  async getEdus(userId: number) {
+  async getEdus(userId: string) {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -51,7 +51,7 @@ export class EducationService {
     };
   }
 
-  async getEduById(id: number, userId: number) {
+  async getEduById(id: number, userId: string) {
     // check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -73,7 +73,7 @@ export class EducationService {
     };
   }
 
-  async updateEdu(id: number, edu: UpdateEducationDto, userId: number) {
+  async updateEdu(id: number, edu: UpdateEducationDto, userId: string) {
     // Check if education exists
     const education = await this.prisma.education.findUnique({
       where: { id, userId },
@@ -97,7 +97,7 @@ export class EducationService {
     };
   }
 
-  async deleteEdu(id: number, userId: number) {
+  async deleteEdu(id: number, userId: string) {
     const education = await this.prisma.education.findUnique({
       where: { id, userId },
     });

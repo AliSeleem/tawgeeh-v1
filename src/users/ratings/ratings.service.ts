@@ -15,8 +15,8 @@ export class RatingsService {
 
   async create(
     rating: CreateRatingsDto,
-    userId: number,
-    raterId: number,
+    userId: string,
+    raterId: string,
   ): Promise<ApiResponse<any>> {
     // check if the user has already rated the item
     const existingRating = await this.prisma.rating.findFirst({
@@ -51,7 +51,7 @@ export class RatingsService {
     };
   }
 
-  async getAll(userId: number): Promise<ApiResponse<any>> {
+  async getAll(userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -71,7 +71,7 @@ export class RatingsService {
     };
   }
 
-  async getOne(id: number, userId): Promise<ApiResponse<any>> {
+  async getOne(id: number, userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -99,7 +99,7 @@ export class RatingsService {
   async update(
     id: number,
     rating: UpdateRatingsDto,
-    raterId: number,
+    raterId: string,
   ): Promise<ApiResponse<any>> {
     // check if the rating exist
     const existingRating = await this.prisma.rating.findUnique({
@@ -158,7 +158,7 @@ export class RatingsService {
     };
   }
 
-  async delete(id: number, raterId: number): Promise<ApiResponse<any>> {
+  async delete(id: number, raterId: string): Promise<ApiResponse<any>> {
     const Rating = await this.prisma.rating.findUnique({
       where: { id, raterId },
     });

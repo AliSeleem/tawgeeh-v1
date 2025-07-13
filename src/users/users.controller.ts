@@ -50,6 +50,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
+  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all users',
     description: 'Retrieve list of users with optional email filter',
@@ -123,7 +125,7 @@ export class UsersController {
     example: 1,
   })
   async getUserById(@Param('id') id: string): Promise<ApiResponse<any>> {
-    return this.usersService.getUserById(+id);
+    return this.usersService.getUserById(id);
   }
 
   @Patch(':id')
@@ -144,7 +146,7 @@ export class UsersController {
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<ApiResponse<any>> {
-    return this.usersService.updateUser(+id, updateUserDto);
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Patch('profileImg/:id')
@@ -169,7 +171,7 @@ export class UsersController {
       throw new BadRequestException('No file uploaded');
     }
     return this.usersService.updateProfileImg(
-      +id,
+      id,
       `http://168.231.114.196/uploads/${image_url.filename}`,
     );
   }
@@ -196,7 +198,7 @@ export class UsersController {
       throw new BadRequestException('No file uploaded');
     }
     return this.usersService.updateProfileImg(
-      +id,
+      id,
       `http://localhost:3000/uploads/${cover_url.filename}`,
     );
   }
@@ -215,6 +217,6 @@ export class UsersController {
     example: 1,
   })
   async deleteUser(@Param('id') id: string): Promise<ApiResponse<any>> {
-    return this.usersService.deleteUser(+id);
+    return this.usersService.deleteUser(id);
   }
 }

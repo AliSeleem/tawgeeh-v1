@@ -13,10 +13,10 @@ import { CreateAnswerDto } from './create-answer.dto';
 export class CreateSessionDto {
   @ApiProperty({
     description: 'ID of the mentor for the session',
-    example: 2,
+    example: '1234567890',
   })
   @IsInt()
-  mentorId: number;
+  mentorId: string;
 
   @ApiProperty({
     description: 'ID of the mentor service for the session',

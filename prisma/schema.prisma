@@ -195,7 +195,7 @@ model MentorRequest {
   status          ReqStat   @default(PENDING)
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
-  reviewedBy      Int? // ID of admin who reviewed
+  reviewedBy      String? // ID of admin who reviewed
   reviewedAt      DateTime? // When the request was reviewed
 }
 

@@ -46,7 +46,7 @@ export class EducationController {
     summary: "Get user's education",
     description: 'Get all education for the user',
   })
-  async getEdus(@Param('userId') userId: number): Promise<ApiResponse<any>> {
+  async getEdus(@Param('userId') userId: string): Promise<ApiResponse<any>> {
     return this.educationService.getEdus(userId);
   }
 
@@ -57,7 +57,7 @@ export class EducationController {
   })
   async getEdu(
     @Param('id') id: number,
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
   ): Promise<ApiResponse<any>> {
     return this.educationService.getEduById(id, userId);
   }

@@ -67,7 +67,7 @@ export class ChatController {
       },
     },
   })
-  async getOrCreateChat(@Body() body: { user1Id: number; user2Id: number }) {
+  async getOrCreateChat(@Body() body: { user1Id: string; user2Id: string }) {
     return this.chatService.getOrCreateChat(body.user1Id, body.user2Id);
   }
 
@@ -102,7 +102,7 @@ export class ChatController {
     },
   })
   async sendMessage(
-    @Body() body: { chatId: string; senderId: number; content: string },
+    @Body() body: { chatId: string; senderId: string; content: string },
   ) {
     return this.chatService.sendMessage(
       body.chatId,
@@ -133,7 +133,7 @@ export class ChatController {
     },
   })
   async getUserChats(@Param('userId') userId: string) {
-    return this.chatService.getUserChats(parseInt(userId, 10));
+    return this.chatService.getUserChats(userId);
   }
 
   // 🟢 Get Messages for a Chat
@@ -187,7 +187,7 @@ export class ChatController {
       },
     },
   })
-  async markMessagesAsRead(@Body() body: { chatId: string; userId: number }) {
+  async markMessagesAsRead(@Body() body: { chatId: string; userId: string }) {
     return this.chatService.markMessagesAsRead(body.chatId, body.userId);
   }
 }

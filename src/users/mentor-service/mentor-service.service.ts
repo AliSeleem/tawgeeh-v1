@@ -21,7 +21,7 @@ export class MentorServiceService {
   ) {}
 
   async create(
-    mentorId: number,
+    mentorId: string,
     createMentorServiceDto: CreateMentorServiceDto,
   ): Promise<ApiResponse<MentorService>> {
     // check if mentorId is valid
@@ -85,7 +85,7 @@ export class MentorServiceService {
     };
   }
 
-  async findAll(mentorId: number): Promise<ApiResponse<MentorService[]>> {
+  async findAll(mentorId: string): Promise<ApiResponse<MentorService[]>> {
     // Check if mentor exists
     const mentor = await this.prisma.user.findUnique({
       where: { id: mentorId, role: Role.MENTOR },
@@ -107,7 +107,7 @@ export class MentorServiceService {
 
   async findOne(
     id: number,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<MentorService>> {
     // check if mentor exists
     const mentor = await this.prisma.user.findUnique({
@@ -135,7 +135,7 @@ export class MentorServiceService {
 
   async update(
     id: number,
-    mentorId: number,
+    mentorId: string,
     updateMentorServiceDto: UpdateMentorServiceDto,
   ): Promise<ApiResponse<MentorService>> {
     // extract questions and dates
@@ -218,7 +218,7 @@ export class MentorServiceService {
 
   async remove(
     id: number,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<MentorService>> {
     // Check if service exists
     const service = await this.prisma.mentorService.findUnique({

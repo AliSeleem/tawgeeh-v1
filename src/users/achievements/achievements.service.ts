@@ -6,7 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 @Injectable()
 export class AchievementsService {
   constructor(private prisma: PrismaService) {}
-  async create(createAchievementDto: CreateAchievementDto, userId: number) {
+  async create(createAchievementDto: CreateAchievementDto, userId: string) {
     // check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -29,7 +29,7 @@ export class AchievementsService {
     };
   }
 
-  async findAll(userId: number) {
+  async findAll(userId: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -49,7 +49,7 @@ export class AchievementsService {
     };
   }
 
-  async findOne(id: number, userId: number) {
+  async findOne(id: number, userId: string) {
     // check if user exists
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -73,7 +73,7 @@ export class AchievementsService {
 
   async update(
     id: number,
-    userId: number,
+    userId: string,
     updateAchievementDto: UpdateAchievementDto,
   ) {
     // Check if achievement exists
@@ -97,7 +97,7 @@ export class AchievementsService {
     };
   }
 
-  async remove(id: number, userId: number) {
+  async remove(id: number, userId: string) {
     // Check if achievement exists
     const achievement = await this.prisma.achievement.findUnique({
       where: { id, userId },

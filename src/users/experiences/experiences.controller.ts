@@ -44,7 +44,7 @@ export class ExperiencesController {
     summary: 'Get user experiences',
     description: 'Get all experiences of the user profile',
   })
-  async getExperiences(@Param('userId') userId: number) {
+  async getExperiences(@Param('userId') userId: string) {
     return this.experiencesService.getExperiences(userId);
   }
 
@@ -54,7 +54,7 @@ export class ExperiencesController {
     description: 'Get specific experience of the user profile',
   })
   async getExperience(
-    @Param('userId') userId: number,
+    @Param('userId') userId: string,
     @Param('id') id: number,
   ) {
     return this.experiencesService.getExperience(id, userId);

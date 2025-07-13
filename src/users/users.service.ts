@@ -96,11 +96,56 @@ export class UsersService {
     // Fetch users with the filtered conditions
     const users = await this.prisma.user.findMany({
       where,
-      include: {
+      select: {
+        id: true,
+        name: true,
+        image_url: true,
+        cover_url: true,
+        bio: true,
+        specialization: true,
+        experienceLevel: true,
+        linkedin: true,
+        instagram: true,
+        dribbble: true,
+        behance: true,
+        github: true,
         experiences: {
           select: {
             company: true,
             title: true,
+          },
+        },
+        education: {
+          select: {
+            school: true,
+            degree: true,
+            from: true,
+            to: true,
+          },
+        },
+        certificates: {
+          select: {
+            name: true,
+            donor: true,
+            date: true,
+            link: true,
+          },
+        },
+        role: true,
+        totalMinutes: true,
+        totalSessions: true,
+        video_url: true,
+        mentorServices: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            duration: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          where: {
+            isActive: true,
           },
         },
       },
@@ -187,9 +232,62 @@ export class UsersService {
     };
   }
 
-  async getUserById(id: number): Promise<ApiResponse<any>> {
+  async getUserById(id: string): Promise<ApiResponse<any>> {
     const user = await this.prisma.user.findUnique({
       where: { id },
+      select: {
+        id: true,
+        name: true,
+        image_url: true,
+        cover_url: true,
+        bio: true,
+        specialization: true,
+        experienceLevel: true,
+        linkedin: true,
+        instagram: true,
+        dribbble: true,
+        behance: true,
+        github: true,
+        experiences: {
+          select: {
+            company: true,
+            title: true,
+          },
+        },
+        education: {
+          select: {
+            school: true,
+            degree: true,
+            from: true,
+            to: true,
+          },
+        },
+        certificates: {
+          select: {
+            name: true,
+            donor: true,
+            date: true,
+            link: true,
+          },
+        },
+        role: true,
+        totalMinutes: true,
+        totalSessions: true,
+        video_url: true,
+        mentorServices: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            duration: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+          where: {
+            isActive: true,
+          },
+        },
+      },
     });
 
     if (!user) {
@@ -204,7 +302,7 @@ export class UsersService {
   }
 
   async updateUser(
-    id: number,
+    id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<ApiResponse<any>> {
     const user = await this.prisma.user.findUnique({
@@ -227,7 +325,7 @@ export class UsersService {
     };
   }
 
-  async deleteUser(id: number): Promise<ApiResponse<any>> {
+  async deleteUser(id: string): Promise<ApiResponse<any>> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
@@ -257,7 +355,7 @@ export class UsersService {
 
   // update profile and cover picture
   async updateProfileImg(
-    userId: number,
+    userId: string,
     image_url: string,
   ): Promise<ApiResponse<string>> {
     // check if the user exists
@@ -285,7 +383,7 @@ export class UsersService {
   }
 
   async updateCoverImg(
-    userId: number,
+    userId: string,
     cover_url: string,
   ): Promise<ApiResponse<string>> {
     // check if the user exists

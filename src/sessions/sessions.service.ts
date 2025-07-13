@@ -38,8 +38,8 @@ export class SessionsService {
 
   async createGoogleMeetLink(
     scheduledAt: Date,
-    menteeId: number,
-    mentorId: number,
+    menteeId: string,
+    mentorId: string,
   ): Promise<ApiResponse<string>> {
     const oauth2Client = this.createGoogleAuthClient();
 
@@ -115,7 +115,7 @@ export class SessionsService {
   // Mentee requests a session
   async requestSession(
     dto: CreateSessionDto,
-    menteeId: number,
+    menteeId: string,
   ): Promise<ApiResponse<any>> {
     // Check if mentee exists
     const mentee = await this.prisma.user.findUnique({
@@ -336,7 +336,7 @@ export class SessionsService {
   // Mentor accepts a session
   async acceptSession(
     sessionId: string,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -414,7 +414,7 @@ export class SessionsService {
   // Mentor rejects a session
   async rejectSession(
     sessionId: string,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -456,7 +456,7 @@ export class SessionsService {
   // Mentee or mentor cancels a session
   async cancelSession(
     sessionId: string,
-    userId: number,
+    userId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -501,7 +501,7 @@ export class SessionsService {
   // Mentee or mentor marks a session as complete
   async completeSession(
     sessionId: string,
-    userId: number,
+    userId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -557,7 +557,7 @@ export class SessionsService {
   // Mentor adds notes upon completion
   async addNotes(
     dto: UpdateSessionNotesDto,
-    mentorId: number,
+    mentorId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -601,7 +601,7 @@ export class SessionsService {
   // Mentee adds feedback upon completion
   async addFeedback(
     dto: UpdateSessionFeedbackDto,
-    menteeId: number,
+    menteeId: string,
   ): Promise<ApiResponse<any>> {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
@@ -645,7 +645,7 @@ export class SessionsService {
   }
 
   // Get all sessions for a user (mentee or mentor)
-  async getUserSessions(userId: number): Promise<ApiResponse<any>> {
+  async getUserSessions(userId: string): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
@@ -680,7 +680,7 @@ export class SessionsService {
   // Get a specific session
   async getSession(
     sessionId: string,
-    userId: number,
+    userId: string,
   ): Promise<ApiResponse<any>> {
     // Check if user exists
     const user = await this.prisma.user.findUnique({ where: { id: userId } });

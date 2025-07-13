@@ -43,7 +43,7 @@ export class AchievementsController {
     summary: "get user's achievements",
     description: 'Get all achievements of the user',
   })
-  findAll(@Param('userId') userId: number) {
+  findAll(@Param('userId') userId: string) {
     return this.achievementsService.findAll(userId);
   }
 
@@ -52,7 +52,7 @@ export class AchievementsController {
     summary: "get user's achievement",
     description: 'Get a specific achievement of the user',
   })
-  findOne(@Param('id') id: number, @Param('userId') userId: number) {
+  findOne(@Param('id') id: number, @Param('userId') userId: string) {
     return this.achievementsService.findOne(id, userId);
   }
 
