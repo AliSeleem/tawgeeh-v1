@@ -2,7 +2,7 @@ name: Deploy NestJS App
 on:
   push:
     branches:
-      - main
+      - seleem
 jobs:
   deploy:
     runs-on: ubuntu-latest
