@@ -31,7 +31,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Users')
-@Controller('userss')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 

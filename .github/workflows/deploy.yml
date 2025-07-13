@@ -1,27 +1,38 @@
-name: Deploy NestJS App
+name: 🚀 Deploy NestJS App
+
 on:
   push:
     branches:
       - seleem
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: 🛎️ Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: ⚙️ Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
 
-      - name: Install dependencies
-        run: npm install
+      - name: 📦 Install dependencies
+        run: npm ci
 
-      - name: Build
+      - name: 🛠️ Build project
         run: npm run build
 
-      - name: Deploy to server
+      # Optional: Upload build for debugging if needed
+      # - name: Upload build artifacts
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: build-artifacts
+      #     path: dist
+
+      - name: 🚚 Deploy to server via SSH
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: 168.231.114.196
@@ -29,10 +40,24 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
+
           ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP -p 2222 << 'EOF'
+            set -e
             cd /var/www/nestjs-app
+
+            echo "📥 Pulling latest code..."
             git pull origin seleem
-            npm install
+
+            echo "📦 Installing dependencies..."
+            npm ci
+
+            echo "🛠️ Building app..."
             npm run build
-            pm2 restart nestjs-app
+
+            echo "🔄 Restarting PM2 process..."
+            pm2 reload nestjs-app --update-env
+
+            echo "✅ Deployment completed."
           EOF
+
+          rm -f private_key

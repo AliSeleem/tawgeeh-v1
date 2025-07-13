@@ -10,7 +10,7 @@ datasource db {
 // ======== USER MODELS ========
 
 model User {
-  id       Int     @id @default(autoincrement())
+  id           String             @id @default(uuid())
   name     String  @db.VarChar(50)
   email    String  @unique
   password String?
@@ -107,7 +107,7 @@ enum Role {
 
 model MentorService {
   id          Int                  @id @default(autoincrement())
-  mentorId    Int
+  mentorId    String
   name        String               @db.VarChar(100)
   description String               @db.Text
   duration    Int // Duration in minutes
@@ -137,7 +137,7 @@ model Question {
 model MentorAvailability {
   id                Int                      @id @default(autoincrement())
   title             String
-  mentorId          Int
+  mentorId          String
   availableFrom     DateTime                @default(now())
   expireAt          DateTime?               // The expiration time
   maxDaysBefore     Int                     // Maximum number of days user can book before
@@ -185,7 +185,7 @@ model MentorAvailabilityInterval {
 
 model MentorRequest {
   id              Int       @id @default(autoincrement())
-  userId          Int
+  userId          String
   user            User      @relation(fields: [userId], references: [id])
   specialization  String
   experienceLevel String
@@ -225,7 +225,7 @@ enum BookingStatus {
 
 model Experience {
   id         Int       @id @default(autoincrement())
-  userId     Int
+  userId     String
   title      String    @db.VarChar(100)
   company    String    @db.VarChar(100)
   from       DateTime
@@ -242,7 +242,7 @@ model Experience {
 
 model Certificate {
   id        Int       @id @default(autoincrement())
-  userId    Int
+  userId    String
   name      String    @db.VarChar(100)
   donor     String    @db.VarChar(100)
   date      DateTime
@@ -259,7 +259,7 @@ model Certificate {
 
 model Education {
   id        Int       @id @default(autoincrement())
-  userId    Int
+  userId    String
   school    String    @db.VarChar(100)
   degree    String    @db.VarChar(100)
   from      DateTime
@@ -274,8 +274,8 @@ model Education {
 
 model Rating {
   id        Int      @id @default(autoincrement())
-  userId    Int // User being rated
-  raterId   Int // User giving the rating
+  userId    String // User being rated
+  raterId   String // User giving the rating
   stars     Float // @db.DoublePrecision
   comment   String   @db.Text
   likes     Int      @default(0)
@@ -292,7 +292,7 @@ model Rating {
 
 model Achievement {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    String
   name      String   @db.VarChar(100)
   image     String   @db.VarChar(255)
   date      DateTime @default(now())
@@ -319,7 +319,7 @@ model Chat {
 
 model ChatParticipants {
   id       String    @id @default(uuid())
-  userId   Int
+  userId   String
   chatId   String
   joinedAt DateTime  @default(now())
   lastRead DateTime? // Track when user last read messages
@@ -335,7 +335,7 @@ model ChatParticipants {
 model Message {
   id        String      @id @default(uuid())
   chatId    String
-  senderId  Int
+  senderId  String
   content   String      @db.Text
   type      MessageType @default(TEXT)
   read      Boolean     @default(false)
@@ -366,8 +366,8 @@ enum MessageType {
 
 model Session {
   id            String        @id @default(uuid())
-  menteeId      Int
-  mentorId      Int
+  menteeId      String
+  mentorId      String
   serviceId     Int?          // Optional link to the specific mentor service
   status        SessionStatus @default(PENDING)
   googleMeetUrl String?
@@ -414,7 +414,7 @@ enum SessionStatus {
 
 model Notification {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    String
   from      Int? // ID of the user made the action that triggered the Notification
   title     String // Title of the Notification
   body      String // Notification body
