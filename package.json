@@ -18,7 +18,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "postinstall": "prisma generate && prisma migrate deploy"
+    "postinstall": "if [ \"$DATABASE_URL\" != \"\" ]; then prisma generate && prisma migrate deploy; else echo '⚠️ DATABASE_URL not set, skipping Prisma generation and migration.'; fi"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.0",
