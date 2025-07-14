@@ -41,7 +41,7 @@ jobs:
           echo "$SSH_PRIVATE_KEY" > private_key
           chmod 600 private_key
 
-          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP -p 2222 << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i private_key $SERVER_USER@$SERVER_IP -p 22 << 'EOF'
             set -e
             cd /var/www/nestjs-app
 
