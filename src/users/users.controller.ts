@@ -199,7 +199,7 @@ export class UsersController {
     }
     return this.usersService.updateCoverImg(
       id,
-      `http://localhost:3000/uploads/${cover_url.filename}`,
+      `http://168.231.114.196/uploads/${cover_url.filename}`,
     );
   }
 
