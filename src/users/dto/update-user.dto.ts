@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
+import { ExperienceLevel } from '../../common/enums/experience-level.enum';
 import {
   IsEmail,
   IsIn,
@@ -53,7 +54,42 @@ export class UpdateUserDto {
   @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid country.' })
   country: string;
 
+  @ApiPropertyOptional({
+    example: 'This is my bio',
+    description: 'User biography (optional)',
+  })
+  @IsString()
+  @MaxLength(500, { message: 'Bio must be at most 500 characters long.' })
   bio?: string;
+
+  @ApiProperty({
+    enum: ExperienceLevel,
+    example: ExperienceLevel.INTERMEDIATE,
+    description: 'User experience level',
+  })
+  @IsNotEmpty({ message: 'Experience level is required.' })
+  @IsIn(
+    [
+      ExperienceLevel.BEGINNER,
+      ExperienceLevel.INTERMEDIATE,
+      ExperienceLevel.EXPERT,
+    ],
+    {
+      message: 'Experience level must be BEGINNER, INTERMEDIATE, or EXPERT.',
+    },
+  )
+  experienceLevel: ExperienceLevel;
+
+  @ApiPropertyOptional({
+    example: 'Other',
+    description: 'User specialization (optional)',
+  })
+  @IsString()
+  @MaxLength(100, {
+    message: 'Specialization must be at most 100 characters long.',
+  })
+  specialization?: string;
+
   // SOCIAL MEDIA (lINKEDIN, BEHANCE, INSTAGRAM, GITHUB)
   @ApiPropertyOptional({
     example: 'https://www.linkedin.com/in/username',

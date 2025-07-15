@@ -11,9 +11,10 @@ import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
+    AuthModule,
+    ProfileModule,
     UsersModule,
     PrismaModule,
-    AuthModule,
     ChatModule,
     SessionsModule,
     NotificationModule,
@@ -21,7 +22,6 @@ import { ProfileModule } from './profile/profile.module';
       rootPath: join(__dirname, '..', 'uploads'),
       serveRoot: '/uploads',
     }),
-    ProfileModule,
   ],
   controllers: [],
   providers: [],
