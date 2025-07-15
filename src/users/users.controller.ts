@@ -137,9 +137,9 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'User ID',
-    example: 1,
+    example: '12345',
   })
   @ApiBody({ type: UpdateUserDto })
   async updateUser(
@@ -197,7 +197,7 @@ export class UsersController {
     if (!cover_url) {
       throw new BadRequestException('No file uploaded');
     }
-    return this.usersService.updateProfileImg(
+    return this.usersService.updateCoverImg(
       id,
       `http://localhost:3000/uploads/${cover_url.filename}`,
     );
