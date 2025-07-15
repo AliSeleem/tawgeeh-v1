@@ -120,7 +120,7 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'User ID',
     example: 1,
   })
@@ -159,7 +159,7 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'User ID',
     example: 1,
   })
@@ -186,7 +186,7 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'User ID',
     example: 1,
   })
@@ -212,7 +212,7 @@ export class UsersController {
   })
   @ApiParam({
     name: 'id',
-    type: Number,
+    type: String,
     description: 'User ID',
     example: 1,
   })
