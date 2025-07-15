@@ -150,8 +150,6 @@ export class UsersController {
   }
 
   @Patch('profileImg/:id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('image_url'))
   @ApiOperation({
     summary: 'Update image',
@@ -177,8 +175,6 @@ export class UsersController {
   }
 
   @Patch('coverImg/:id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('cover_url'))
   @ApiOperation({
     summary: 'Update cover image',

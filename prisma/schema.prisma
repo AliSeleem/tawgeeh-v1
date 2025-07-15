@@ -39,7 +39,7 @@ model User {
   role     Role    @default(MENTEE)
 
   // Media and statistics
-  image_url     String? @default("http://localhost:3000/uploads/image_url.jpg")
+  image_url     String? @default("http://168.231.114.196/uploads/image_url.jpg")
   cover_url     String?
   video_url     String?
   totalSessions Int     @default(0)
