@@ -5,6 +5,7 @@ import {
   IsEmail,
   IsIn,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Matches,
   MaxLength,
@@ -90,25 +91,59 @@ export class UpdateUserDto {
   })
   specialization?: string;
 
-  // SOCIAL MEDIA (lINKEDIN, BEHANCE, INSTAGRAM, GITHUB)
   @ApiPropertyOptional({
     example: 'https://www.linkedin.com/in/username',
     description: 'LinkedIn profile URL (optional)',
   })
-  linkedIn?: string;
+  @IsString()
+  @MaxLength(200, {
+    message: 'LinkedIn URL must be at most 200 characters long.',
+  })
+  @Matches(/^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/, {
+    message: 'Please enter a valid LinkedIn URL.',
+  })
+  @IsOptional()
+  linkedin?: string;
+
   @ApiPropertyOptional({
     example: 'https://www.behance.net/username',
     description: 'Behance profile URL (optional)',
   })
+  @IsString()
+  @MaxLength(200, {
+    message: 'Behance URL must be at most 200 characters long.',
+  })
+  @Matches(/^(https?:\/\/)?(www\.)?behance\.net\/[a-zA-Z0-9_-]+\/?$/, {
+    message: 'Please enter a valid Behance URL.',
+  })
+  @IsOptional()
   behance?: string;
+
   @ApiPropertyOptional({
     example: 'https://www.instagram.com/username',
     description: 'Instagram profile URL (optional)',
   })
+  @IsString()
+  @MaxLength(200, {
+    message: 'Instagram URL must be at most 200 characters long.',
+  })
+  @Matches(/^(https?:\/\/)?(www\.)?instagram\.com\/[a-zA-Z0-9._]+\/?$/, {
+    message: 'Please enter a valid Instagram URL.',
+  })
+  @IsOptional()
   instagram?: string;
+
   @ApiPropertyOptional({
     example: 'https://github.com/username',
     description: 'GitHub profile URL (optional)',
   })
+  @IsString()
+  @MaxLength(200, {
+    message: 'GitHub URL must be at most 200 characters long.',
+  })
+  @Matches(/^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9._]+\/?$/, {
+    message: 'Please enter a valid GitHub URL.',
+  })
+  @IsOptional()
   github?: string;
 }

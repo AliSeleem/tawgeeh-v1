@@ -60,21 +60,4 @@ export class CreateMentorRequestDto {
   @IsEnum(RequestStatus)
   @IsOptional()
   status?: RequestStatus;
-
-  @ApiProperty({
-    description: 'Admin ID',
-    example: '1234567890',
-  })
-  @IsString()
-  @IsOptional()
-  reviewedBy?: number;
-
-  @ApiProperty({
-    description: 'Review date',
-    example: '2025-04-027',
-  })
-  @Transform(({ value }) => new Date(value))
-  @IsDate()
-  @IsOptional()
-  reviewedAt?: Date;
 }

@@ -216,6 +216,7 @@ export class UsersService {
       select: {
         id: true,
         name: true,
+        gender: true,
         image_url: true,
         specialization: true,
         experienceLevel: true,
@@ -238,6 +239,7 @@ export class UsersService {
       select: {
         id: true,
         name: true,
+        gender: true,
         image_url: true,
         cover_url: true,
         bio: true,
@@ -250,12 +252,16 @@ export class UsersService {
         github: true,
         experiences: {
           select: {
+            id: true,
             company: true,
             title: true,
+            from: true,
+            to: true,
           },
         },
         education: {
           select: {
+            id: true,
             school: true,
             degree: true,
             from: true,
@@ -264,6 +270,7 @@ export class UsersService {
         },
         certificates: {
           select: {
+            id: true,
             name: true,
             donor: true,
             date: true,
