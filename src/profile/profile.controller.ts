@@ -210,8 +210,7 @@ export class ProfileController {
   }
 
   // ========== EXPERIENCE ROUTES ==========
-  @Post('experiences')y
-  
+  @Post('experiences')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({
