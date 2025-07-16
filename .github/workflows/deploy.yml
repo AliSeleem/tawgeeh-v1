@@ -46,6 +46,7 @@ jobs:
             cd /var/www/nestjs-app
 
             echo "📥 Pulling latest code..."
+            git remote set-url origin git@github.com:campushubs/campus_back.git 
             git pull origin seleem
 
             echo "📦 Installing dependencies..."
