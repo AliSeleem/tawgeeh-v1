@@ -52,7 +52,7 @@ jobs:
             echo "📦 Installing dependencies..."
             npm ci
 
-            echo "🛠️ Building app..."
+            echo "🛠️ Building app...."
             npm run build
 
             echo "🔄 Restarting PM2 process..."
