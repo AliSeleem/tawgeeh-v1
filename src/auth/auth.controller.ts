@@ -208,6 +208,14 @@ export class AuthController {
     return this.authService.forgetPassword(dto.email);
   }
 
+  @Get('resend-reset-code')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Resend reset code for password reset' })
+  async resendResetCode(@Req() req: any) {
+    return this.authService.forgetPassword(req.user.email);
+  }
+
   @Post('verify-reset-code')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

@@ -118,22 +118,51 @@ export class AuthService {
     return this.generateToken(user);
   }
 
-  private generateToken(user: User) {
-    return {
+  private generateToken(
+    user: User,
+    sendUserData = true,
+  ): {
+    access_token: string;
+    user?: {
+      id: string;
+      name: string;
+      gender: Gender | null;
+      role: string;
+      image_url: string | null;
+    };
+  } {
+    let res: {
+      access_token: string;
+      user?: {
+        id: string;
+        name: string;
+        gender: Gender | null;
+        role: string;
+        image_url: string | null;
+      };
+    } = {
       access_token: this.jwtService.sign(
         { sub: user.id, role: user.role },
         {
           expiresIn: '1d',
         },
       ),
-      user: {
-        id: user.id,
-        name: user.name,
-        gender: user.gender,
-        role: user.role,
-        image_url: user.image_url,
-      },
     };
+
+    if (sendUserData) {
+      res = {
+        ...res,
+        user: {
+          id: user.id,
+          name: user.name,
+          gender: user.gender,
+          role: user.role,
+          image_url: user.image_url,
+        },
+      };
+    }
+
+    return res;
   }
 
   async generateAndSendVerificationCode(user: {
@@ -225,7 +254,7 @@ export class AuthService {
       );
 
       // Generate and return a token (optional)
-      return this.generateToken(user);
+      return this.generateToken(user, false);
     } catch (error) {
       // Log the error and throw a generic error to prevent information leakage
       console.error('Password reset error:', error);

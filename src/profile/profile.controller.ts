@@ -20,6 +20,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Request } from 'express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { CertificationsService } from 'src/users/certifications/certifications.service';
@@ -78,7 +80,27 @@ export class ProfileController {
   @Patch('profileImg')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @UseInterceptors(FileInterceptor('image_url'))
+  // @UseInterceptors(FileInterceptor('image_url'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/images',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only image files are allowed!'), false);
+        }
+      },
+    }),
+  )
   @ApiOperation({
     summary: 'Update image',
     description: 'Update user profile image',
@@ -95,14 +117,34 @@ export class ProfileController {
     }
     return this.userService.updateProfileImg(
       req.user['id'],
-      `http://168.231.114.196/uploads/${image_url.filename}`,
+      `http://168.231.114.196/uploads/images/${image_url.filename}`,
     );
   }
 
   @Patch('coverImg')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  @UseInterceptors(FileInterceptor('cover_url'))
+  // @UseInterceptors(FileInterceptor('cover_url'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/images',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+      limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only image files are allowed!'), false);
+        }
+      },
+    }),
+  )
   @ApiOperation({
     summary: 'Update cover image',
     description: 'Update user cover image',
@@ -120,12 +162,56 @@ export class ProfileController {
 
     return this.userService.updateCoverImg(
       req.user['id'],
-      `http://168.231.114.196/uploads/${cover_url.filename}`,
+      `http://168.231.114.196/uploads/images/${cover_url.filename}`,
+    );
+  }
+
+  @Patch('video')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/videos',
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, uniqueSuffix + extname(file.originalname));
+        },
+      }),
+      limits: { fileSize: 25 * 1024 * 1024 },
+      fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('video/')) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only video files are allowed!'), false);
+        }
+      },
+    }),
+  )
+  @ApiOperation({
+    summary: 'Upload video',
+    description: 'Upload a video file for the user',
+  })
+  async uploadVideo(
+    @Req() req: Request,
+    @UploadedFile() video: Express.Multer.File,
+  ): Promise<ApiResponse<any>> {
+    if (!video) {
+      throw new BadRequestException('No file uploaded');
+    }
+    if (!req.user || typeof req.user['id'] === 'undefined') {
+      throw new Error('User information is missing from request.');
+    }
+    return this.userService.updateVideoUrl(
+      req.user['id'],
+      `http://168.231.114.196/uploads/videos/${video.filename}`,
     );
   }
 
   // ========== EXPERIENCE ROUTES ==========
-  @Post('experiences')
+  @Post('experiences')y
+  
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({

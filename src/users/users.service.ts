@@ -416,4 +416,32 @@ export class UsersService {
       data: cover_url,
     };
   }
+
+  async updateVideoUrl(
+    userId: string,
+    video_url: string,
+  ): Promise<ApiResponse<string>> {
+    // check if the user exists
+    let user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} is not found`);
+    }
+
+    // update the video URL
+    user = await this.prisma.user.update({
+      where: { id: userId },
+      data: {
+        video_url,
+      },
+    });
+
+    return {
+      success: true,
+      message: 'User video URL updated successfully',
+      data: video_url,
+    };
+  }
 }
