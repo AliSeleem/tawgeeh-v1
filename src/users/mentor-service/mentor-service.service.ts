@@ -72,7 +72,14 @@ export class MentorServiceService {
     // Fetch the full service with questions and availabilities
     const finalService = await this.prisma.mentorService.findUnique({
       where: { id: mentorService.id },
-      include: { questions: true, dates: true },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
     });
 
     if (!finalService) {
@@ -165,7 +172,14 @@ export class MentorServiceService {
     }
     const services = await this.prisma.mentorService.findMany({
       where: { mentorId },
-      include: { questions: true, dates: true },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
     });
 
     return {
@@ -190,7 +204,14 @@ export class MentorServiceService {
     // Check if service exists
     const service = await this.prisma.mentorService.findUnique({
       where: { id, mentorId },
-      include: { questions: true, dates: true },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
     });
     if (!service) {
       throw new NotFoundException(`Mentor service with ID ${id} not found`);
@@ -316,7 +337,14 @@ export class MentorServiceService {
     // Fetch the updated service with questions and availabilities
     const finalService = await this.prisma.mentorService.findUnique({
       where: { id },
-      include: { questions: true, dates: true },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
     });
     return {
       success: true,
