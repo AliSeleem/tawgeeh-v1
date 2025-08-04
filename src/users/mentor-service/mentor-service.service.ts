@@ -11,6 +11,7 @@ import { QuestionService } from './question/question.service';
 import { MentorAvailabilityService } from './mentor-availability/mentor-availability.service';
 import { MentorService } from '@prisma/client';
 import { Role } from 'src/common/enums/role.enum';
+import { NewCreateMentorServiceDto } from './dto/new-create-mentor-service.dto';
 
 @Injectable()
 export class MentorServiceService {
@@ -85,6 +86,75 @@ export class MentorServiceService {
     };
   }
 
+  async newCreate(
+    mentorId: string,
+    createMentorServiceDto: NewCreateMentorServiceDto,
+  ): Promise<ApiResponse<MentorService>> {
+    // check if mentorId is valid
+    const mentor = await this.prisma.user.findUnique({
+      where: { id: mentorId, role: Role.MENTOR },
+    });
+    if (!mentor) {
+      throw new NotFoundException('Mentor not found');
+    }
+
+    // extract questions and dates
+    const { questions, availability, ...mentorServiceData } =
+      createMentorServiceDto;
+
+    const availabilityWithTitle = {
+      ...availability,
+      title: mentorServiceData.name,
+    };
+
+    // create availability and get availability ID
+    const createdAvailability = await this.availabilityService.create(
+      availabilityWithTitle,
+      mentorId,
+    );
+
+    // create a new mentor service
+    const mentorService = await this.prisma.mentorService.create({
+      data: {
+        ...mentorServiceData,
+        mentorId,
+        dates: {
+          connect: [createdAvailability.data?.id]?.map((id) => ({ id })) || [],
+        },
+      },
+    });
+
+    // Create questions in parallel
+    const questionPromises =
+      questions?.map((question) =>
+        this.questionService.create(question, mentorService.id),
+      ) || [];
+    await Promise.all(questionPromises);
+
+    // Fetch the full service with questions and availabilities
+    const finalService = await this.prisma.mentorService.findUnique({
+      where: { id: mentorService.id },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
+    });
+
+    if (!finalService) {
+      throw new InternalServerErrorException('Could not create service');
+    }
+
+    return {
+      success: true,
+      message: 'Mentor service created successfully',
+      data: finalService,
+    };
+  }
+
   async findAll(mentorId: string): Promise<ApiResponse<MentorService[]>> {
     // Check if mentor exists
     const mentor = await this.prisma.user.findUnique({
@@ -125,6 +195,45 @@ export class MentorServiceService {
     if (!service) {
       throw new NotFoundException(`Mentor service with ID ${id} not found`);
     }
+
+    return {
+      success: true,
+      message: 'Mentor service retrieved successfully',
+      data: service,
+    };
+  }
+
+  async copy(
+    id: number,
+    mentorId: string,
+  ): Promise<ApiResponse<MentorService>> {
+    console.log('Copying mentor service with ID:', id, 'by user:', mentorId);
+    // check if mentor exists
+    const mentor = await this.prisma.user.findUnique({
+      where: { id: mentorId, role: Role.MENTOR },
+    });
+
+    if (!mentor) {
+      throw new NotFoundException('Mentor not found in the database');
+    }
+
+    // Check if service exists
+    const service = await this.prisma.mentorService.findUnique({
+      where: { id, mentorId },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: true,
+          },
+        },
+      },
+    });
+    if (!service) {
+      throw new NotFoundException(`Mentor service with ID ${id} not found`);
+    }
+
+    service.name = `Copy of ${service.name}`;
 
     return {
       success: true,
