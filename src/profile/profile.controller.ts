@@ -57,7 +57,7 @@ export class ProfileController {
     if (!req.user || typeof req.user['id'] === 'undefined') {
       throw new Error('User information is missing from request.');
     }
-    return this.userService.getUserById(req.user['id']);
+    return this.userService.getUserProfile(req.user['id']);
   }
 
   @Patch()

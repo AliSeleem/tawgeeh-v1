@@ -308,6 +308,83 @@ export class UsersService {
     };
   }
 
+  async getUserProfile(id: string): Promise<ApiResponse<any>> {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        gender: true,
+        image_url: true,
+        cover_url: true,
+        bio: true,
+        specialization: true,
+        experienceLevel: true,
+        linkedin: true,
+        instagram: true,
+        dribbble: true,
+        behance: true,
+        github: true,
+        experiences: {
+          select: {
+            id: true,
+            company: true,
+            title: true,
+            from: true,
+            to: true,
+          },
+        },
+        education: {
+          select: {
+            id: true,
+            school: true,
+            degree: true,
+            from: true,
+            to: true,
+          },
+        },
+        certificates: {
+          select: {
+            id: true,
+            name: true,
+            donor: true,
+            date: true,
+            link: true,
+          },
+        },
+        role: true,
+        totalMinutes: true,
+        totalSessions: true,
+        video_url: true,
+        mentorServices: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            duration: true,
+            createdAt: true,
+            updatedAt: true,
+            isActive: true,
+            dates: {
+              include: { days: true },
+            },
+            questions: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+
+    return {
+      success: true,
+      message: 'User retrieved successfully.',
+      data: user,
+    };
+  }
+
   async updateUser(
     id: string,
     updateUserDto: UpdateUserDto,
