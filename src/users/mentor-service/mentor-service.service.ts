@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -9,9 +10,12 @@ import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { QuestionService } from './question/question.service';
 import { MentorAvailabilityService } from './mentor-availability/mentor-availability.service';
-import { MentorService } from '@prisma/client';
+import { MentorAvailability, MentorService } from '@prisma/client';
 import { Role } from 'src/common/enums/role.enum';
 import { NewCreateMentorServiceDto } from './dto/new-create-mentor-service.dto';
+import { NewUpdateMentorServiceDto } from './dto/new-update-mentor-service.dto';
+import { CreateMentorAvailabilityDto } from './mentor-availability/dto/create-mentor-availability.dto';
+import { NewCreateMentorAvailabilityDto } from './mentor-availability/dto/new-create-mentor-availability.dto';
 
 @Injectable()
 export class MentorServiceService {
@@ -76,7 +80,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -145,7 +153,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -176,7 +188,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -208,7 +224,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -245,7 +265,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -341,7 +365,11 @@ export class MentorServiceService {
         questions: true,
         dates: {
           include: {
-            days: true,
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
           },
         },
       },
@@ -350,6 +378,158 @@ export class MentorServiceService {
       success: true,
       message: 'Mentor service updated successfully',
       data: finalService ?? undefined,
+    };
+  }
+
+  async newUpdate(
+    id: number,
+    mentorId: string,
+    updateMentorServiceDto: NewUpdateMentorServiceDto,
+  ): Promise<ApiResponse<MentorService>> {
+    // Validate inputs
+    if (!id || !mentorId) {
+      throw new BadRequestException('Service ID and mentor ID are required');
+    }
+
+    // Fetch existing service with relations
+    const service = await this.prisma.mentorService.findUnique({
+      where: { id, mentorId },
+      include: {
+        questions: true,
+        dates: {
+          include: {
+            days: {
+              include: {
+                intervals: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!service) {
+      throw new NotFoundException(`Mentor service with ID ${id} not found`);
+    }
+
+    // Extract DTO fields
+    const { availability, questions, ...serviceData } = updateMentorServiceDto;
+
+    // Use Prisma transaction to ensure atomic updates
+    const updatedService = await this.prisma.$transaction(
+      async (tx) => {
+        // Handle availability updates
+        let newAvailability: MentorAvailability | null = null;
+        if (availability) {
+          // Delete existing availabilities
+          if (service.dates.length > 0) {
+            await Promise.all(
+              service.dates.map((date) =>
+                this.availabilityService.remove(date.id, mentorId),
+              ),
+            );
+          }
+
+          // Prepare new availability with fallback values
+          const availabilityWithDefaults: CreateMentorAvailabilityDto = {
+            title: serviceData.name || service.name,
+            availableFrom:
+              availability.availableFrom ||
+              (service.dates[0]?.availableFrom ?? new Date().toISOString()),
+            expireAt:
+              availability.expireAt || service.dates[0]?.expireAt || undefined,
+            maxDaysBefore:
+              availability.maxDaysBefore ||
+              service.dates[0]?.maxDaysBefore ||
+              30,
+            minHoursBefore:
+              availability.minHoursBefore ||
+              service.dates[0]?.minHoursBefore ||
+              24,
+            maxBookingsPerDay:
+              availability.maxBookingsPerDay ||
+              service.dates[0]?.maxBookingsPerDay ||
+              5,
+            breakMinutes:
+              availability.breakMinutes || service.dates[0]?.breakMinutes || 15,
+            isRecurring:
+              availability.isRecurring ??
+              service.dates[0]?.isRecurring ??
+              false,
+            days: availability.days || service.dates[0]?.days || [],
+          };
+
+          newAvailability = (
+            await this.availabilityService.create(
+              availabilityWithDefaults,
+              mentorId,
+            )
+          ).data!;
+        } else if (service.dates.length > 0) {
+          newAvailability = service.dates[0];
+        }
+
+        // Handle question updates
+        if (questions) {
+          // Get existing questions
+          const existingQuestions = service.questions;
+
+          // Identify questions to delete and create
+          const existingQuestionSet = new Set(
+            existingQuestions.map((q) => q.question),
+          );
+          const newQuestionSet = new Set(questions.map((q) => q.question));
+
+          const questionsToDelete = existingQuestions.filter(
+            (q) => !newQuestionSet.has(q.question),
+          );
+          const questionsToCreate = questions.filter(
+            (q) => !existingQuestionSet.has(q.question),
+          );
+
+          // Execute question updates in parallel
+          await Promise.all([
+            ...questionsToDelete.map((q) =>
+              this.questionService.remove(q.id, id),
+            ),
+            ...questionsToCreate.map((q) => this.questionService.create(q, id)),
+          ]);
+        }
+
+        // Update the mentor service
+        const updated = await tx.mentorService.update({
+          where: { id },
+          data: {
+            ...serviceData,
+            ...(newAvailability && {
+              dates: {
+                connect: { id: newAvailability.id },
+              },
+            }),
+          },
+          include: {
+            questions: true,
+            dates: {
+              include: {
+                days: {
+                  include: {
+                    intervals: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        return updated;
+      },
+      { timeout: 6000 },
+    );
+
+    return {
+      success: true,
+      message: 'Mentor service updated successfully',
+      data: updatedService,
     };
   }
 

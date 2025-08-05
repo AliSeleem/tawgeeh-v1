@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { Role } from 'src/common/enums/role.enum';
 import { RoleGuard } from 'src/common/guards/roles.guard';
 import { NewCreateMentorServiceDto } from './dto/new-create-mentor-service.dto';
+import { NewUpdateMentorServiceDto } from './dto/new-update-mentor-service.dto';
 
 @Controller('mentor-service')
 export class MentorServiceController {
@@ -121,6 +122,35 @@ export class MentorServiceController {
       req.user.id,
     );
     return this.mentorServiceService.update(
+      id,
+      req.user.id,
+      updateMentorServiceDto,
+    );
+  }
+
+  @Patch('/v2/:id')
+  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Update a mentor service',
+    description: 'Update a mentor service',
+  })
+  @ApiBody({
+    type: NewUpdateMentorServiceDto,
+    description: 'Update a mentor service',
+  })
+  newUpdate(
+    @Req() req: any,
+    @Param('id') id: number,
+    @Body() updateMentorServiceDto: NewUpdateMentorServiceDto,
+  ) {
+    console.log(
+      'Updating mentor service with ID:',
+      id,
+      'for user:',
+      req.user.id,
+    );
+    return this.mentorServiceService.newUpdate(
       id,
       req.user.id,
       updateMentorServiceDto,
