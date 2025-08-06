@@ -293,7 +293,11 @@ export class SessionsService {
         menteeQ: dto.menteeQ,
         status: SessionStatus.PENDING,
       },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     // Add answers
@@ -340,7 +344,10 @@ export class SessionsService {
     // Check if session exists
     const session = await this.prisma.session.findUnique({
       where: { id: sessionId },
-      include: { mentee: true, mentor: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: true,
+      },
     });
     if (!session) {
       throw new NotFoundException(`Session with ID ${sessionId} not found.`);
@@ -375,7 +382,11 @@ export class SessionsService {
         status: SessionStatus.ACCEPTED,
         googleMeetUrl: googleMeetResponse.data,
       },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     // Send notifications to mentee and mentor
@@ -442,7 +453,11 @@ export class SessionsService {
     const updatedSession = await this.prisma.session.update({
       where: { id: sessionId },
       data: { status: SessionStatus.REJECTED },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     return {
@@ -487,7 +502,11 @@ export class SessionsService {
     const updatedSession = await this.prisma.session.update({
       where: { id: sessionId },
       data: { status: SessionStatus.CANCELLED },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     return {
@@ -543,7 +562,11 @@ export class SessionsService {
           },
         },
       },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     return {
@@ -587,7 +610,11 @@ export class SessionsService {
     const updatedSession = await this.prisma.session.update({
       where: { id: dto.sessionId },
       data: { notes: dto.notes },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     return {
@@ -633,7 +660,11 @@ export class SessionsService {
     const updatedSession = await this.prisma.session.update({
       where: { id: dto.sessionId },
       data: { feedback: dto.feedback },
-      include: { mentee: true, mentor: true, service: true },
+      include: {
+        mentee: { select: { id: true, name: true, email: true } },
+        mentor: { select: { id: true, name: true, email: true } },
+        service: true,
+      },
     });
 
     return {
