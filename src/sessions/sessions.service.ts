@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
-  InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -18,7 +17,7 @@ import {
   EmailType,
   NotificationType,
 } from '../notification/enums/notification-type.enum';
-import { subscribe } from 'diagnostics_channel';
+import { GaxiosResponse } from 'gaxios';
 
 @Injectable()
 export class SessionsService {
@@ -75,7 +74,7 @@ export class SessionsService {
       },
     ];
 
-    let event;
+    let event: GaxiosResponse<calendar_v3.Schema$Event> | null = null;
     try {
       event = await calendar.events.insert({
         calendarId: 'primary',
@@ -108,7 +107,7 @@ export class SessionsService {
     return {
       success: true,
       message: 'Google Meet link created successfully.',
-      data: event.data.hangoutLink || '',
+      data: event?.data.hangoutLink || '',
     };
   }
 
