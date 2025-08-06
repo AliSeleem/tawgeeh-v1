@@ -15,7 +15,7 @@ export class CreateSessionDto {
     description: 'ID of the mentor for the session',
     example: '1234567890',
   })
-  @IsInt()
+  @IsString()
   mentorId: string;
 
   @ApiProperty({
