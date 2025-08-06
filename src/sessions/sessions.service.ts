@@ -688,8 +688,24 @@ export class SessionsService {
         OR: [{ menteeId: userId }, { mentorId: userId }],
       },
       include: {
-        mentee: { select: { id: true, name: true, email: true } },
-        mentor: { select: { id: true, name: true, email: true } },
+        mentee: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image_url: true,
+            specialization: true,
+          },
+        },
+        mentor: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+            image_url: true,
+            specialization: true,
+          },
+        },
         answers: true,
         service: {
           include: {
