@@ -440,8 +440,8 @@ export class UsersService {
   // update profile and cover picture
   async updateProfileImg(
     userId: string,
-    image_url: string,
-  ): Promise<ApiResponse<string>> {
+    image_url: string | null,
+  ): Promise<ApiResponse<string | null>> {
     // check if the user exists
     let user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -468,8 +468,8 @@ export class UsersService {
 
   async updateCoverImg(
     userId: string,
-    cover_url: string,
-  ): Promise<ApiResponse<string>> {
+    cover_url: string | null,
+  ): Promise<ApiResponse<string | null>> {
     // check if the user exists
     let user = await this.prisma.user.findUnique({
       where: { id: userId },
@@ -496,8 +496,8 @@ export class UsersService {
 
   async updateVideoUrl(
     userId: string,
-    video_url: string,
-  ): Promise<ApiResponse<string>> {
+    video_url: string | null,
+  ): Promise<ApiResponse<string | null>> {
     // check if the user exists
     let user = await this.prisma.user.findUnique({
       where: { id: userId },

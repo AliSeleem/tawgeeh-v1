@@ -121,6 +121,20 @@ export class ProfileController {
     );
   }
 
+  @Delete('profileImg')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete user profile image',
+    description: 'Remove the profile image of the authenticated user',
+  })
+  async DeleteUserImg(@Req() req: Request): Promise<ApiResponse<any>> {
+    if (!req.user || typeof req.user['id'] === 'undefined') {
+      throw new Error('User information is missing from request.');
+    }
+    return this.userService.updateProfileImg(req.user['id'], null);
+  }
+
   @Patch('coverImg')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -166,6 +180,21 @@ export class ProfileController {
     );
   }
 
+  @Delete('coverImg')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete cover image',
+    description: 'Delete user cover image',
+  })
+  async DeleteUserCover(@Req() req: Request): Promise<ApiResponse<any>> {
+    if (!req.user || typeof req.user['id'] === 'undefined') {
+      throw new Error('User information is missing from request.');
+    }
+
+    return this.userService.updateCoverImg(req.user['id'], null);
+  }
+
   @Patch('video')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -207,6 +236,20 @@ export class ProfileController {
       req.user['id'],
       `http://168.231.114.196/uploads/videos/${video.filename}`,
     );
+  }
+
+  @Patch('video')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete video',
+    description: 'Remove the video file of the authenticated user',
+  })
+  async DeleteVideo(@Req() req: Request): Promise<ApiResponse<any>> {
+    if (!req.user || typeof req.user['id'] === 'undefined') {
+      throw new Error('User information is missing from request.');
+    }
+    return this.userService.updateVideoUrl(req.user['id'], null);
   }
 
   // ========== EXPERIENCE ROUTES ==========
