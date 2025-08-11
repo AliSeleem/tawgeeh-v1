@@ -112,7 +112,7 @@ export class SessionsService {
   }
 
   // Get available time slots for a service
-  async getAvailableSlots(
+  async getAvailablehSlots(
     serviceId: number,
     menteeId?: string,
   ): Promise<
