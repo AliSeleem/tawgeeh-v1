@@ -114,7 +114,7 @@ export class SessionsService {
   // Get available time slots for a service
   async getAvailablehSlots(
     serviceId: number,
-    menteeId?: string,
+    menteeId: string,
   ): Promise<
     ApiResponse<{
       service: { id: number; mentorId: string; duration: number };
@@ -224,26 +224,24 @@ export class SessionsService {
 
     // Fetch mentee's existing sessions if menteeId provided
     let menteeSessions: { start: Date; end: Date }[] = [];
-    if (menteeId) {
-      const menteeExisting = await this.prisma.session.findMany({
-        where: {
-          menteeId,
-          scheduledAt: { gte: startRange, lte: endRange },
-          status: {
-            notIn: [
-              SessionStatus.CANCELLED,
-              SessionStatus.COMPLETED,
-              SessionStatus.REJECTED,
-            ],
-          },
+    const menteeExisting = await this.prisma.session.findMany({
+      where: {
+        menteeId,
+        scheduledAt: { gte: startRange, lte: endRange },
+        status: {
+          notIn: [
+            SessionStatus.CANCELLED,
+            SessionStatus.COMPLETED,
+            SessionStatus.REJECTED,
+          ],
         },
-        select: { scheduledAt: true, duration: true },
-      });
-      menteeSessions = menteeExisting.map((s) => ({
-        start: s.scheduledAt,
-        end: new Date(s.scheduledAt.getTime() + s.duration * 60 * 1000),
-      }));
-    }
+      },
+      select: { scheduledAt: true, duration: true },
+    });
+    menteeSessions = menteeExisting.map((s) => ({
+      start: s.scheduledAt,
+      end: new Date(s.scheduledAt.getTime() + s.duration * 60 * 1000),
+    }));
 
     // Generate slots
     const slots: Date[] = [];
@@ -996,10 +994,14 @@ export class SessionsService {
       orderBy: { scheduledAt: 'desc' },
     });
 
+    // split sessions into mentee and mentor
+    const menteeSessions = sessions.filter((s) => s.menteeId === userId);
+    const mentorSessions = sessions.filter((s) => s.mentorId === userId);
+
     return {
       success: true,
       message: "User's sessions retrieved successfully.",
-      data: sessions,
+      data: { menteeSessions, mentorSessions },
     };
   }
 

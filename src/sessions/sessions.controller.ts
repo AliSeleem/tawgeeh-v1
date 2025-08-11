@@ -33,6 +33,27 @@ import { SessionStatus } from '@prisma/client';
 export class SessionsController {
   constructor(private readonly sessionService: SessionsService) {}
 
+  @Get('available-slots/:serviceId')
+  @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
+  @ApiOperation({ summary: 'Get available time slots for a service' })
+  @ApiQuery({
+    name: 'serviceId',
+    required: true,
+    type: Number,
+    description: 'ID of the service to get available slots for',
+  })
+  @ApiParam({
+    name: 'serviceId',
+    description: 'Service ID to get available slots for',
+    type: Number,
+  })
+  async getAvailableSlots(
+    @Req() req,
+    @Param('serviceId') serviceId: number,
+  ): Promise<ApiResponse<any>> {
+    return this.sessionService.getAvailablehSlots(serviceId, req.user.id);
+  }
+
   @Post('request')
   @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Request a new mentoring session' })
