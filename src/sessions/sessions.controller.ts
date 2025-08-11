@@ -7,6 +7,7 @@ import {
   Get,
   UseGuards,
   Req,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiParam,
   ApiBody,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { SessionsService } from './sessions.service';
 import { CreateSessionDto } from './dto/create-session.dto';
@@ -23,6 +25,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { RoleGuard } from 'src/common/guards/roles.guard';
 import { Role } from 'src/common/enums/role.enum';
+import { SessionStatus } from '@prisma/client';
 
 @ApiTags('Sessions')
 @ApiBearerAuth()
@@ -113,8 +116,14 @@ export class SessionsController {
   @Get('user')
   @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Get user sessions' })
-  async getUserSessions(@Req() req): Promise<ApiResponse<any>> {
-    return this.sessionService.getUserSessions(req.user.id);
+  @ApiQuery({
+    name: 'filter',
+    required: false,
+    enum: SessionStatus,
+    description: 'Filter sessions by status',
+  })
+  async getUserSessions(@Req() req, @Query() query): Promise<ApiResponse<any>> {
+    return this.sessionService.getUserSessions(req.user.id, query.filter);
   }
 
   @Get(':sessionId')

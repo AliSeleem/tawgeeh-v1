@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -8,22 +7,13 @@ import { CreateMentorServiceDto } from './dto/create-mentor-service.dto';
 import { UpdateMentorServiceDto } from './dto/update-mentor-service.dto';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { QuestionService } from './question/question.service';
-import { MentorAvailabilityService } from './mentor-availability/mentor-availability.service';
-import { MentorAvailability, MentorService } from '@prisma/client';
+import { MentorService } from '@prisma/client';
 import { Role } from 'src/common/enums/role.enum';
-import { NewCreateMentorServiceDto } from './dto/new-create-mentor-service.dto';
-import { NewUpdateMentorServiceDto } from './dto/new-update-mentor-service.dto';
-import { CreateMentorAvailabilityDto } from './mentor-availability/dto/create-mentor-availability.dto';
-import { NewCreateMentorAvailabilityDto } from './mentor-availability/dto/new-create-mentor-availability.dto';
+import getNextWeekdayDate from 'src/common/utils';
 
 @Injectable()
 export class MentorServiceService {
-  constructor(
-    private readonly questionService: QuestionService,
-    private prisma: PrismaService,
-    private availabilityService: MentorAvailabilityService,
-  ) {}
+  constructor(private prisma: PrismaService) {}
 
   async create(
     mentorId: string,
@@ -38,120 +28,58 @@ export class MentorServiceService {
     }
 
     // extract questions and dates
-    const { questions, availabilityIds, ...mentorServiceData } =
-      createMentorServiceDto;
-
-    // Validate availability IDs
-    if (availabilityIds?.length && availabilityIds?.length > 0) {
-      const validAvailabilities =
-        await this.availabilityService.validateAvailabilityIds(
-          availabilityIds,
-          mentorId,
-        );
-      if (validAvailabilities.length !== availabilityIds.length) {
-        throw new NotFoundException(
-          'One or more availability IDs are invalid or not owned by the mentor',
-        );
-      }
-    }
-
-    // create a new mentor service
-    const mentorService = await this.prisma.mentorService.create({
-      data: {
-        ...mentorServiceData,
-        mentorId,
-        dates: {
-          connect: availabilityIds?.map((id) => ({ id })) || [],
-        },
-      },
-    });
-
-    // Create questions in parallel
-    const questionPromises =
-      questions?.map((question) =>
-        this.questionService.create(question, mentorService.id),
-      ) || [];
-    await Promise.all(questionPromises);
-
-    // Fetch the full service with questions and availabilities
-    const finalService = await this.prisma.mentorService.findUnique({
-      where: { id: mentorService.id },
-      include: {
-        questions: true,
-        dates: {
-          include: {
-            days: {
-              include: {
-                intervals: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!finalService) {
-      throw new InternalServerErrorException('Could not create service');
-    }
-
-    return {
-      success: true,
-      message: 'Mentor service created successfully',
-      data: finalService,
-    };
-  }
-
-  async newCreate(
-    mentorId: string,
-    createMentorServiceDto: NewCreateMentorServiceDto,
-  ): Promise<ApiResponse<MentorService>> {
-    // check if mentorId is valid
-    const mentor = await this.prisma.user.findUnique({
-      where: { id: mentorId, role: Role.MENTOR },
-    });
-    if (!mentor) {
-      throw new NotFoundException('Mentor not found');
-    }
-
-    // extract questions and dates
     const { questions, availability, ...mentorServiceData } =
       createMentorServiceDto;
 
-    const availabilityWithTitle = {
-      ...availability,
-      title: mentorServiceData.name,
-    };
-
-    // create availability and get availability ID
-    const createdAvailability = await this.availabilityService.create(
-      availabilityWithTitle,
-      mentorId,
-    );
-
     // create a new mentor service
-    const mentorService = await this.prisma.mentorService.create({
-      data: {
-        ...mentorServiceData,
-        mentorId,
-        dates: {
-          connect: [createdAvailability.data?.id]?.map((id) => ({ id })) || [],
+    const mentorService = await this.prisma.$transaction(async (tx) => {
+      // create service
+      const createdService = await tx.mentorService.create({
+        data: {
+          ...mentorServiceData,
+          mentorId,
+          questions: questions
+            ? {
+                create: questions.map((question) => ({
+                  ...question,
+                })),
+              }
+            : undefined,
+          availability: availability
+            ? {
+                create: {
+                  ...availability,
+                  mentorId: mentorId,
+                  days: {
+                    create: availability.days.map((day) => ({
+                      ...day,
+                      // Convert specificDate to Date object if not recurring
+                      specificDate: availability.isRecurring
+                        ? null
+                        : typeof day.dayOfWeek !== 'undefined'
+                          ? getNextWeekdayDate(day.dayOfWeek)
+                          : null,
+                      intervals: {
+                        create: day.intervals.map((interval) => ({
+                          ...interval,
+                        })),
+                      },
+                    })),
+                  },
+                },
+              }
+            : undefined,
         },
-      },
+      }); // create service
+      return createdService;
     });
-
-    // Create questions in parallel
-    const questionPromises =
-      questions?.map((question) =>
-        this.questionService.create(question, mentorService.id),
-      ) || [];
-    await Promise.all(questionPromises);
 
     // Fetch the full service with questions and availabilities
     const finalService = await this.prisma.mentorService.findUnique({
       where: { id: mentorService.id },
       include: {
         questions: true,
-        dates: {
+        availability: {
           include: {
             days: {
               include: {
@@ -186,7 +114,7 @@ export class MentorServiceService {
       where: { mentorId },
       include: {
         questions: true,
-        dates: {
+        availability: {
           include: {
             days: {
               include: {
@@ -222,7 +150,7 @@ export class MentorServiceService {
       where: { id, mentorId },
       include: {
         questions: true,
-        dates: {
+        availability: {
           include: {
             days: {
               include: {
@@ -263,7 +191,7 @@ export class MentorServiceService {
       where: { id, mentorId },
       include: {
         questions: true,
-        dates: {
+        availability: {
           include: {
             days: {
               include: {
@@ -292,244 +220,97 @@ export class MentorServiceService {
     mentorId: string,
     updateMentorServiceDto: UpdateMentorServiceDto,
   ): Promise<ApiResponse<MentorService>> {
-    // extract questions and dates
-    const { availabilityIds, questions, ...serviceData } =
-      updateMentorServiceDto;
+    // check if mentor exists
+    const mentor = await this.prisma.user.findUnique({
+      where: { id: mentorId, role: Role.MENTOR },
+    });
+    if (!mentor) {
+      throw new NotFoundException('Mentor not found');
+    }
 
-    // Check if service exists
-    const service = await this.prisma.mentorService.findUnique({
+    // check if service exists
+    const existingService = await this.prisma.mentorService.findFirst({
       where: { id, mentorId },
     });
-    if (!service) {
+    if (!existingService) {
       throw new NotFoundException(`Mentor service with ID ${id} not found`);
     }
 
-    // Validate availability IDs if provided
-    if (availabilityIds?.length && availabilityIds?.length > 0) {
-      const validAvailabilities =
-        await this.availabilityService.validateAvailabilityIds(
-          availabilityIds,
-          service.mentorId,
-        );
-      if (validAvailabilities.length !== availabilityIds.length) {
-        throw new NotFoundException(
-          'One or more availability IDs are invalid or not owned by the mentor',
-        );
-      }
-    }
+    const { questions, availability, ...serviceData } = updateMentorServiceDto;
 
-    // Update the service
-    const updatedService = await this.prisma.mentorService.update({
-      where: { id },
-      data: {
-        ...serviceData,
-        dates: {
-          connect: availabilityIds ? availabilityIds.map((id) => ({ id })) : [],
-        },
-      },
-    });
-
-    // Check for new questions and removed ones, and update questions in parallel
-    if (questions) {
-      // Get existing questions
-      const existingQuestions = await this.prisma.question.findMany({
-        where: { serviceId: id },
-        select: { id: true, question: true },
+    const updatedService = await this.prisma.$transaction(async (tx) => {
+      // 1️⃣ Delete existing questions & availability (to fully replace them)
+      await tx.question.deleteMany({ where: { serviceId: id } });
+      await tx.mentorAvailability.deleteMany({
+        where: { mentorServiceId: id },
       });
 
-      // Identify questions to delete (existing but not in new list)
-      const questionsToDelete = existingQuestions.filter(
-        (eq) => !questions.some((q) => q.question === eq.question),
-      );
-
-      // Identify questions to create (new but not in existing list)
-      const questionsToCreate = questions.filter(
-        (q) => !existingQuestions.some((eq) => eq.question === q.question),
-      );
-
-      // Execute deletions and creations in parallel
-      const questionPromises = [
-        ...questionsToDelete.map((q) =>
-          this.questionService.remove(q.id, updatedService.id),
-        ),
-        ...questionsToCreate.map((q) => this.questionService.create(q, id)),
-      ];
-
-      await Promise.all(questionPromises);
-    }
-
-    // Fetch the updated service with questions and availabilities
-    const finalService = await this.prisma.mentorService.findUnique({
-      where: { id },
-      include: {
-        questions: true,
-        dates: {
-          include: {
-            days: {
-              include: {
-                intervals: true,
-              },
-            },
-          },
-        },
-      },
-    });
-    return {
-      success: true,
-      message: 'Mentor service updated successfully',
-      data: finalService ?? undefined,
-    };
-  }
-
-  async newUpdate(
-    id: number,
-    mentorId: string,
-    updateMentorServiceDto: NewUpdateMentorServiceDto,
-  ): Promise<ApiResponse<MentorService>> {
-    // Validate inputs
-    if (!id || !mentorId) {
-      throw new BadRequestException('Service ID and mentor ID are required');
-    }
-
-    // Fetch existing service with relations
-    const service = await this.prisma.mentorService.findUnique({
-      where: { id, mentorId },
-      include: {
-        questions: true,
-        dates: {
-          include: {
-            days: {
-              include: {
-                intervals: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!service) {
-      throw new NotFoundException(`Mentor service with ID ${id} not found`);
-    }
-
-    // Extract DTO fields
-    const { availability, questions, ...serviceData } = updateMentorServiceDto;
-
-    // Use Prisma transaction to ensure atomic updates
-    const updatedService = await this.prisma.$transaction(
-      async (tx) => {
-        // Handle availability updates
-        let newAvailability: MentorAvailability | null = null;
-        if (availability) {
-          // Delete existing availabilities
-          if (service.dates.length > 0) {
-            await Promise.all(
-              service.dates.map((date) =>
-                this.availabilityService.remove(date.id, mentorId),
-              ),
-            );
-          }
-
-          // Prepare new availability with fallback values
-          const availabilityWithDefaults: CreateMentorAvailabilityDto = {
-            title: serviceData.name || service.name,
-            availableFrom:
-              availability.availableFrom ||
-              (service.dates[0]?.availableFrom ?? new Date().toISOString()),
-            expireAt:
-              availability.expireAt || service.dates[0]?.expireAt || undefined,
-            maxDaysBefore:
-              availability.maxDaysBefore ||
-              service.dates[0]?.maxDaysBefore ||
-              30,
-            minHoursBefore:
-              availability.minHoursBefore ||
-              service.dates[0]?.minHoursBefore ||
-              24,
-            maxBookingsPerDay:
-              availability.maxBookingsPerDay ||
-              service.dates[0]?.maxBookingsPerDay ||
-              5,
-            breakMinutes:
-              availability.breakMinutes || service.dates[0]?.breakMinutes || 15,
-            isRecurring:
-              availability.isRecurring ??
-              service.dates[0]?.isRecurring ??
-              false,
-            days: availability.days || service.dates[0]?.days || [],
-          };
-
-          newAvailability = (
-            await this.availabilityService.create(
-              availabilityWithDefaults,
-              mentorId,
-            )
-          ).data!;
-        } else if (service.dates.length > 0) {
-          newAvailability = service.dates[0];
-        }
-
-        // Handle question updates
-        if (questions) {
-          // Get existing questions
-          const existingQuestions = service.questions;
-
-          // Identify questions to delete and create
-          const existingQuestionSet = new Set(
-            existingQuestions.map((q) => q.question),
-          );
-          const newQuestionSet = new Set(questions.map((q) => q.question));
-
-          const questionsToDelete = existingQuestions.filter(
-            (q) => !newQuestionSet.has(q.question),
-          );
-          const questionsToCreate = questions.filter(
-            (q) => !existingQuestionSet.has(q.question),
-          );
-
-          // Execute question updates in parallel
-          await Promise.all([
-            ...questionsToDelete.map((q) =>
-              this.questionService.remove(q.id, id),
-            ),
-            ...questionsToCreate.map((q) => this.questionService.create(q, id)),
-          ]);
-        }
-
-        // Update the mentor service
-        const updated = await tx.mentorService.update({
-          where: { id },
-          data: {
-            ...serviceData,
-            ...(newAvailability && {
-              dates: {
-                connect: { id: newAvailability.id },
-              },
-            }),
-          },
-          include: {
-            questions: true,
-            dates: {
-              include: {
-                days: {
-                  include: {
-                    intervals: true,
+      // 2️⃣ Update mentor service
+      const service = await tx.mentorService.update({
+        where: { id },
+        data: {
+          ...serviceData,
+          questions: questions
+            ? {
+                create: questions.map((q) => ({
+                  ...q,
+                })),
+              }
+            : undefined,
+          availability: availability
+            ? {
+                create: {
+                  ...availability,
+                  mentorId: mentorId,
+                  days: {
+                    create: availability.days.map((day) => ({
+                      ...day,
+                      specificDate: availability.isRecurring
+                        ? null
+                        : typeof day.dayOfWeek !== 'undefined'
+                          ? getNextWeekdayDate(day.dayOfWeek)
+                          : null,
+                      intervals: {
+                        create: day.intervals.map((interval) => ({
+                          ...interval,
+                        })),
+                      },
+                    })),
                   },
                 },
+              }
+            : undefined,
+        },
+      });
+
+      return service;
+    });
+
+    // 3️⃣ Fetch the updated service with nested relations
+    const finalService = await this.prisma.mentorService.findUnique({
+      where: { id: updatedService.id },
+      include: {
+        questions: true,
+        availability: {
+          include: {
+            days: {
+              include: {
+                intervals: true,
               },
             },
           },
-        });
-
-        return updated;
+        },
       },
-      { timeout: 6000 },
-    );
+    });
+
+    if (!finalService) {
+      throw new InternalServerErrorException('Could not update service');
+    }
 
     return {
       success: true,
       message: 'Mentor service updated successfully',
-      data: updatedService,
+      data: finalService,
     };
   }
 

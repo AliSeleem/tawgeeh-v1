@@ -10,7 +10,7 @@ datasource db {
 // ======== USER MODELS ========
 
 model User {
-  id           String             @id @default(uuid())
+  id       String  @id @default(uuid())
   name     String  @db.VarChar(50)
   email    String  @unique
   password String?
@@ -57,16 +57,16 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations to other models
-  chats             ChatParticipants[]
-  messages          Message[]
-  mentorSessions    Session[]         @relation("mentorSessions")
-  menteeSessions    Session[]         @relation("menteeSessions")
-  experiences       Experience[]
-  certificates      Certificate[]
-  education         Education[]
-  ratings           Rating[]           @relation("RatedUser")
-  givenRatings      Rating[]           @relation("RaterUser")
-  achievements      Achievement[]
+  chats          ChatParticipants[]
+  messages       Message[]
+  mentorSessions Session[]          @relation("mentorSessions")
+  menteeSessions Session[]          @relation("menteeSessions")
+  experiences    Experience[]
+  certificates   Certificate[]
+  education      Education[]
+  ratings        Rating[]           @relation("RatedUser")
+  givenRatings   Rating[]           @relation("RaterUser")
+  achievements   Achievement[]
 
   // Mentor-specific relations
   mentorRequests     MentorRequest[] // Relation to mentor requests
@@ -106,16 +106,16 @@ enum Role {
 // ======== MENTOR MODELS ========
 
 model MentorService {
-  id          Int                  @id @default(autoincrement())
-  mentorId    String
-  name        String               @db.VarChar(100)
-  description String               @db.Text
-  duration    Int // Duration in minutes
-  questions   Question[] // Questions for the session
-  dates       MentorAvailability[]
-  isActive    Boolean              @default(true)
-  createdAt   DateTime             @default(now())
-  updatedAt   DateTime             @updatedAt
+  id           Int                 @id @default(autoincrement())
+  mentorId     String
+  name         String              @db.VarChar(100)
+  description  String              @db.Text
+  duration     Int // Duration in minutes
+  questions    Question[] // Questions for the session
+  availability MentorAvailability?
+  isActive     Boolean             @default(true)
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
 
   mentor   User      @relation(fields: [mentorId], references: [id], onDelete: Cascade)
   sessions Session[] // Sessions booked for this service
@@ -135,36 +135,34 @@ model Question {
 }
 
 model MentorAvailability {
-  id                Int                      @id @default(autoincrement())
-  title             String
+  id                Int                     @id @default(autoincrement())
   mentorId          String
-  availableFrom     DateTime                @default(now())
-  expireAt          DateTime?               // The expiration time
-  maxDaysBefore     Int                     // Maximum number of days user can book before
-  minHoursBefore    Int                     // Minimum number of hours user can book before
-  maxBookingsPerDay Int                     // Maximum number of bookings per day
-  breakMinutes      Int?                    // Number of break minutes between sessions
+  maxDaysBefore     Int // Maximum number of days user can book before
+  minHoursBefore    Int // Minimum number of hours user can book before
+  maxBookingsPerDay Int // Maximum number of bookings per day
+  break             Boolean                 @default(true)
   isRecurring       Boolean                 @default(true)
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   mentor            User                    @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-  MentorService     MentorService?          @relation(fields: [mentorServiceId], references: [id])
-  mentorServiceId   Int?
+  MentorService     MentorService           @relation(fields: [mentorServiceId], references: [id])
+  mentorServiceId   Int                     @unique
   days              MentorAvailabilityDay[] // Relation to days
 
+  @@unique([mentorId, mentorServiceId])
   @@index([mentorId])
   @@index([isRecurring])
 }
 
 model MentorAvailabilityDay {
-  id                Int                      @id @default(autoincrement())
+  id                   Int                          @id @default(autoincrement())
   mentorAvailabilityId Int
-  dayOfWeek         DayOfWeek?              // For recurring availability (e.g., Saturday)
-  specificDate      DateTime?               // For non-recurring availability
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  mentorAvailability MentorAvailability     @relation(fields: [mentorAvailabilityId], references: [id], onDelete: Cascade)
-  intervals         MentorAvailabilityInterval[] // Relation to intervals
+  dayOfWeek            DayOfWeek? // For recurring availability (e.g., Saturday)
+  specificDate         DateTime? // For non-recurring availability
+  createdAt            DateTime                     @default(now())
+  updatedAt            DateTime                     @updatedAt
+  mentorAvailability   MentorAvailability           @relation(fields: [mentorAvailabilityId], references: [id], onDelete: Cascade)
+  intervals            MentorAvailabilityInterval[] // Relation to intervals
 
   @@index([mentorAvailabilityId])
   @@index([dayOfWeek])
@@ -172,13 +170,13 @@ model MentorAvailabilityDay {
 }
 
 model MentorAvailabilityInterval {
-  id                Int                      @id @default(autoincrement())
+  id                      Int                   @id @default(autoincrement())
   mentorAvailabilityDayId Int
-  startTime         String                  // Time string, e.g., '11:45'
-  endTime           String                  // Time string, e.g., '14:00'
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  mentorAvailabilityDay MentorAvailabilityDay @relation(fields: [mentorAvailabilityDayId], references: [id], onDelete: Cascade)
+  startTime               String // Time string, e.g., '11:45'
+  endTime                 String // Time string, e.g., '14:00'
+  createdAt               DateTime              @default(now())
+  updatedAt               DateTime              @updatedAt
+  mentorAvailabilityDay   MentorAvailabilityDay @relation(fields: [mentorAvailabilityDayId], references: [id], onDelete: Cascade)
 
   @@index([mentorAvailabilityDayId])
 }
@@ -368,7 +366,7 @@ model Session {
   id            String        @id @default(uuid())
   menteeId      String
   mentorId      String
-  serviceId     Int?          // Optional link to the specific mentor service
+  serviceId     Int? // Optional link to the specific mentor service
   status        SessionStatus @default(PENDING)
   googleMeetUrl String?
   scheduledAt   DateTime
@@ -380,9 +378,9 @@ model Session {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  mentee        User              @relation(name: "menteeSessions", fields: [menteeId], references: [id], onDelete: Cascade)
-  mentor        User              @relation(name: "mentorSessions", fields: [mentorId], references: [id], onDelete: Cascade)
-  service       MentorService?    @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  mentee  User           @relation(name: "menteeSessions", fields: [menteeId], references: [id], onDelete: Cascade)
+  mentor  User           @relation(name: "mentorSessions", fields: [mentorId], references: [id], onDelete: Cascade)
+  service MentorService? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
 
   @@index([menteeId])
   @@index([mentorId])
@@ -392,12 +390,12 @@ model Session {
 }
 
 model Answer {
-  id            Int       @id @default(autoincrement())
-  questionId    Int
-  text          String
+  id         Int    @id @default(autoincrement())
+  questionId Int
+  text       String
 
-  sessionId     String
-  session       Session   @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String
+  session   Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
   @@index([sessionId])
 }

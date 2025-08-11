@@ -74,33 +74,6 @@ class DayDto {
 
 export class CreateMentorAvailabilityDto {
   @ApiProperty({
-    example: 'Work time',
-    description: 'Title for this availability',
-  })
-  @IsString()
-  @IsNotEmpty({ message: 'Title is required' })
-  title: string;
-
-  @ApiProperty({
-    example: '2025-04-27',
-    description: 'Time this availability is available from',
-  })
-  @Transform(({ value }) => new Date(value))
-  @IsDate({ message: 'availableFrom must be a date' })
-  @IsNotEmpty({ message: 'availableFrom is required' })
-  availableFrom: Date;
-
-  @ApiProperty({
-    example: '2025-10-27',
-    description: 'Date this availability expires on',
-    required: false,
-  })
-  @Transform(({ value }) => (value ? new Date(value) : undefined))
-  @IsDate({ message: 'expireAt must be a date' })
-  @IsOptional()
-  expireAt?: Date;
-
-  @ApiProperty({
     example: 30,
     description: 'Maximum number of days in advance a user can book',
   })
@@ -125,13 +98,12 @@ export class CreateMentorAvailabilityDto {
   maxBookingsPerDay: number;
 
   @ApiProperty({
-    example: 15,
-    description: 'Number of break minutes between sessions',
-    required: false,
+    example: true,
+    description: 'Is there is break 15 minutes between sessions',
   })
-  @IsInt()
-  @IsOptional()
-  breakMinutes?: number;
+  @IsBoolean()
+  @IsNotEmpty({ message: 'Break is required' })
+  break: boolean;
 
   @ApiProperty({
     example: true,

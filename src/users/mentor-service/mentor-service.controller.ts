@@ -16,8 +16,6 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiBody, ApiOperation } from '@nestjs/swagger';
 import { Role } from 'src/common/enums/role.enum';
 import { RoleGuard } from 'src/common/guards/roles.guard';
-import { NewCreateMentorServiceDto } from './dto/new-create-mentor-service.dto';
-import { NewUpdateMentorServiceDto } from './dto/new-update-mentor-service.dto';
 
 @Controller('mentor-service')
 export class MentorServiceController {
@@ -40,28 +38,6 @@ export class MentorServiceController {
   ) {
     console.log('Creating mentor service for user:', req.user.id);
     return this.mentorServiceService.create(
-      req.user.id,
-      createMentorServiceDto,
-    );
-  }
-
-  @Post('/v2')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Create a new mentor service',
-    description: 'Create a new mentor service',
-  })
-  @ApiBody({
-    type: NewCreateMentorServiceDto,
-    description: 'Create a new mentor service',
-  })
-  async newCreate(
-    @Req() req: any,
-    @Body() createMentorServiceDto: NewCreateMentorServiceDto,
-  ) {
-    console.log('Creating new mentor service for user:', req.user.id);
-    return this.mentorServiceService.newCreate(
       req.user.id,
       createMentorServiceDto,
     );
@@ -122,35 +98,6 @@ export class MentorServiceController {
       req.user.id,
     );
     return this.mentorServiceService.update(
-      id,
-      req.user.id,
-      updateMentorServiceDto,
-    );
-  }
-
-  @Patch('/v2/:id')
-  @UseGuards(JwtAuthGuard, RoleGuard(Role.MENTOR))
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Update a mentor service',
-    description: 'Update a mentor service',
-  })
-  @ApiBody({
-    type: NewUpdateMentorServiceDto,
-    description: 'Update a mentor service',
-  })
-  newUpdate(
-    @Req() req: any,
-    @Param('id') id: number,
-    @Body() updateMentorServiceDto: NewUpdateMentorServiceDto,
-  ) {
-    console.log(
-      'Updating mentor service with ID:',
-      id,
-      'for user:',
-      req.user.id,
-    );
-    return this.mentorServiceService.newUpdate(
       id,
       req.user.id,
       updateMentorServiceDto,
