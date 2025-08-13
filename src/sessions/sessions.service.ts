@@ -363,7 +363,7 @@ export class SessionsService {
           id: serviceId,
           mentorId: service.mentorId,
           duration: service.duration,
-          questions: service.questions.map(q => { question: q.question, required: q.required })
+          questions: service.questions.map(q => ({ question: q.question, required: q.required }))
         },
         slots: groupedSlots,
       },
