@@ -66,7 +66,11 @@ export class MentorRequestController {
     description: 'Approve or reject a mentor request by admin',
   })
   @ApiBody({
-    schema: { properties: { status: { type: RequestStatus as any } } },
+    schema: {
+      properties: {
+        status: { type: 'string', enum: ['APPROVED', 'REJECTED', 'PENDING'] },
+      },
+    },
   })
   @ApiParam({
     name: 'id',
@@ -77,7 +81,7 @@ export class MentorRequestController {
   async updateMentorRequest(
     @Req() req: any,
     @Param('id') id: string,
-    @Body() status: ReqStat,
+    @Body('status') status: 'APPROVED' | 'REJECTED' | 'PENDING',
   ): Promise<ApiResponse<MentorRequest>> {
     return this.mentorRequestService.updateMentorRequest(
       +id,

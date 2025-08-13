@@ -67,7 +67,7 @@ export class MentorRequestService {
 
   async updateMentorRequest(
     requestId: number,
-    status: ReqStat,
+    status: 'APPROVED' | 'REJECTED' | 'PENDING',
     adminId: string,
   ): Promise<ApiResponse<any>> {
     const request = await this.prisma.mentorRequest.findUnique({
@@ -81,10 +81,12 @@ export class MentorRequestService {
       throw new UnauthorizedException('Only pending requests can be updated');
     }
 
+    console.log('status: ', status, ' and the type is :', typeof status);
+
     const updatedRequest = await this.prisma.mentorRequest.update({
       where: { id: requestId },
       data: {
-        status: status,
+        status: status as ReqStat,
         reviewedBy: adminId,
         reviewedAt: new Date(),
       },
