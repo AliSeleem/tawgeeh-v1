@@ -117,7 +117,12 @@ export class SessionsService {
     menteeId: string,
   ): Promise<
     ApiResponse<{
-      service: { id: number; mentorId: string; duration: number };
+      service: {
+        id: number;
+        mentorId: string;
+        duration: number;
+        questions: { question: string; required: boolean }[];
+      };
       slots: { date: Date; sessions: Date[] }[];
     }>
   > {
@@ -131,7 +136,12 @@ export class SessionsService {
             days: { include: { intervals: true } },
           },
         },
-        questions: true,
+        questions: {
+          select: {
+            question: true,
+            required: true,
+          },
+        },
       },
     });
 
@@ -363,7 +373,7 @@ export class SessionsService {
           id: serviceId,
           mentorId: service.mentorId,
           duration: service.duration,
-          questions: service.questions.map(q => ({ question: q.question, required: q.required }))
+          questions: service.questions,
         },
         slots: groupedSlots,
       },

@@ -6,8 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateMentorRequestDto } from './dto/create-mentor-request.dto';
-import { UpdateMentorRequestDto } from './dto/update-mentor-request.dto';
-import { MentorRequest, Role } from '@prisma/client';
+import { MentorRequest, ReqStat, Role } from '@prisma/client';
 import { RequestStatus } from 'src/common/enums/request-status.enum';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 
@@ -68,7 +67,7 @@ export class MentorRequestService {
 
   async updateMentorRequest(
     requestId: number,
-    dto: UpdateMentorRequestDto,
+    status: ReqStat,
     adminId: string,
   ): Promise<ApiResponse<any>> {
     const request = await this.prisma.mentorRequest.findUnique({
@@ -85,13 +84,13 @@ export class MentorRequestService {
     const updatedRequest = await this.prisma.mentorRequest.update({
       where: { id: requestId },
       data: {
-        status: dto.status,
+        status: status,
         reviewedBy: adminId,
         reviewedAt: new Date(),
       },
     });
 
-    if (dto.status === RequestStatus.APPROVED) {
+    if (status === RequestStatus.APPROVED) {
       await this.prisma.user.update({
         where: { id: request.userId },
         data: { role: Role.MENTOR, isMentor: true },
@@ -101,7 +100,7 @@ export class MentorRequestService {
     return {
       success: true,
       data: updatedRequest,
-      message: `Mentor request ${dto.status?.toLowerCase()} successfully`,
+      message: `Mentor request ${status.toLowerCase()} successfully`,
     };
   }
 }

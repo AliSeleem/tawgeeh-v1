@@ -19,10 +19,10 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RoleGuard } from '../../common/guards/roles.guard';
 import { MentorRequestService } from './mentor-request.service';
 import { CreateMentorRequestDto } from './dto/create-mentor-request.dto';
-import { UpdateMentorRequestDto } from './dto/update-mentor-request.dto';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
-import { MentorRequest } from '@prisma/client';
+import { MentorRequest, ReqStat } from '@prisma/client';
 import { Role } from 'src/common/enums/role.enum';
+import { RequestStatus } from 'src/common/enums/request-status.enum';
 
 @Controller('mentor-requests')
 export class MentorRequestController {
@@ -65,7 +65,9 @@ export class MentorRequestController {
     summary: 'Update mentor request status',
     description: 'Approve or reject a mentor request by admin',
   })
-  @ApiBody({ type: UpdateMentorRequestDto })
+  @ApiBody({
+    schema: { properties: { status: { type: RequestStatus as any } } },
+  })
   @ApiParam({
     name: 'id',
     type: Number,
@@ -75,11 +77,11 @@ export class MentorRequestController {
   async updateMentorRequest(
     @Req() req: any,
     @Param('id') id: string,
-    @Body() updateMentorRequestDto: UpdateMentorRequestDto,
+    @Body() status: ReqStat,
   ): Promise<ApiResponse<MentorRequest>> {
     return this.mentorRequestService.updateMentorRequest(
       +id,
-      updateMentorRequestDto,
+      status,
       req.user.id,
     );
   }

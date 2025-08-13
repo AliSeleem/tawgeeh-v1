@@ -51,13 +51,4 @@ export class CreateMentorRequestDto {
   @IsString()
   @IsNotEmpty()
   bio: string;
-
-  @ApiProperty({
-    description: 'Request status',
-    example: 'PENDING',
-    enum: RequestStatus,
-  })
-  @IsEnum(RequestStatus)
-  @IsOptional()
-  status?: RequestStatus;
 }
