@@ -365,7 +365,7 @@ export class UsersService {
             createdAt: true,
             updatedAt: true,
             isActive: true,
-            dates: {
+            availability: {
               include: { days: true },
             },
             questions: true,

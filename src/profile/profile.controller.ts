@@ -238,7 +238,7 @@ export class ProfileController {
     );
   }
 
-  @Patch('video')
+  @Delete('video')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({

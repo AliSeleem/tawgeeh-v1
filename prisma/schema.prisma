@@ -137,9 +137,9 @@ model Question {
 model MentorAvailability {
   id                Int                     @id @default(autoincrement())
   mentorId          String
-  maxDaysBefore     Int // Maximum number of days user can book before
-  minHoursBefore    Int // Minimum number of hours user can book before
-  maxBookingsPerDay Int // Maximum number of bookings per day
+  maxDaysBefore     Int                     // Maximum number of days user can book before
+  minHoursBefore    Int                     // Minimum number of hours user can book before
+  maxBookingsPerDay Int                     // Maximum number of bookings per day
   break             Boolean                 @default(true)
   isRecurring       Boolean                 @default(true)
   createdAt         DateTime                @default(now())

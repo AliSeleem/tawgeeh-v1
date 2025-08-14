@@ -60,9 +60,8 @@ export class CreateMentorServiceDto {
 
   @ApiProperty({
     example: {
-      title: 'Math Tutoring',
-      description: 'One-on-one math tutoring sessions',
-      price: 50,
+      maxDaysBefore: 30,
+      minHoursBefore: 24,
       duration: 60,
       maxBookingsPerDay: 5,
       break: true,
@@ -81,7 +80,7 @@ export class CreateMentorServiceDto {
     description: 'List of availabilities to connect to the service',
     type: () => CreateMentorAvailabilityDto,
   })
-  @ValidateNested()
+  @ValidateNested({ each: true })
   @Type(() => CreateMentorAvailabilityDto)
   availability: CreateMentorAvailabilityDto;
 }

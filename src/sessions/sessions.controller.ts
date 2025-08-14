@@ -36,12 +36,6 @@ export class SessionsController {
   @Get('available-slots/:serviceId')
   @UseGuards(JwtAuthGuard, RoleGuard([Role.MENTOR, Role.MENTEE]))
   @ApiOperation({ summary: 'Get available time slots for a service' })
-  @ApiQuery({
-    name: 'serviceId',
-    required: true,
-    type: Number,
-    description: 'ID of the service to get available slots for',
-  })
   @ApiParam({
     name: 'serviceId',
     description: 'Service ID to get available slots for',

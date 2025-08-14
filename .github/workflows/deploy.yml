@@ -52,6 +52,9 @@ jobs:
             echo "📦 Installing dependencies..."
             npm ci
 
+            echo "Migrating database..."
+            npx prisma migrate deploy
+
             echo "🛠️ Building app...."
             npm run build
 

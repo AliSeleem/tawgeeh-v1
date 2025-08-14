@@ -18,6 +18,7 @@ import {
   NotificationType,
 } from '../notification/enums/notification-type.enum';
 import { GaxiosResponse } from 'gaxios';
+import { spec } from 'node:test/reporters';
 
 @Injectable()
 export class SessionsService {
@@ -117,9 +118,16 @@ export class SessionsService {
     menteeId: string,
   ): Promise<
     ApiResponse<{
+      mentor: {
+        id: string;
+        name: string;
+        image_url: string;
+        specialization: string;
+      };
       service: {
         id: number;
-        mentorId: string;
+        name: string;
+        description: string;
         duration: number;
         questions: { question: string; required: boolean }[];
       };
@@ -129,7 +137,17 @@ export class SessionsService {
     const service = await this.prisma.mentorService.findUnique({
       where: { id: serviceId },
       select: {
-        mentorId: true,
+        id: true,
+        name: true,
+        description: true,
+        mentor: {
+          select: {
+            id: true,
+            name: true,
+            image_url: true,
+            specialization: true,
+          },
+        },
         duration: true,
         availability: {
           include: {
@@ -138,6 +156,7 @@ export class SessionsService {
         },
         questions: {
           select: {
+            id: true,
             question: true,
             required: true,
           },
@@ -201,7 +220,7 @@ export class SessionsService {
 
     const existingSessions = await this.prisma.session.findMany({
       where: {
-        mentorId: service.mentorId,
+        mentorId: service.mentor.id,
         scheduledAt: { gte: startRange, lte: endRange },
         status: {
           notIn: [
@@ -256,7 +275,7 @@ export class SessionsService {
 
     // Generate slots
     const slots: Date[] = [];
-    const stepMs = 15 * 60 * 1000; // 15-minute increments
+    const stepMs = service.duration * 60 * 1000; // 15-minute increments
     const bufferMs = avail.break ? 15 * 60 * 1000 : 0; // 15-minute buffer if break enabled
 
     for (const date of availableDates) {
@@ -369,9 +388,16 @@ export class SessionsService {
       success: true,
       message: 'Available slots retrieved successfully.',
       data: {
+        mentor: {
+          id: service.mentor.id,
+          name: service.mentor.name,
+          image_url: service.mentor.image_url || '',
+          specialization: service.mentor.specialization,
+        },
         service: {
           id: serviceId,
-          mentorId: service.mentorId,
+          name: service.name,
+          description: service.description,
           duration: service.duration,
           questions: service.questions,
         },
