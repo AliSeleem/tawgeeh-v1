@@ -15,11 +15,6 @@ async function bootstrap() {
     abortOnError: false,
   });
 
-  // 👉 Mount backend under /api
-  app.setGlobalPrefix('api', {
-    exclude: [''], // root excluded so "/" still serves frontend
-  });
-  
   // // serve static files
   // const publicPath = path.join(__dirname, '..', 'public');
   // app.useStaticAssets(publicPath);
