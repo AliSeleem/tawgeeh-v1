@@ -117,7 +117,7 @@ export class ProfileController {
     }
     return this.userService.updateProfileImg(
       req.user['id'],
-      `http://168.231.114.196/uploads/images/${image_url.filename}`,
+      `https://campushubs.org/api/uploads/images/${image_url.filename}`,
     );
   }
 
@@ -132,7 +132,10 @@ export class ProfileController {
     if (!req.user || typeof req.user['id'] === 'undefined') {
       throw new Error('User information is missing from request.');
     }
-    return this.userService.updateProfileImg(req.user['id'], null);
+    return this.userService.updateProfileImg(
+      req.user['id'],
+      'https://campushubs.org/api/uploads/image_url.jpg',
+    );
   }
 
   @Patch('coverImg')
@@ -163,7 +166,7 @@ export class ProfileController {
     summary: 'Update cover image',
     description: 'Update user cover image',
   })
-  async updateUserCover(
+  async updateUserCosver(
     @Req() req: Request,
     @UploadedFile() cover_url: Express.Multer.File,
   ): Promise<ApiResponse<any>> {
@@ -176,7 +179,7 @@ export class ProfileController {
 
     return this.userService.updateCoverImg(
       req.user['id'],
-      `http://168.231.114.196/uploads/images/${cover_url.filename}`,
+      `http://campushubs.org/api/uploads/images/${cover_url.filename}`,
     );
   }
 
@@ -222,7 +225,7 @@ export class ProfileController {
     summary: 'Upload video',
     description: 'Upload a video file for the user',
   })
-  async uploadVideo(
+  async uploadVisdeo(
     @Req() req: Request,
     @UploadedFile() video: Express.Multer.File,
   ): Promise<ApiResponse<any>> {
@@ -234,7 +237,7 @@ export class ProfileController {
     }
     return this.userService.updateVideoUrl(
       req.user['id'],
-      `http://168.231.114.196/uploads/videos/${video.filename}`,
+      `http://campushubs.org/api/uploads/videos/${video.filename}`,
     );
   }
 

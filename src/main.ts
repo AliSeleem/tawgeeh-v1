@@ -5,6 +5,9 @@ import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as path from 'path';
+import { ValidationError } from 'class-validator';
+import { CairoDateInterceptor } from './common/interceptors/timezone';
+import { CairoDatePipe } from './common/pips/timezone';
 // import { Handler, Server } from 'vercel';
 
 async function bootstrap() {
@@ -30,7 +33,7 @@ async function bootstrap() {
             message: 'Validation failed',
             errors: errors.map((error) => ({
               field: error.property,
-              errors: Object.values(error.constraints || {}),
+              errors: extractValidationErrors(errors),
             })),
           },
           HttpStatus.BAD_REQUEST,
@@ -38,6 +41,9 @@ async function bootstrap() {
       },
     }),
   );
+
+  app.useGlobalInterceptors(new CairoDateInterceptor());
+  app.useGlobalPipes(new CairoDatePipe());
 
   // Apply Global Exception Filter
   app.useGlobalFilters(new AllExceptionsFilter());
@@ -69,3 +75,30 @@ bootstrap().catch((e) => console.error(e));
 //   await app.init();
 //   app.getHttpAdapter().getInstance()(req, res);
 // };
+
+// Recursive function to extract nested validation errors
+function extractValidationErrors(
+  errors: ValidationError[],
+  parentPath = '',
+): { field: string; errors: string[] }[] {
+  return errors.flatMap((error) => {
+    const fieldPath = parentPath
+      ? `${parentPath}.${error.property}`
+      : error.property;
+
+    const currentErrors = error.constraints
+      ? [
+          {
+            field: fieldPath,
+            errors: Object.values(error.constraints),
+          },
+        ]
+      : [];
+
+    const childrenErrors = error.children?.length
+      ? extractValidationErrors(error.children, fieldPath)
+      : [];
+
+    return [...currentErrors, ...childrenErrors];
+  });
+}

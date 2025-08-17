@@ -49,13 +49,4 @@ export class CreateSessionDto {
   @ValidateNested({ each: true })
   @Type(() => CreateAnswerDto)
   answers?: CreateAnswerDto[];
-
-  @ApiProperty({
-    description: 'Optional question or note from the mentee',
-    example: 'I need help with TypeScript best practices.',
-    required: false,
-  })
-  @IsString()
-  @IsOptional()
-  menteeQ?: string;
 }

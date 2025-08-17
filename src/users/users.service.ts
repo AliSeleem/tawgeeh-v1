@@ -161,6 +161,7 @@ export class UsersService {
   async explore(query: {
     email?: string;
     q?: string;
+    mentor: boolean;
     specialization?: string;
   }): Promise<ApiResponse<any>> {
     // Build the Prisma where clause based on the query
@@ -171,7 +172,8 @@ export class UsersService {
         equals: query.email,
         mode: 'insensitive', // Case-insensitive email search
       };
-    } else if (query.q) {
+    }
+    if (query.q) {
       const searchTerm = query.q.trim();
       if (searchTerm) {
         where.OR = [
@@ -203,11 +205,15 @@ export class UsersService {
           },
         ];
       }
-    } else if (query.specialization?.trim()) {
+    }
+    if (query.specialization?.trim()) {
       where.specialization = {
         contains: query.specialization.trim(),
         mode: 'insensitive',
       };
+    }
+    if (query.mentor) {
+      where.role = 'MENTOR';
     }
 
     // Fetch users with the filtered conditions

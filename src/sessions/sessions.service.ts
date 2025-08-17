@@ -254,222 +254,40 @@ export class SessionsService {
 
     // Fetch mentee's existing sessions if menteeId provided
     let menteeSessions: { start: Date; end: Date }[] = [];
-    const menteeExisting = await this.prisma.session.findMany({
-      where: {
-        menteeId,
-        scheduledAt: { gte: startRange, lte: endRange },
-        status: {
-          notIn: [
-            SessionStatus.CANCELLED,
-            SessionStatus.COMPLETED,
-            SessionStatus.REJECTED,
-          ],
+    if (menteeId) {
+      const menteeExisting = await this.prisma.session.findMany({
+        where: {
+          menteeId,
+          scheduledAt: { gte: startRange, lte: endRange },
+          status: {
+            notIn: [
+              SessionStatus.CANCELLED,
+              SessionStatus.COMPLETED,
+              SessionStatus.REJECTED,
+            ],
+          },
         },
-      },
-      select: { scheduledAt: true, duration: true },
-    });
-    menteeSessions = menteeExisting.map((s) => ({
-      start: s.scheduledAt,
-      end: new Date(s.scheduledAt.getTime() + s.duration * 60 * 1000),
-    }));
+        select: { scheduledAt: true, duration: true },
+      });
+      menteeSessions = menteeExisting.map((s) => ({
+        start: s.scheduledAt,
+        end: new Date(s.scheduledAt.getTime() + s.duration * 60 * 1000),
+      }));
+    }
 
-    // // Generate slots
-    // const slots: Date[] = [];
-    // const stepMs = service.duration * 60 * 1000; // 15-minute increments
-    // const bufferMs = avail.break ? 15 * 60 * 1000 : 0; // 15-minute buffer if break enabled
-
-    // for (const date of availableDates) {
-    //   const dayStr = date.toDateString();
-    //   const maxPerDay = avail.maxBookingsPerDay || Infinity;
-    //   const currentBookings = dailyBookings.get(dayStr) || 0;
-    //   if (currentBookings >= maxPerDay) continue; // No more bookings allowed today
-
-    //   const matchingDay = avail.days.find((day) =>
-    //     avail.isRecurring
-    //       ? day.dayOfWeek ===
-    //         date.toLocaleString('en-us', { weekday: 'long' }).toUpperCase()
-    //       : day.specificDate?.toDateString() === dayStr,
-    //   );
-    //   if (!matchingDay) continue;
-
-    //   const dayExisting = existingByDay.get(dayStr) || [];
-
-    //   for (const interval of matchingDay.intervals) {
-    //     const [startH, startM] = interval.startTime.split(':').map(Number);
-    //     const intervalStart = new Date(date);
-    //     intervalStart.setHours(startH, startM, 0, 0);
-
-    //     const [endH, endM] = interval.endTime.split(':').map(Number);
-    //     const intervalEnd = new Date(date);
-    //     intervalEnd.setHours(endH, endM, 0, 0);
-
-    //     let currentStart = new Date(intervalStart);
-    //     while (
-    //       currentStart.getTime() + 15 * 60 * 1000 <=
-    //       intervalEnd.getTime()
-    //     ) {
-    //       if (currentStart < minBookingTime) {
-    //         currentStart = new Date(currentStart.getTime() + stepMs);
-    //         continue;
-    //       }
-
-    //       const currentEnd = new Date(currentStart.getTime() + 15 * 60 * 1000);
-
-    //       // Check overlap with mentor's existing sessions
-    //       const hasOverlap = dayExisting.some(
-    //         (sess) => sess.start < currentEnd && sess.end > currentStart,
-    //       );
-    //       if (hasOverlap) {
-    //         currentStart = new Date(currentStart.getTime() + stepMs);
-    //         continue;
-    //       }
-
-    //       // Check buffer if break enabled
-    //       if (avail.break) {
-    //         const bufferStart = new Date(currentStart.getTime() - bufferMs);
-    //         const bufferEnd = new Date(currentEnd.getTime() + bufferMs);
-    //         const hasConflict = dayExisting.some(
-    //           (sess) => sess.start < bufferEnd && sess.end > bufferStart,
-    //         );
-    //         if (hasConflict) {
-    //           currentStart = new Date(currentStart.getTime() + stepMs);
-    //           continue;
-    //         }
-    //       }
-
-    //       // Check overlap with mentee's existing sessions if provided
-    //       if (menteeId) {
-    //         const hasMenteeOverlap = menteeSessions.some(
-    //           (s) => s.start < currentEnd && s.end > currentStart,
-    //         );
-    //         if (hasMenteeOverlap) {
-    //           currentStart = new Date(currentStart.getTime() + stepMs);
-    //           continue;
-    //         }
-    //       }
-
-    //       // Slot is available
-    //       slots.push(new Date(currentStart));
-
-    //       currentStart = new Date(currentStart.getTime() + stepMs);
-    //     }
-    //   }
-    // }
-    // Fixed slot generation logic
-    // const slots: Date[] = [];
-    // const stepMs = 15 * 60 * 1000; // 15-minute increments for slot discovery
-    // const serviceDurationMs = service.duration * 60 * 1000; // Actual service duration
-    // const bufferMs = avail.break ? 15 * 60 * 1000 : 0; // 15-minute buffer if break enabled
-
-    // for (const date of availableDates) {
-    //   const dayStr = date.toDateString();
-    //   const maxPerDay = avail.maxBookingsPerDay || Infinity;
-    //   const currentBookings = dailyBookings.get(dayStr) || 0;
-    //   if (currentBookings >= maxPerDay) continue;
-
-    //   const matchingDay = avail.days.find((day) =>
-    //     avail.isRecurring
-    //       ? day.dayOfWeek ===
-    //         date.toLocaleString('en-us', { weekday: 'long' }).toUpperCase()
-    //       : day.specificDate?.toDateString() === dayStr,
-    //   );
-    //   if (!matchingDay) continue;
-
-    //   const dayExisting = existingByDay.get(dayStr) || [];
-
-    //   for (const interval of matchingDay.intervals) {
-    //     const [startH, startM] = interval.startTime.split(':').map(Number);
-    //     const intervalStart = new Date(date);
-    //     intervalStart.setHours(startH, startM, 0, 0);
-
-    //     const [endH, endM] = interval.endTime.split(':').map(Number);
-    //     const intervalEnd = new Date(date);
-    //     intervalEnd.setHours(endH, endM, 0, 0);
-
-    //     let currentStart = new Date(intervalStart);
-
-    //     // Check if we have enough time for the service within this interval
-    //     while (
-    //       currentStart.getTime() + serviceDurationMs <=
-    //       intervalEnd.getTime()
-    //     ) {
-    //       // Skip if before minimum booking time
-    //       if (currentStart < minBookingTime) {
-    //         currentStart = new Date(currentStart.getTime() + stepMs);
-    //         continue;
-    //       }
-
-    //       const currentEnd = new Date(
-    //         currentStart.getTime() + serviceDurationMs,
-    //       );
-
-    //       // Check overlap with mentor's existing sessions
-    //       const hasOverlap = dayExisting.some(
-    //         (sess) => sess.start < currentEnd && sess.end > currentStart,
-    //       );
-    //       if (hasOverlap) {
-    //         // Skip ahead to after the conflicting session
-    //         const conflictingSession = dayExisting.find(
-    //           (sess) => sess.start < currentEnd && sess.end > currentStart,
-    //         );
-    //         if (conflictingSession) {
-    //           currentStart = new Date(conflictingSession.end.getTime());
-    //           continue;
-    //         } else {
-    //           currentStart = new Date(currentStart.getTime() + stepMs);
-    //           continue;
-    //         }
-    //       }
-
-    //       // Check buffer requirement
-    //       if (avail.break && bufferMs > 0) {
-    //         const hasBufferConflict = dayExisting.some((sess) => {
-    //           // Check if there's enough buffer time between sessions
-    //           const timeToSessionStart =
-    //             sess.start.getTime() - currentEnd.getTime();
-    //           const timeFromSessionEnd =
-    //             currentStart.getTime() - sess.end.getTime();
-
-    //           return (
-    //             (timeToSessionStart > 0 && timeToSessionStart < bufferMs) ||
-    //             (timeFromSessionEnd > 0 && timeFromSessionEnd < bufferMs)
-    //           );
-    //         });
-
-    //         if (hasBufferConflict) {
-    //           currentStart = new Date(currentStart.getTime() + stepMs);
-    //           continue;
-    //         }
-    //       }
-
-    //       // Check overlap with mentee's existing sessions
-    //       if (menteeId && menteeSessions.length > 0) {
-    //         const hasMenteeOverlap = menteeSessions.some(
-    //           (s) => s.start < currentEnd && s.end > currentStart,
-    //         );
-    //         if (hasMenteeOverlap) {
-    //           currentStart = new Date(currentStart.getTime() + stepMs);
-    //           continue;
-    //         }
-    //       }
-
-    //       // Slot is available
-    //       slots.push(new Date(currentStart));
-    //       currentStart = new Date(currentStart.getTime() + stepMs);
-    //     }
-    //   }
-    // }
-    // Generate slots - CORRECTED VERSION
+    // Generate available slots
     const slots: Date[] = [];
     const serviceDurationMs = service.duration * 60 * 1000; // Service duration in milliseconds
-    const breakDurationMs = avail.break ? 15 * 60 * 1000 : 0; // 15-minute break if enabled
-    const stepMs = serviceDurationMs + breakDurationMs; // Step includes service + break time
+    const breakDurationMs = 15 * 60 * 1000; // 15-minute break duration
+    const stepMs = 15 * 60 * 1000; // Check slots every 15 minutes
 
     for (const date of availableDates) {
       const dayStr = date.toDateString();
       const maxPerDay = avail.maxBookingsPerDay || Infinity;
       const currentBookings = dailyBookings.get(dayStr) || 0;
-      if (currentBookings >= maxPerDay) continue; // No more bookings allowed today
+
+      // Skip if max bookings per day reached
+      if (currentBookings >= maxPerDay) continue;
 
       const matchingDay = avail.days.find((day) =>
         avail.isRecurring
@@ -492,7 +310,7 @@ export class SessionsService {
 
         let currentStart = new Date(intervalStart);
 
-        // Generate slots with proper service duration and breaks
+        // Generate slots within this interval
         while (
           currentStart.getTime() + serviceDurationMs <=
           intervalEnd.getTime()
@@ -516,19 +334,20 @@ export class SessionsService {
             continue;
           }
 
-          // Check if break is enabled and ensure 15-minute gap from existing sessions
+          // Check break requirements if enabled
           if (avail.break) {
             const hasBreakViolation = dayExisting.some((sess) => {
-              // Check if there's at least 15 minutes between this slot and existing sessions
-              const gapAfterExisting =
+              // Calculate gaps between this potential slot and existing sessions
+              const gapFromSessionEnd =
                 currentStart.getTime() - sess.end.getTime();
-              const gapBeforeExisting =
+              const gapToSessionStart =
                 sess.start.getTime() - currentEnd.getTime();
 
-              // Must have at least 15 minutes gap on either side
+              // Check if there's insufficient break time
               return (
-                (gapAfterExisting > 0 && gapAfterExisting < breakDurationMs) ||
-                (gapBeforeExisting > 0 && gapBeforeExisting < breakDurationMs)
+                (gapFromSessionEnd > 0 &&
+                  gapFromSessionEnd < breakDurationMs) ||
+                (gapToSessionStart > 0 && gapToSessionStart < breakDurationMs)
               );
             });
 
@@ -538,8 +357,8 @@ export class SessionsService {
             }
           }
 
-          // Check overlap with mentee's existing sessions if provided
-          if (menteeId && menteeSessions.length > 0) {
+          // Check overlap with mentee's existing sessions
+          if (menteeSessions.length > 0) {
             const hasMenteeOverlap = menteeSessions.some(
               (s) => s.start < currentEnd && s.end > currentStart,
             );
@@ -553,7 +372,9 @@ export class SessionsService {
           slots.push(new Date(currentStart));
 
           // Move to next potential slot (service duration + break)
-          currentStart = new Date(currentStart.getTime() + stepMs);
+          currentStart = new Date(
+            currentEnd.getTime() + (avail.break ? breakDurationMs : 0),
+          );
         }
       }
     }
@@ -563,28 +384,27 @@ export class SessionsService {
 
     // Group slots by day
     const groupedSlots: { date: Date; sessions: Date[] }[] = [];
-    let currentDay: string | null = null;
-    let currentSessions: Date[] = [];
+    const slotsByDay: Map<string, Date[]> = new Map();
 
     for (const slot of slots) {
       const dayStr = slot.toDateString();
-      if (currentDay !== dayStr) {
-        if (currentDay) {
-          const dayDate = new Date(currentDay);
-          dayDate.setHours(0, 0, 0, 0);
-          groupedSlots.push({ date: dayDate, sessions: currentSessions });
-        }
-        currentDay = dayStr;
-        currentSessions = [];
+      if (!slotsByDay.has(dayStr)) {
+        slotsByDay.set(dayStr, []);
       }
-      currentSessions.push(slot);
+      slotsByDay.get(dayStr)!.push(slot);
     }
 
-    if (currentDay) {
-      const dayDate = new Date(currentDay);
-      dayDate.setHours(0, 0, 0, 0);
-      groupedSlots.push({ date: dayDate, sessions: currentSessions });
+    // Convert map to array format
+    for (const [dayStr, daySessions] of slotsByDay.entries()) {
+      const dayDate = new Date(dayStr);
+      groupedSlots.push({
+        date: dayDate,
+        sessions: daySessions.sort((a, b) => a.getTime() - b.getTime()),
+      });
     }
+
+    // Sort grouped slots by date
+    groupedSlots.sort((a, b) => a.date.getTime() - b.date.getTime());
 
     return {
       success: true,
@@ -788,7 +608,6 @@ export class SessionsService {
         serviceId: dto.serviceId,
         scheduledAt: dto.scheduledAt,
         duration: dto.duration,
-        menteeQ: dto.menteeQ,
         status: SessionStatus.PENDING,
       },
       include: {

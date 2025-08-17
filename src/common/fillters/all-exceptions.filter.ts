@@ -18,6 +18,30 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let message = 'An unexpected error occurred';
     let errors: any = null;
 
+    // Recursive function to extract nested validation errors
+    function extractValidationErrors(errors: any[], parentPath = ''): any[] {
+      return errors.flatMap((error) => {
+        const fieldPath = parentPath
+          ? `${parentPath}.${error.property}`
+          : error.property;
+
+        const currentErrors = error.constraints
+          ? [
+              {
+                field: fieldPath,
+                errors: Object.values(error.constraints),
+              },
+            ]
+          : [];
+
+        const childrenErrors = error.children?.length
+          ? extractValidationErrors(error.children, fieldPath)
+          : [];
+
+        return [...currentErrors, ...childrenErrors];
+      });
+    }
+
     // Handle NestJS HTTP Exceptions
     if (exception instanceof HttpException) {
       status = exception.getStatus();
@@ -30,7 +54,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
         message = responseBody as string;
       }
     }
-
     // Handle Validation Errors (class-validator)
     else if (
       exception?.response?.message &&
@@ -38,10 +61,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     ) {
       status = HttpStatus.BAD_REQUEST;
       message = 'Validation failed';
-      errors = exception.response.message.map((error) => ({
-        field: error.property,
-        errors: Object.values(error.constraints || {}),
-      }));
+      errors = extractValidationErrors(exception.response.message);
     }
 
     // Handle Prisma Errors (e.g., unique constraint violation)

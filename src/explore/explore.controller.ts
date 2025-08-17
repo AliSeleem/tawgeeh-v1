@@ -43,6 +43,13 @@ export class ExploreController {
     example: 'user@example.com',
     description: 'Filter users by email address',
   })
+  @ApiQuery({
+    name: 'mentor',
+    required: false,
+    type: Boolean,
+    example: true,
+    description: 'Filter users by mentor status',
+  })
   async exploreUsers(@Query() query: any): Promise<ApiResponse<any>> {
     return this.usersService.explore(query);
   }

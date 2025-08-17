@@ -328,7 +328,7 @@ export class MentorServiceService {
 
     // Delete the service (cascades to questions due to Prisma schema)
     const deletedService = await this.prisma.mentorService.delete({
-      where: { id },
+      where: { id, mentorId },
     });
 
     return {
