@@ -58,7 +58,13 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/', app, document);
+  // 👇 This ensures Swagger UI is at /api/docs
+  // and generated "Try it out" calls go to /api/...
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      url: '/api-json', // this is where the schema is exposed
+    },
+  });
 
   // listen on port
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
