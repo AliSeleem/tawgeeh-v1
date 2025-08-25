@@ -5,10 +5,13 @@ import {
   IsEmail,
   IsIn,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   Matches,
+  Max,
   MaxLength,
+  Min,
   MinLength,
 } from 'class-validator';
 
@@ -81,6 +84,15 @@ export class UpdateUserDto {
   )
   experienceLevel: ExperienceLevel;
 
+  @ApiProperty({
+    example: 3,
+    description: 'Years of experience (non-negative integer)',
+  })
+  @IsNumber({}, { message: 'Experience must be a number.' })
+  @Min(0, { message: 'Experience must be a non-negative integer.' })
+  @Max(10, { message: 'Experience must be at most 10 years.' })
+  experience?: number;
+
   @ApiPropertyOptional({
     example: 'Other',
     description: 'User specialization (optional)',
@@ -146,4 +158,15 @@ export class UpdateUserDto {
   })
   @IsOptional()
   github?: string;
+
+  @ApiPropertyOptional({
+    example: 'https://dribbble.com/username',
+    description: 'Dribbble profile URL (optional)',
+  })
+  @IsString()
+  @Matches(/^(https?:\/\/)?(www\.)?dribbble\.com\/[a-zA-Z0-9_-]+\/?$/, {
+    message: 'Please enter a valid Dribbble URL.',
+  })
+  @IsOptional()
+  dribbble?: string;
 }

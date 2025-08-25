@@ -16,6 +16,7 @@ import {
   NotificationType,
 } from 'src/notification/enums/notification-type.enum';
 import { CompleteRegistrationDto } from './dto/complete-registration.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -294,6 +295,46 @@ export class AuthService {
       console.error('Reset code verification error:', error);
       throw new BadRequestException('Unable to verify reset code');
     }
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    // Find the user
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new BadRequestException('Invalid user id');
+    }
+
+    // Verify old password
+    const isOldPasswordValid = await bcrypt.compare(
+      changePasswordDto.oldPassword,
+      user.password ?? '',
+    );
+    if (!isOldPasswordValid) {
+      throw new BadRequestException('Old password is incorrect');
+    }
+
+    // Prevent reusing the same password
+    if (
+      await bcrypt.compare(changePasswordDto.newPassword, user.password ?? '')
+    ) {
+      throw new BadRequestException(
+        'New password must be different from the old one',
+      );
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(changePasswordDto.newPassword, 12);
+
+    // Update user password
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password successfully changed' };
   }
 
   async resetPassword(userId: string, newPassword: string) {

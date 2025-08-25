@@ -32,6 +32,7 @@ model User {
   country         String          @default("Egypt") @db.VarChar(100)
   specialization  String          @default("Other") @db.VarChar(100)
   experienceLevel ExperienceLevel @default(BEGINNER)
+  experience      Int             @default(0)
   bio             String?         @db.Text
 
   // Role and Mentor status
