@@ -179,7 +179,7 @@ export class ProfileController {
 
     return this.userService.updateCoverImg(
       req.user['id'],
-      `http://campushubs.org/api/uploads/images/${cover_url.filename}`,
+      `https://campushubs.org/api/uploads/images/${cover_url.filename}`,
     );
   }
 
