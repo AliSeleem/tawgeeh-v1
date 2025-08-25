@@ -77,6 +77,20 @@ export class ProfileController {
     return this.userService.updateUser(req.user['id'], body);
   }
 
+  @Delete()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Delete user profile',
+    description: 'Delete the profile of the authenticated user',
+  })
+  async deleteProfile(@Req() req: Request): Promise<ApiResponse<any>> {
+    if (!req.user || typeof req.user['id'] === 'undefined') {
+      throw new Error('User information is missing from request.');
+    }
+    return this.userService.deleteUser(req.user['id']);
+  }
+
   @Patch('profileImg')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()

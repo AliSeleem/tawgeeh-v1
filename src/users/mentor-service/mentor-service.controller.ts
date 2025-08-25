@@ -111,13 +111,13 @@ export class MentorServiceController {
     summary: 'Remove a mentor service',
     description: 'Remove a mentor service',
   })
-  remove(@Req() req: any, @Param('id') id: string) {
+  remove(@Req() req: any, @Param('id') id: number) {
     console.log(
       'Removing mentor service with ID:',
       id,
       'for user:',
       req.user.id,
     );
-    return this.mentorServiceService.remove(+id, req.user.id);
+    return this.mentorServiceService.remove(id, req.user.id);
   }
 }

@@ -1078,8 +1078,22 @@ export class SessionsService {
     const session = await this.prisma.session.findUnique({
       where: { id: sessionId },
       include: {
-        mentee: { select: { id: true, name: true, email: true } },
-        mentor: { select: { id: true, name: true, email: true } },
+        mentee: {
+          select: {
+            id: true,
+            name: true,
+            specialization: true,
+            image_url: true,
+          },
+        },
+        mentor: {
+          select: {
+            id: true,
+            name: true,
+            specialization: true,
+            image_url: true,
+          },
+        },
         answers: true,
         service: {
           include: {

@@ -326,6 +326,7 @@ export class UsersService {
         bio: true,
         specialization: true,
         experienceLevel: true,
+        experience: true,
         linkedin: true,
         instagram: true,
         dribbble: true,
