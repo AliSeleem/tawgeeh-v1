@@ -12,6 +12,8 @@ import { MentorRequestModule } from './mentor-request/mentor-request.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { SpecializationExistsValidator } from 'src/common/validators/specialization-exists.validator';
+import { SpecializationsModule } from './specializations/specializations.module';
 
 @Module({
   imports: [
@@ -46,9 +48,10 @@ import { extname } from 'path';
         fileSize: 5 * 1024 * 1024, // 5MB limit
       },
     }),
+    SpecializationsModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, SpecializationExistsValidator],
   exports: [UsersService],
 })
 export class UsersModule {}

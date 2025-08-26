@@ -88,7 +88,7 @@ export class AuthController {
         secure: process.env.NODE_ENV === 'production',
       });
 
-      return res.redirect('/chats.html');
+      return res.redirect('/token=' + access_token);
     } catch (error) {
       throw new HttpException(
         error.message || 'Google authentication failed',

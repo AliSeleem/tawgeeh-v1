@@ -71,14 +71,14 @@ export class UsersController {
     description: 'Search users by name or company or role in this company',
   })
   @ApiQuery({
-    name: 'specialization',
+    name: 'specializationId',
     required: false,
-    type: String,
+    type: Number,
     example: 'Developer',
-    description: 'Filter users by specialization',
+    description: 'Filter users by specializationId',
   })
   async getAllUsers(
-    @Query() query: { email?: string; q?: string; specialization?: string },
+    @Query() query: { email?: string; q?: string; specializationId?: number },
   ): Promise<ApiResponse<any>> {
     return this.usersService.getAllUsers(query);
   }
@@ -96,11 +96,11 @@ export class UsersController {
     description: 'Search users by name or company or role in this company',
   })
   @ApiQuery({
-    name: 'specialization',
+    name: 'specializationId',
     required: false,
-    type: String,
+    type: Number,
     example: 'Developer',
-    description: 'Filter users by specialization',
+    description: 'Filter users by specializationId',
   })
   @ApiQuery({
     name: 'email',
@@ -212,7 +212,11 @@ export class UsersController {
     description: 'User ID',
     example: 1,
   })
-  async deleteUser(@Param('id') id: string): Promise<ApiResponse<any>> {
-    return this.usersService.deleteUser(id);
+  @ApiBody({ schema: { example: { password: 'yourPassword' } } })
+  async deleteUser(
+    @Param('id') id: string,
+    @Body('password') password: string,
+  ): Promise<ApiResponse<any>> {
+    return this.usersService.deleteUser(id, password);
   }
 }

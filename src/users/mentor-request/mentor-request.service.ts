@@ -44,6 +44,12 @@ export class MentorRequestService {
       },
     });
 
+    // update user mentor request status
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { mentorRequestState: ReqStat.PENDING },
+    });
+
     return {
       success: true,
       data: request,
@@ -95,7 +101,18 @@ export class MentorRequestService {
     if (status === RequestStatus.APPROVED) {
       await this.prisma.user.update({
         where: { id: request.userId },
-        data: { role: Role.MENTOR, isMentor: true },
+        data: {
+          role: Role.MENTOR,
+          isMentor: true,
+          mentorRequestState: ReqStat.APPROVED,
+        },
+      });
+    } else {
+      await this.prisma.user.update({
+        where: { id: request.userId },
+        data: {
+          mentorRequestState: ReqStat.REJECTED,
+        },
       });
     }
 

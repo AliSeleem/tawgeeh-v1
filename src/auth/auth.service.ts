@@ -9,7 +9,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { ExperienceLevel, Gender, SignupMethod, User } from '@prisma/client';
+import { Gender, SignupMethod, User } from '@prisma/client';
 import { NotificationService } from 'src/notification/notification.service';
 import {
   EmailType,
@@ -80,22 +80,11 @@ export class AuthService {
       });
     }
 
-    // Identify missing fields
-    const missingFields: string[] = [];
-
-    if (!user.phone) missingFields.push('phone');
-    if (!user.gender) missingFields.push('gender');
-    if (!user.country) missingFields.push('country');
-    if (!user.specialization) missingFields.push('specialization');
-    if (!user.experienceLevel) missingFields.push('experienceLevel');
-    if (!user.bio) missingFields.push('bio');
-
     const { access_token } = this.generateToken(user);
 
     return {
       access_token,
       user, // Send full user data to prefill the form
-      missingFields, // Indicate what needs to be completed
     };
   }
 
@@ -140,6 +129,7 @@ export class AuthService {
         gender: Gender | null;
         role: string;
         image_url: string | null;
+        mentorRequestState: string | null;
       };
     } = {
       access_token: this.jwtService.sign(
@@ -159,6 +149,7 @@ export class AuthService {
           gender: user.gender,
           role: user.role,
           image_url: user.image_url,
+          mentorRequestState: user.mentorRequestState,
         },
       };
     }

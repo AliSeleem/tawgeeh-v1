@@ -27,17 +27,19 @@ model User {
   signup_method           SignupMethod @default(MANUAL)
 
   // Profile information
-  phone           String?         @db.VarChar(20)
-  gender          Gender          @default(MALE)
-  country         String          @default("Egypt") @db.VarChar(100)
-  specialization  String          @default("Other") @db.VarChar(100)
-  experienceLevel ExperienceLevel @default(BEGINNER)
-  experience      Int             @default(0)
-  bio             String?         @db.Text
+  phone               String?         @db.VarChar(20)
+  gender              Gender          @default(MALE)
+  country             String          @default("Egypt") @db.VarChar(100)
+  specializationId    Int?           // Changed from String to relation
+  specialization      Specialization? @relation(fields: [specializationId], references: [id], onDelete: SetNull)
+  experienceLevel     ExperienceLevel? @default(BEGINNER)
+  experience          Int             @default(0)
+  bio                 String?         @db.Text
 
   // Role and Mentor status
-  isMentor Boolean @default(false)
-  role     Role    @default(MENTEE)
+  isMentor            Boolean @default(false)
+  role                Role    @default(MENTEE)
+  mentorRequestState  ReqStat?
 
   // Media and statistics
   image_url     String? @default("https://campushubs.org/api/uploads/image_url.jpg")
@@ -104,6 +106,34 @@ enum Role {
   ADMIN
 }
 
+// ======== SPECIALIZATION MODELS ========
+
+model SpecializationCategory {
+  id            Int            @id @default(autoincrement())
+  name          String         @db.VarChar(100)
+  description   String?        @db.Text
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  specializations Specialization[] // Relation to specializations in this category
+
+  @@index([name])
+}
+
+model Specialization {
+  id            Int                   @id @default(autoincrement())
+  name          String                @db.VarChar(100)
+  categoryId    Int
+  description   String?               @db.Text
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  category      SpecializationCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  users         User[]                // Users with this specialization
+  mentorRequests MentorRequest[]      // Mentor requests with this specialization
+
+  @@index([categoryId])
+  @@index([name])
+}
+
 // ======== MENTOR MODELS ========
 
 model MentorService {
@@ -146,7 +176,7 @@ model MentorAvailability {
   createdAt         DateTime                @default(now())
   updatedAt         DateTime                @updatedAt
   mentor            User                    @relation(fields: [mentorId], references: [id], onDelete: Cascade)
-  MentorService     MentorService           @relation(fields: [mentorServiceId], references: [id])
+  MentorService     MentorService           @relation(fields: [mentorServiceId], references: [id], onDelete: Cascade)
   mentorServiceId   Int                     @unique
   days              MentorAvailabilityDay[] // Relation to days
 
@@ -183,19 +213,24 @@ model MentorAvailabilityInterval {
 }
 
 model MentorRequest {
-  id              Int       @id @default(autoincrement())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  specialization  String
-  experienceLevel String
-  TargetMentees   String
-  linkedin        String
-  bio             String
-  status          ReqStat   @default(PENDING)
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-  reviewedBy      String? // ID of admin who reviewed
-  reviewedAt      DateTime? // When the request was reviewed
+  id                Int       @id @default(autoincrement())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  specializationId  Int       // Changed from String to relation
+  specialization    Specialization @relation(fields: [specializationId], references: [id], onDelete: Restrict)
+  experienceLevel   ExperienceLevel?
+  experience        Int
+  linkedin          String
+  dribbble          String?
+  behance           String?
+  github            String?
+  instagram         String?
+  bio               String
+  status            ReqStat   @default(PENDING)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  reviewedBy        String? // ID of admin who reviewed
+  reviewedAt        DateTime? // When the request was reviewed
 }
 
 enum ReqStat {

@@ -1,6 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Gender } from '@prisma/client';
-import { ExperienceLevel } from '../../common/enums/experience-level.enum';
 import {
   IsEmail,
   IsIn,
@@ -13,7 +12,9 @@ import {
   MaxLength,
   Min,
   MinLength,
+  Validate,
 } from 'class-validator';
+import { SpecializationExistsValidator } from 'src/common/validators/specialization-exists.validator';
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -26,7 +27,6 @@ export class UpdateUserDto {
   @IsNotEmpty({ message: 'Name is required.' })
   @MinLength(2, { message: 'Name must be at least 2 characters long.' })
   @MaxLength(50, { message: 'Name must be at most 50 characters long.' })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid name.' })
   name: string;
 
   @ApiProperty({
@@ -55,7 +55,6 @@ export class UpdateUserDto {
   @IsNotEmpty({ message: 'Country is required.' })
   @MinLength(2, { message: 'Country must be at least 2 characters long.' })
   @MaxLength(50, { message: 'Country must be at most 50 characters long.' })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid country.' })
   country: string;
 
   @ApiPropertyOptional({
@@ -67,41 +66,21 @@ export class UpdateUserDto {
   bio?: string;
 
   @ApiProperty({
-    enum: ExperienceLevel,
-    example: ExperienceLevel.INTERMEDIATE,
-    description: 'User experience level',
-  })
-  @IsNotEmpty({ message: 'Experience level is required.' })
-  @IsIn(
-    [
-      ExperienceLevel.BEGINNER,
-      ExperienceLevel.INTERMEDIATE,
-      ExperienceLevel.EXPERT,
-    ],
-    {
-      message: 'Experience level must be BEGINNER, INTERMEDIATE, or EXPERT.',
-    },
-  )
-  experienceLevel: ExperienceLevel;
-
-  @ApiProperty({
     example: 3,
     description: 'Years of experience (non-negative integer)',
   })
   @IsNumber({}, { message: 'Experience must be a number.' })
   @Min(0, { message: 'Experience must be a non-negative integer.' })
-  @Max(10, { message: 'Experience must be at most 10 years.' })
+  @Max(50, { message: 'Experience must be at most 50 years.' })
   experience?: number;
 
   @ApiPropertyOptional({
-    example: 'Other',
-    description: 'User specialization (optional)',
+    example: 1,
+    description: 'User specializationId of specialization (optional)',
   })
-  @IsString()
-  @MaxLength(100, {
-    message: 'Specialization must be at most 100 characters long.',
-  })
-  specialization?: string;
+  @IsNumber()
+  @Validate(SpecializationExistsValidator)
+  specializationId?: number;
 
   @ApiPropertyOptional({
     example: 'https://www.linkedin.com/in/username',

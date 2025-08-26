@@ -21,7 +21,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'Name is required.' })
   @MinLength(2, { message: 'Name must be at least 2 characters long.' })
   @MaxLength(50, { message: 'Name must be at most 50 characters long.' })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid name.' })
   name: string;
 
   @ApiProperty({

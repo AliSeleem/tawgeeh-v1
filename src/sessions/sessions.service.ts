@@ -12,7 +12,7 @@ import { CreateSessionDto } from './dto/create-session.dto';
 import { UpdateSessionNotesDto } from './dto/update-session-notes.dto';
 import { UpdateSessionFeedbackDto } from './dto/update-session-feedback.dto';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
-import { SessionStatus, User } from '@prisma/client';
+import { SessionStatus, Specialization, User } from '@prisma/client';
 import {
   EmailType,
   NotificationType,
@@ -122,7 +122,7 @@ export class SessionsService {
         id: string;
         name: string;
         image_url: string;
-        specialization: string;
+        specialization: string | null;
       };
       service: {
         id: number;
@@ -145,7 +145,9 @@ export class SessionsService {
             id: true,
             name: true,
             image_url: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
           },
         },
         duration: true,
@@ -414,7 +416,7 @@ export class SessionsService {
           id: service.mentor.id,
           name: service.mentor.name,
           image_url: service.mentor.image_url || '',
-          specialization: service.mentor.specialization,
+          specialization: service.mentor.specialization?.name || null,
         },
         service: {
           id: serviceId,
@@ -616,7 +618,9 @@ export class SessionsService {
             id: true,
             name: true,
             email: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
             image_url: true,
           },
         },
@@ -625,7 +629,9 @@ export class SessionsService {
             id: true,
             name: true,
             email: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
             image_url: true,
           },
         },
@@ -1031,7 +1037,9 @@ export class SessionsService {
             name: true,
             email: true,
             image_url: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
           },
         },
         mentor: {
@@ -1040,7 +1048,9 @@ export class SessionsService {
             name: true,
             email: true,
             image_url: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
           },
         },
         answers: true,
@@ -1082,7 +1092,9 @@ export class SessionsService {
           select: {
             id: true,
             name: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
             image_url: true,
           },
         },
@@ -1090,7 +1102,9 @@ export class SessionsService {
           select: {
             id: true,
             name: true,
-            specialization: true,
+            specialization: {
+              select: { id: true, name: true },
+            },
             image_url: true,
           },
         },

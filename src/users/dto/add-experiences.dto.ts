@@ -23,7 +23,6 @@ export class AddExperienceDto {
   @IsNotEmpty({ message: 'Title is required.' })
   @MinLength(2, { message: 'Title must be at least 2 characters long.' })
   @MaxLength(50, { message: 'Title must be at most 50 characters long.' })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid title.' })
   title: string;
 
   @ApiProperty({
@@ -39,7 +38,6 @@ export class AddExperienceDto {
   @MaxLength(50, {
     message: 'Company name must be at most 50 characters long.',
   })
-  @Matches(/^[A-Za-z\s]+$/, { message: 'Please enter a valid company name.' })
   company: string;
 
   @ApiProperty({

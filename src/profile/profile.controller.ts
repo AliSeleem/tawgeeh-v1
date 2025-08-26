@@ -15,6 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiParam,
   ApiTags,
@@ -84,11 +85,17 @@ export class ProfileController {
     summary: 'Delete user profile',
     description: 'Delete the profile of the authenticated user',
   })
-  async deleteProfile(@Req() req: Request): Promise<ApiResponse<any>> {
+  @ApiBody({
+    schema: { example: { password: 'yourPassword' } },
+  })
+  async deleteProfile(
+    @Req() req: Request,
+    @Body('password') password: string,
+  ): Promise<ApiResponse<any>> {
     if (!req.user || typeof req.user['id'] === 'undefined') {
       throw new Error('User information is missing from request.');
     }
-    return this.userService.deleteUser(req.user['id']);
+    return this.userService.deleteUser(req.user['id'], password);
   }
 
   @Patch('profileImg')

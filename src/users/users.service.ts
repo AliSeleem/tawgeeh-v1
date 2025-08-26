@@ -11,6 +11,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ApiResponse } from 'src/common/interfaces/response.interface';
 import { User } from '@prisma/client';
+import { equal } from 'assert';
+import { equals } from 'class-validator';
 
 @Injectable()
 export class UsersService {
@@ -44,7 +46,7 @@ export class UsersService {
   async getAllUsers(query: {
     email?: string;
     q?: string;
-    specialization?: string;
+    specializationId?: number;
   }): Promise<ApiResponse<any>> {
     // Build the Prisma where clause based on the query
     const where: any = {};
@@ -86,10 +88,9 @@ export class UsersService {
           },
         ];
       }
-    } else if (query.specialization?.trim()) {
-      where.specialization = {
-        contains: query.specialization.trim(),
-        mode: 'insensitive',
+    } else if (query.specializationId) {
+      where.specializationId = {
+        equals: query.specializationId,
       };
     }
 
@@ -102,8 +103,10 @@ export class UsersService {
         image_url: true,
         cover_url: true,
         bio: true,
-        specialization: true,
-        experienceLevel: true,
+        specialization: {
+          select: { id: true, name: true },
+        },
+        experience: true,
         linkedin: true,
         instagram: true,
         dribbble: true,
@@ -162,7 +165,7 @@ export class UsersService {
     email?: string;
     q?: string;
     mentor: boolean;
-    specialization?: string;
+    specializationId?: number;
   }): Promise<ApiResponse<any>> {
     // Build the Prisma where clause based on the query
     const where: any = {};
@@ -206,10 +209,9 @@ export class UsersService {
         ];
       }
     }
-    if (query.specialization?.trim()) {
-      where.specialization = {
-        contains: query.specialization.trim(),
-        mode: 'insensitive',
+    if (query.specializationId) {
+      where.specializationId = {
+        equals: query.specializationId,
       };
     }
     if (query.mentor) {
@@ -224,8 +226,10 @@ export class UsersService {
         name: true,
         gender: true,
         image_url: true,
-        specialization: true,
-        experienceLevel: true,
+        specialization: {
+          select: { id: true, name: true },
+        },
+        experience: true,
         linkedin: true,
         instagram: true,
         dribbble: true,
@@ -249,8 +253,10 @@ export class UsersService {
         image_url: true,
         cover_url: true,
         bio: true,
-        specialization: true,
-        experienceLevel: true,
+        specialization: {
+          select: { id: true, name: true },
+        },
+        experience: true,
         linkedin: true,
         instagram: true,
         dribbble: true,
@@ -324,9 +330,11 @@ export class UsersService {
         image_url: true,
         cover_url: true,
         bio: true,
-        specialization: true,
-        experienceLevel: true,
+        specialization: {
+          select: { id: true, name: true },
+        },
         experience: true,
+        mentorRequestState: true,
         linkedin: true,
         instagram: true,
         dribbble: true,
@@ -416,13 +424,17 @@ export class UsersService {
     };
   }
 
-  async deleteUser(id: string): Promise<ApiResponse<any>> {
+  async deleteUser(id: string, password: string): Promise<ApiResponse<any>> {
     const user = await this.prisma.user.findUnique({
       where: { id },
     });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found.`);
+    }
+
+    if (bcrypt.compareSync(password, user?.password || '') === false) {
+      throw new BadRequestException('Password is incorrect.');
     }
 
     try {
