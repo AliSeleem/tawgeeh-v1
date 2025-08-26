@@ -56,9 +56,10 @@ async function bootstrap() {
     .setDescription('API for managing Tawgeeh')
     .setVersion('1.0')
     .addBearerAuth()
+    .addServer('/api')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/', app, document);
+  SwaggerModule.setup('api', app, document);
 
   // listen on port
   await app.listen(process.env.PORT || 3000, '0.0.0.0');
