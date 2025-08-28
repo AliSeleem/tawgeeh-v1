@@ -19,7 +19,7 @@ export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
       // LinkedIn v2 API uses these scopes:
       // scope: ['r_emailaddress', 'r_liteprofile'],
       // If you need OpenID Connect:
-      scope: ['openid', 'profile', 'email', 'w_member_social'],
+      scope: ['openid', 'profile', 'email'],
       passReqToCallback: true,
     });
   }
