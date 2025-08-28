@@ -4,7 +4,7 @@ import { AllExceptionsFilter } from './common/fillters/all-exceptions.filter';
 import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import * as path from 'path';
+import { useContainer } from 'class-validator';
 import { ValidationError } from 'class-validator';
 import { CairoDateInterceptor } from './common/interceptors/timezone';
 import { CairoDatePipe } from './common/pips/timezone';
@@ -30,10 +30,11 @@ async function bootstrap() {
       exceptionFactory: (errors) => {
         return new HttpException(
           {
+            success: false,
             message: 'Validation failed',
             errors: errors.map((error) => ({
               field: error.property,
-              errors: extractValidationErrors(errors),
+              errors: extractValidationErrors([error]),
             })),
           },
           HttpStatus.BAD_REQUEST,
@@ -50,13 +51,16 @@ async function bootstrap() {
 
   app.enableCors();
 
+  // 👇 This is crucial for injecting services into validators
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
+
   // Swagger Configuration
   const config = new DocumentBuilder()
     .setTitle('Tawgeeh API')
     .setDescription('API for managing Tawgeeh')
     .setVersion('1.0')
     .addBearerAuth()
-    .addServer('/api')
+    // .addServer('/api')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/', app, document);

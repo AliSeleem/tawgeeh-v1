@@ -16,6 +16,9 @@ export class SpecializationExistsValidator
 
   async validate(specializationId: number): Promise<boolean> {
     // check if specialization exists in DB
+    if (!this.specializationService) {
+      throw new Error('SpecializationService is not defined');
+    }
     const specialization =
       await this.specializationService.findOneSpecialization(specializationId);
     return !!specialization; // true if exists

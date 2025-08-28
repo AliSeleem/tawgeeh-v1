@@ -42,6 +42,9 @@ export class MentorRequestService {
         ...dto,
         userId,
       },
+      include: {
+        specialization: true,
+      },
     });
 
     // update user mentor request status

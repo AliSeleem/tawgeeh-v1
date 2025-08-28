@@ -415,6 +415,70 @@ export class UsersService {
     const updatedUser = await this.prisma.user.update({
       where: { id },
       data: updateUserDto,
+      select: {
+        id: true,
+        name: true,
+        gender: true,
+        image_url: true,
+        cover_url: true,
+        bio: true,
+        specialization: {
+          select: { id: true, name: true },
+        },
+        experience: true,
+        mentorRequestState: true,
+        linkedin: true,
+        instagram: true,
+        dribbble: true,
+        behance: true,
+        github: true,
+        experiences: {
+          select: {
+            id: true,
+            company: true,
+            title: true,
+            from: true,
+            to: true,
+          },
+        },
+        education: {
+          select: {
+            id: true,
+            school: true,
+            degree: true,
+            from: true,
+            to: true,
+          },
+        },
+        certificates: {
+          select: {
+            id: true,
+            name: true,
+            donor: true,
+            date: true,
+            link: true,
+          },
+        },
+        role: true,
+        totalMinutes: true,
+        totalSessions: true,
+        video_url: true,
+        mentorServices: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            duration: true,
+            createdAt: true,
+            updatedAt: true,
+            isActive: true,
+            availability: {
+              include: { days: true },
+            },
+            questions: true,
+          },
+        },
+      },
     });
 
     return {

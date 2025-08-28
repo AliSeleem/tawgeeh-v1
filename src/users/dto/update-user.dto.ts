@@ -72,7 +72,8 @@ export class UpdateUserDto {
   @IsNumber({}, { message: 'Experience must be a number.' })
   @Min(0, { message: 'Experience must be a non-negative integer.' })
   @Max(50, { message: 'Experience must be at most 50 years.' })
-  experience?: number;
+  @IsNotEmpty({ message: 'Experience is required.' })
+  experience: number;
 
   @ApiPropertyOptional({
     example: 1,
@@ -80,7 +81,8 @@ export class UpdateUserDto {
   })
   @IsNumber()
   @Validate(SpecializationExistsValidator)
-  specializationId?: number;
+  @IsNotEmpty({ message: 'Specialization is required.' })
+  specializationId: number;
 
   @ApiPropertyOptional({
     example: 'https://www.linkedin.com/in/username',
@@ -93,8 +95,8 @@ export class UpdateUserDto {
   @Matches(/^(https?:\/\/)?(www\.)?linkedin\.com\/in\/[a-zA-Z0-9_-]+\/?$/, {
     message: 'Please enter a valid LinkedIn URL.',
   })
-  @IsOptional()
-  linkedin?: string;
+  @IsNotEmpty({ message: 'LinkedIn URL is required.' })
+  linkedin: string;
 
   @ApiPropertyOptional({
     example: 'https://www.behance.net/username',
