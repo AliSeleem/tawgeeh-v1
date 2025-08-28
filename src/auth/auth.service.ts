@@ -64,12 +64,12 @@ export class AuthService {
   }
 
   async validateOAuthUser(profile: any, provider: 'google' | 'linkedin') {
-    let user = await this.prisma.user.findUnique({
+    let existingUser = await this.prisma.user.findUnique({
       where: { email: profile.emails[0].value },
     });
 
-    if (!user) {
-      user = await this.prisma.user.create({
+    if (!existingUser) {
+      existingUser = await this.prisma.user.create({
         data: {
           name: profile.displayName,
           email: profile.emails[0].value,
@@ -80,11 +80,11 @@ export class AuthService {
       });
     }
 
-    const { access_token } = this.generateToken(user);
+    const { access_token, user } = this.generateToken(existingUser);
 
     return {
       access_token,
-      user, // Send full user data to prefill the form
+      user,
     };
   }
 

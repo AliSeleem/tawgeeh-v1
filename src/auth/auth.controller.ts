@@ -78,17 +78,12 @@ export class AuthController {
         _json: req.user._json,
       };
 
-      const { access_token } = await this.authService.validateOAuthUser(
+      const response = await this.authService.validateOAuthUser(
         formattedProfile,
         'google',
       );
 
-      res.cookie('access_token', access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-
-      return res.redirect('/token=' + access_token);
+      res.status(HttpStatus.OK).json(response);
     } catch (error) {
       throw new HttpException(
         error.message || 'Google authentication failed',
@@ -164,17 +159,12 @@ export class AuthController {
         _json: profileData,
       };
 
-      const { access_token } = await this.authService.validateOAuthUser(
+      const response = await this.authService.validateOAuthUser(
         formattedProfile,
         'linkedin',
       );
 
-      res.cookie('access_token', access_token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-
-      return res.redirect('/chats.html');
+      res.status(HttpStatus.OK).json(response);
     } catch (error) {
       throw new HttpException(
         error.response?.data?.message ||
