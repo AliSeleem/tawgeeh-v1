@@ -30,11 +30,11 @@ export class ExploreController {
     description: 'Search users by name or company or role in this company',
   })
   @ApiQuery({
-    name: 'specialization',
+    name: 'specializationId',
     required: false,
-    type: String,
-    example: 'Developer',
-    description: 'Filter users by specialization',
+    type: Number,
+    example: 1,
+    description: 'Filter users by specialization ID',
   })
   @ApiQuery({
     name: 'email',
@@ -50,7 +50,15 @@ export class ExploreController {
     example: true,
     description: 'Filter users by mentor status',
   })
-  async exploreUsers(@Query() query: any): Promise<ApiResponse<any>> {
+  async exploreUsers(
+    @Query()
+    query: {
+      email?: string;
+      q?: string;
+      mentor: boolean;
+      specializationId?: number;
+    },
+  ): Promise<ApiResponse<any>> {
     return this.usersService.explore(query);
   }
 

@@ -215,7 +215,7 @@ model MentorAvailabilityInterval {
 model MentorRequest {
   id                Int       @id @default(autoincrement())
   userId            String
-  user              User      @relation(fields: [userId], references: [id])
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   specializationId  Int       // Changed from String to relation
   specialization    Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
   experienceLevel   ExperienceLevel?
