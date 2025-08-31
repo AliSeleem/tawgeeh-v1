@@ -25,27 +25,11 @@ export class LinkedInStrategy extends PassportStrategy(Strategy, 'linkedin') {
   }
 
   async validate(
-    req: any,
     accessToken: string,
     refreshToken: string,
     profile: any,
     done: Function,
   ) {
-    try {
-      this.logger.debug(
-        'LinkedIn profile data:',
-        JSON.stringify(profile, null, 2),
-      );
-
-      // Pass the user to your auth service for processing
-      const user = await this.authService.validateOAuthUser(
-        profile,
-        'linkedin',
-      );
-      return done(null, user);
-    } catch (error) {
-      this.logger.error('Error validating LinkedIn profile:', error);
-      return done(error, false);
-    }
+    return done(null, profile);
   }
 }
