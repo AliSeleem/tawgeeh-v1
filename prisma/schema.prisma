@@ -217,7 +217,7 @@ model MentorRequest {
   userId            String
   user              User      @relation(fields: [userId], references: [id])
   specializationId  Int       // Changed from String to relation
-  specialization    Specialization @relation(fields: [specializationId], references: [id], onDelete: Restrict)
+  specialization    Specialization @relation(fields: [specializationId], references: [id], onDelete: Cascade)
   experienceLevel   ExperienceLevel?
   experience        Int
   linkedin          String
