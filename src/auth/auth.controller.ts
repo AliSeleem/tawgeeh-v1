@@ -102,61 +102,15 @@ export class AuthController {
   @Get('linkedin/callback')
   @UseGuards(AuthGuard('linkedin'))
   @ApiExcludeEndpoint()
-  @ApiQuery({ name: 'code', required: true, type: String })
-  async linkedinAuthCallback(
-    @Query('code') code: string,
-    @Res() res: Response,
-  ) {
+  async linkedinAuthCallback(@Req() req: any, @Res() res: Response) {
     try {
-      const clientId = this.configService.get<string>('LINKEDIN_CLIENT_ID');
-      const clientSecret = this.configService.get<string>(
-        'LINKEDIN_CLIENT_SECRET',
-      );
-      const redirectUri = this.configService.get<string>(
-        'LINKEDIN_CALLBACK_URL',
-      );
-
-      if (!clientId || !clientSecret || !redirectUri) {
-        throw new HttpException(
-          'Missing LinkedIn configuration',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-
-      const params = new URLSearchParams();
-      params.append('grant_type', 'authorization_code');
-      params.append('code', code);
-      params.append('client_id', clientId);
-      params.append('client_secret', clientSecret);
-      params.append('redirect_uri', redirectUri);
-
-      const tokenResponse = await axios.post(
-        'https://www.linkedin.com/oauth/v2/accessToken',
-        params,
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      );
-
-      const accessToken = tokenResponse.data.access_token;
-
-      const profileResponse = await axios.get(
-        'https://api.linkedin.com/v2/userinfo',
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        },
-      );
-
-      const profileData = profileResponse.data;
-
+      console.log(req.user);
       const formattedProfile = {
-        id: profileData.sub,
-        displayName:
-          profileData.name ||
-          `${profileData.given_name || ''} ${profileData.family_name || ''}`.trim(),
-        emails: [{ value: profileData.email }],
+        id: req.user.id,
+        displayName: req.user.displayName,
+        emails: req.user.emails,
         provider: 'linkedin',
-        _json: profileData,
+        _json: req.user._json,
       };
 
       const response = await this.authService.validateOAuthUser(
@@ -167,10 +121,8 @@ export class AuthController {
       res.status(HttpStatus.OK).json(response);
     } catch (error) {
       throw new HttpException(
-        error.response?.data?.message ||
-          error.message ||
-          'LinkedIn authentication failed',
-        error.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        error.message || 'Linkedin authentication failed',
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
   }
