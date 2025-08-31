@@ -50,7 +50,7 @@ jobs:
             git pull origin seleem
 
             echo "📦 Installing dependencies..."
-            npm ci
+            npm install --prefer-offline --no-audit --progress=false
 
             echo "Migrating database..."
             npx prisma migrate deploy
