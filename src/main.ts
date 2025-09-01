@@ -60,7 +60,8 @@ async function bootstrap() {
     .setDescription('API for managing Tawgeeh')
     .setVersion('1.0')
     .addBearerAuth()
-    .addServer(${process.env.SERVER_URL})
+    .addServer('/')
+    .addServer('/api')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('/', app, document);

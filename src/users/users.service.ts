@@ -211,7 +211,7 @@ export class UsersService {
     }
     if (query.specializationId) {
       where.specializationId = {
-        equals: query.specializationId,
+        equals: Number(query.specializationId),
       };
     }
     if (query.mentor) {
