@@ -126,7 +126,7 @@ export class MentorRequestService {
     };
   }
 
-  async getUserMentorRequestState(userId: string): Promise<ReqStat> {
+  async getUserMentorRequestState(userId: string): Promise<ReqStat | null> {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
