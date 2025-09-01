@@ -47,6 +47,17 @@ export class MentorRequestController {
     );
   }
 
+  @Get('/my-request')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get users mentor request',
+    description: 'Retrieve the mentor request for the current user',
+  })
+  async getUserMentorRequestState(@Req() req: any): Promise<ReqStat> {
+    return this.mentorRequestService.getUserMentorRequestState(req.user.id);
+  }
+
   @Get('/pending')
   @UseGuards(JwtAuthGuard, RoleGuard(Role.ADMIN))
   @ApiBearerAuth()
