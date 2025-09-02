@@ -80,7 +80,7 @@ export class MentorRequestService {
     adminId: string,
   ): Promise<ApiResponse<any>> {
     const request = await this.prisma.mentorRequest.findUnique({
-      where: { id: requestId },
+      where: { id: Number(requestId) },
     });
     if (!request) {
       throw new NotFoundException('Mentor request not found');
