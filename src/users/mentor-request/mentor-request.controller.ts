@@ -91,11 +91,11 @@ export class MentorRequestController {
   })
   async updateMentorRequest(
     @Req() req: any,
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body('status') status: 'APPROVED' | 'REJECTED' | 'PENDING',
   ): Promise<ApiResponse<MentorRequest>> {
     return this.mentorRequestService.updateMentorRequest(
-      +id,
+      id,
       status,
       req.user.id,
     );
